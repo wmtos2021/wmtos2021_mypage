@@ -1,0 +1,191 @@
+/* check.css */
+
+/* 기본 설정 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+body {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100dvh;
+    background: #F8F5EF url("../imageLogin/로그인화면.webp") center center / cover no-repeat;
+    font-family: Arial, sans-serif;
+    color: #333333;
+    overflow: hidden;
+    overscroll-behavior: none;
+}
+
+/* 위치정보 알림 */
+.locationModal {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.35);
+    z-index: 1000;
+}
+
+.locationModal.hidden {
+    display: none;
+}
+
+.locationModalBox {
+    width: 100%;
+    max-width: 320px;
+    padding: 30px 25px;
+    background: #FFFFFF;
+    border: 1px solid #BFE5E2;
+    border-radius: 12px;
+    text-align: center;
+}
+
+.locationMessage {
+    margin-bottom: 20px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #444444;
+    white-space: pre-line;
+}
+
+#locationConfirmBtn {
+    width: 100%;
+    height: 45px;
+    border: none;
+    border-radius: 8px;
+    background: #0CA19B;
+    color: #FFFFFF;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+#locationConfirmBtn:active {
+    background: #087E78;
+}
+
+/* 자동 로그인 */
+#checkMessage {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100dvh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #0CA19B;
+    font-size: 29.9px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    transform: translateY(-40px);
+    z-index: 10;
+}
+
+.checkText {
+    display: inline-block;
+    white-space: nowrap;
+}
+
+#checkDots {
+    position: absolute;
+    left: calc(50% + 80px);
+    display: inline-flex;
+    align-items: flex-end;
+    width: auto;
+    height: 20px;
+}
+
+.dot {
+    display: none;
+    width: 6px;
+    height: 6px;
+    border-radius: 1px;
+}
+
+.dot.show {
+    display: block;
+}
+
+.dot1 {
+    background: #E67E22;
+    margin-left: 0;
+}
+
+.dot2 {
+    background: #E6B800;
+    margin-left: 7.4px;
+}
+
+.dot3 {
+    background: #0CA19B;
+    margin-left: 7.4px;
+}
+
+/* 하단 배경 */
+.footerLine {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 58px;
+    background: rgba(0, 0, 0, 0.48);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* 하단 왼쪽 정보 */
+.footerLeft {
+    position: fixed;
+    left: 12px;
+    bottom: 10px;
+    text-align: left;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.footerLine1 {
+    margin-bottom: 0;
+    font-size: 18px;
+    font-weight: 100;
+    letter-spacing: 0.5px;
+    color: #FFFFFF;
+}
+
+.footerLine2 {
+    margin-bottom: 0;
+    font-size: 12px;
+    font-weight: 100;
+    color: #FFFFFF;
+    letter-spacing: -0.48px;
+}
+
+/* 하단 오른쪽 정보 */
+.footerRight {
+    position: fixed;
+    right: 12px;
+    bottom: 10px;
+    font-size: 13px;
+    font-weight: 100;
+    color: #FFFFFF;
+    text-align: right;
+    pointer-events: none;
+    z-index: 2;
+}
