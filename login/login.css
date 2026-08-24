@@ -38,7 +38,7 @@ body {
 }
 
 .academyName {
-    width: 290px;
+    width: 298px;
     max-width: 85vw;
     height: auto;
     display: block;
@@ -66,7 +66,7 @@ body {
     margin-bottom: 4px;
     border: 1px solid #BFE5E2;
     border-radius: 10px;
-    background: rgba(255, 255, 255, 0.94);
+    background: rgba(255, 255, 255, 0.42);
     font-size: 19px;
     color: #333333;
     text-align: center;
