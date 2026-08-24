@@ -136,6 +136,7 @@ body {
     margin-left: 7.4px;
 }
 
+
 /* 하단 배경 */
 .footerLine {
     position: fixed;
@@ -164,7 +165,7 @@ body {
 .footerLine1 {
     margin-bottom: 0;
     font-size: 18px;
-    font-weight: 100;
+    font-weight: 300;
     letter-spacing: 0.5px;
     color: #FFFFFF;
 }
@@ -172,9 +173,9 @@ body {
 .footerLine2 {
     margin-bottom: 0;
     font-size: 12px;
-    font-weight: 100;
+    font-weight: 300;
     color: #FFFFFF;
-    letter-spacing: -0.48px;
+    letter-spacing: -0.3px;
 }
 
 /* 하단 오른쪽 정보 */
@@ -183,7 +184,7 @@ body {
     right: 12px;
     bottom: 10px;
     font-size: 13px;
-    font-weight: 100;
+    font-weight: 300;
     color: #FFFFFF;
     text-align: right;
     pointer-events: none;
