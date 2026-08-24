@@ -34,7 +34,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-bottom: 0;
+    margin-bottom: -24px;
 }
 
 .academyName {
@@ -61,12 +61,13 @@ body {
 #phoneInput {
     display: block;
     margin: 0 auto;
-    width: 80%;
+    width: 74%;
     height: 52px;
+    margin-bottom: 4px;
     border: 1px solid #BFE5E2;
     border-radius: 10px;
     background: rgba(255, 255, 255, 0.94);
-    font-size: 18.4px;
+    font-size: 19px;
     color: #333333;
     text-align: center;
     outline: none;
@@ -74,7 +75,7 @@ body {
 }
 
 #phoneInput::placeholder {
-    font-size: 15.5px;
+    font-size: 16px;
     color: #999999;
 }
 
@@ -87,7 +88,7 @@ body {
 #loginBtn {
     display: block;
     margin: 12px auto 0;
-    width: 80%;
+    width: 74%;
     height: 52px;
     border: none;
     border-radius: 10px;
