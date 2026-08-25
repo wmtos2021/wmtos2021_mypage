@@ -332,7 +332,7 @@ button {
 @media (max-width: 600px) {
     .studentContainer {
         max-width: 520px;
-        padding: 28px 34px 82px;
+        padding: 34px 34px 82px;
     }
     .studentHeader {
         gap: 12px;
@@ -409,7 +409,7 @@ button {
 /* 작은 모바일 */
 @media (max-width: 380px) {
     .studentContainer {
-        padding: 22px 27px 78px;
+        padding: 26px 27px 78px;
     }
     .studentHeader {
         gap: 7px;
