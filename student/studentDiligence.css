@@ -1,0 +1,196 @@
+/* studentDiligence.css */
+
+/* 출석 / 숙제 상태 */
+.diligenceStatusRow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    height: 13px;
+    font-size: 12px;
+    letter-spacing: 0.8px;
+    color: #666666;
+}
+.statusDot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    display: inline-block;
+}
+.statusDot.onTime,
+.statusDot.homeworkDone {
+    background: #0CA19B;
+}
+.statusDot.late {
+    background: #E5A93D;
+}
+.statusDot.absent {
+    background: #D95C5C;
+}
+.statusDot.homeworkNotDone {
+    background: #D95C5C;
+}
+.statusDot.notStarted {
+    background: #BDBDBD;
+}
+
+/* 달력 상단 */
+.calendarHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 18px;
+    padding: 0 2px;
+}
+.calendarHeader strong {
+    font-size: 19px;
+    font-weight: 700;
+    color: #333333;
+}
+.monthBtn {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: #08736F;
+    font-size: 25px;
+    line-height: 1;
+}
+.monthBtn:active {
+    transform: scale(0.9);
+}
+
+/* 달력 */
+.calendar {
+    width: 100%;
+    margin-top: 18px;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 2px;
+}
+.dayName {
+    height: 24px;
+    margin-bottom: 4px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 15px;
+    font-weight: 600;
+    color: #08736F;
+}
+
+/* 날짜 */
+.calendarDay {
+    min-width: 0;
+    min-height: 62px;
+    padding: 5px 0;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 5px;
+}
+.calendarDay.empty {
+    visibility: hidden;
+}
+.dateNumber {
+    font-size: 14px;
+    line-height: 1;
+    color: #444444;
+}
+
+/* 오늘 날짜 */
+.calendarDay.today {
+    background: #F1FAF9;
+    border: 1px solid #CBE8E5;
+}
+
+/* 오늘 출석 버튼 */
+.todayAttendBtn {
+    position: relative;
+    width: 42px;
+    height: 45px;
+    margin: 0;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    background: transparent;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -webkit-user-drag: none;
+    -webkit-tap-highlight-color: transparent;
+}
+.todayAttendBtn::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 1px;
+    width: 42px;
+    height: 42px;
+    transform: translateX(-50%);
+    border-radius: 50%;
+    background: #08736F;
+    z-index: 0;
+    box-shadow:
+        0 3px 0 #075F5C,
+        0 5px 8px rgba(12, 161, 155, 0.20);
+}
+.todayAttendBtn img {
+    position: relative;
+    width: 42px;
+    height: 42px;
+    display: block;
+    object-fit: contain;
+    z-index: 1;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-user-drag: none;
+    -webkit-tap-highlight-color: transparent;
+    border: none;
+    outline: none;
+    transition: transform 0.22s ease;
+}
+.todayAttendBtn:active img {
+    transform: translateY(0.9px);
+}
+.todayAttendBtn:active::before {
+    box-shadow:
+        0 1px 0 #075F5C,
+        0 2px 5px rgba(12, 161, 155, 0.16);
+}
+
+/* 작은 화면 */
+@media (max-width: 380px) {
+    .calendar {
+        gap: 1px;
+    }
+    .calendarDay {
+        min-height: 58px;
+        padding: 5px 1px;
+    }
+    .todayAttendBtn {
+        width: 38px;
+        height: 40px;
+    }
+    .todayAttendBtn::before {
+        width: 38px;
+        height: 38px;
+    }
+    .todayAttendBtn img {
+        width: 38px;
+        height: 38px;
+    }
+    .diligenceStatusRow {
+        gap: 3px;
+        font-size: 9px;
+    }
+    .statusDot {
+        width: 7px;
+        height: 7px;
+    }
+}

@@ -24,14 +24,10 @@ import {
 import {
     showAttendPopup,
     showAttendMessage
-} from "./attendPop.js";
+} from "./attendPopup.js";
 
 import { getWisdom } from "./wisdom.js";
 
-// HTML 요소
-const attendButton = document.querySelector(".attendButton");
-
-// 오늘 정보
 const deviceId = getDeviceId();
 
 let todayClassTime = null;
@@ -43,9 +39,9 @@ let todayLatitude = null;
 let todayLongitude = null;
 let attendPointValue = 0;
 
-// 정보 가져오기
-async function loadTodayInfo() {
 
+// 오늘 정보 가져오기
+async function loadTodayInfo() {
     const deviceInfo = await getDeviceInfo(deviceId);
 
     if (!deviceInfo) {
@@ -61,10 +57,7 @@ async function loadTodayInfo() {
     todayWisdom = deviceInfo.wisdom;
 
     if (!todayWisdom) {
-        todayWisdom =
-            Math.floor(
-                Math.random() * 24
-            ) + 1;
+        todayWisdom = Math.floor(Math.random() * 24) + 1;
 
         await saveWisdom(
             deviceId,
@@ -81,7 +74,8 @@ async function loadTodayInfo() {
     return true;
 }
 
-// 오늘 정보 확인
+
+// 오늘 정보 로딩
 const todayInfoPromise =
     loadTodayInfo()
         .catch(() => {
@@ -89,155 +83,218 @@ const todayInfoPromise =
             return false;
         });
 
-// 출석 버튼
-attendButton.addEventListener(
-    "click",
-    async () => {
-        try {
 
-            const loaded =
-                await todayInfoPromise;
+// 오늘 정보 로딩 완료 대기
+export async function waitTodayInfo() {
+    return await todayInfoPromise;
+}
 
-            if (!loaded) {
-                return;
-            }
 
-            // QR 유효시간 확인
-            if (
-                !attendTimestamp ||
-                Date.now() - attendTimestamp > 5 * 60 * 1000
-            ) {
-                showAttendMessage("출석체크 QR을 새로 인식해주세요.");
-                return;
-            }
+// 출석 버튼 가능 여부
+export function isAttendAvailable() {
+    if (!todayClassTime) {
+        return false;
+    }
 
-            // 학원과의 거리 확인
-            const distance =
-                checkAcademyDistance(
-                    todayLatitude,
-                    todayLongitude
-                );
+    const currentTime = getSeoulTime();
+    const classParts = todayClassTime.split(":");
+    const currentParts = currentTime.split(":");
 
-            if (distance > ALLOW_DISTANCE) {
-                showAttendMessage("학원에 등원 후 출석해주세요.");
-                return;
-            }
+    const classMinutes =
+        Number(classParts[0]) * 60 +
+        Number(classParts[1]);
 
-            // 오늘 이미 출석한 경우
-            const today =
-                new Date().toLocaleDateString(
-                    "sv-SE",
-                    { timeZone: "Asia/Seoul" }
-                );
+    const currentMinutes =
+        Number(currentParts[0]) * 60 +
+        Number(currentParts[1]);
 
-            if (todayLastAttend === today) {
-                showAttendMessage("이미 출석을 완료했어요!");
-                return;
-            }
+    return (
+        currentMinutes >= classMinutes - 90 &&
+        currentMinutes <= classMinutes + 90
+    );
+}
 
-            // 수업이 없는 날
-            if (!todayClassTime) {
-                showAttendMessage("수업이 없는 날입니다.");
-                return;
-            }
 
-            // 수업시간 확인
-            const currentTime = getSeoulTime();
+// 성실도 상태 표시 가능 여부
+export function isDiligenceStatusAvailable() {
+    if (!todayClassTime) {
+        return false;
+    }
 
-            const classParts =
-                todayClassTime.split(":");
+    const currentTime = getSeoulTime();
+    const classParts = todayClassTime.split(":");
+    const currentParts = currentTime.split(":");
 
-            const classMinutes =
-                Number(classParts[0]) * 60 +
-                Number(classParts[1]);
+    const classMinutes =
+        Number(classParts[0]) * 60 +
+        Number(classParts[1]);
 
-            const currentParts =
-                currentTime.split(":");
+    const currentMinutes =
+        Number(currentParts[0]) * 60 +
+        Number(currentParts[1]);
 
-            const currentMinutes =
-                Number(currentParts[0]) * 60 +
-                Number(currentParts[1]);
+    return currentMinutes >= classMinutes + 90;
+}
 
-            // 출석 포인트
-            let imageAttend = "";
-            let point = "";
 
-            if (currentMinutes < classMinutes) {
-                imageAttend = "../imageAttend/attend1_투명.webp";
-                point = "+ 100P";
-                attendPointValue = 100;
+// 오늘 이미 출석했는지 확인
+export function isTodayAttended() {
+    const today =
+        new Date().toLocaleDateString(
+            "sv-SE",
+            { timeZone: "Asia/Seoul" }
+        );
 
-            } else if (
-                currentMinutes < classMinutes + 10
-            ) {
-                imageAttend = "../imageAttend/attend2_투명.webp";
-                point = "+ 100P";
-                attendPointValue = 100;
+    return todayLastAttend === today;
+}
 
-            } else {
-                imageAttend = "../imageAttend/attend3_투명.webp";
-                point = "+ 0P";
-                attendPointValue = 0;
-            }
 
-            // 오늘의 명언
-            const wisdom =
-                getWisdom(todayWisdom);
+// 출석 처리
+export async function handleAttend() {
+    try {
+        const loaded = await todayInfoPromise;
 
-            // 출석 팝업
-            showAttendPopup(
-                imageAttend,
-                point,
-                wisdom.title,
-                wisdom.message,
-                async () => {
+        if (!loaded) {
+            return false;
+        }
 
-                    const time =
-                        new Date().toLocaleTimeString(
-                            "en-GB",
-                            {
-                                timeZone: "Asia/Seoul",
-                                hour12: false
-                            }
-                        );
+        // QR 유효시간 확인
+        if (
+            !attendTimestamp ||
+            Date.now() - attendTimestamp > 5 * 60 * 1000
+        ) {
+            showAttendMessage("출석체크 QR을 새로 인식해주세요.");
+            return false;
+        }
 
-                    // 출석일 저장
-                    await updateLastAttend(
-                        deviceId,
-                        todayMobile,
-                        today
-                    );
+        // 학원과의 거리 확인
+        const distance = checkAcademyDistance(
+            todayLatitude,
+            todayLongitude
+        );
 
-                    // 출석 기록 저장
-                    const saved =
-                        await saveAttendHistory(
-                            todayMobile,
-                            today,
-                            time,
-                            attendPointValue
-                        );
+        if (distance > ALLOW_DISTANCE) {
+            showAttendMessage("학원에 등원 후 출석해주세요.");
+            return false;
+        }
 
-                    // 포인트 누적
-                    if (saved) {
-                        await updateTotalP(
-                            todayMobile,
-                            attendPointValue
-                        );
-                    }
-
-                    // 다음 명언 저장
-                    todayWisdom =
-                        await updateWisdom(
-                            deviceId,
-                            todayWisdom
-                        );
-
-                    todayLastAttend = today;
-                }
+        const today =
+            new Date().toLocaleDateString(
+                "sv-SE",
+                { timeZone: "Asia/Seoul" }
             );
 
-        } catch (error) {
-            showAttendMessage("출석 처리 중 오류가 발생했습니다.");
+        // 오늘 이미 출석한 경우
+        if (todayLastAttend === today) {
+            showAttendMessage("이미 출석을 완료했어요!");
+            return false;
         }
+
+        // 수업이 없는 날
+        if (!todayClassTime) {
+            showAttendMessage("수업이 없는 날입니다.");
+            return false;
+        }
+
+        const currentTime = getSeoulTime();
+        const classParts = todayClassTime.split(":");
+        const currentParts = currentTime.split(":");
+
+        const classMinutes =
+            Number(classParts[0]) * 60 +
+            Number(classParts[1]);
+
+        const currentMinutes =
+            Number(currentParts[0]) * 60 +
+            Number(currentParts[1]);
+
+        // 출석 가능 시간 확인
+        if (
+            currentMinutes < classMinutes - 90 ||
+            currentMinutes > classMinutes + 90
+        ) {
+            showAttendMessage("현재는 출석 가능 시간이 아닙니다.");
+            return false;
+        }
+
+        // 출석 상태
+        let imageAttend = "";
+        let point = "";
+
+        if (currentMinutes < classMinutes) {
+            imageAttend = "../imageAttend/attend1_투명.webp";
+            point = "+ 100P";
+            attendPointValue = 100;
+        } else if (currentMinutes < classMinutes + 10) {
+            imageAttend = "../imageAttend/attend2_투명.webp";
+            point = "+ 100P";
+            attendPointValue = 100;
+        } else {
+            imageAttend = "../imageAttend/attend3_투명.webp";
+            point = "+ 0P";
+            attendPointValue = 0;
+        }
+
+        // 오늘의 명언
+        const wisdom = getWisdom(todayWisdom);
+
+        // 출석 결과 팝업
+        showAttendPopup(
+            imageAttend,
+            point,
+            wisdom.title,
+            wisdom.message,
+            async () => {
+                const time =
+                    new Date().toLocaleTimeString(
+                        "en-GB",
+                        {
+                            timeZone: "Asia/Seoul",
+                            hour12: false
+                        }
+                    );
+
+                // 출석일 저장
+                await updateLastAttend(
+                    deviceId,
+                    todayMobile,
+                    today
+                );
+
+                // 출석 기록 저장
+                const saved = await saveAttendHistory(
+                    todayMobile,
+                    today,
+                    time,
+                    attendPointValue
+                );
+
+                // 포인트 누적
+                if (saved) {
+                    await updateTotalP(
+                        todayMobile,
+                        attendPointValue
+                    );
+                }
+
+                // 다음 명언 저장
+                todayWisdom = await updateWisdom(
+                    deviceId,
+                    todayWisdom
+                );
+
+                todayLastAttend = today;
+
+                document.dispatchEvent(
+                    new CustomEvent("attendanceCompleted")
+                );
+            }
+        );
+
+        return true;
+
+    } catch (error) {
+        showAttendMessage("출석 처리 중 오류가 발생했습니다.");
+        return false;
     }
-);
+}

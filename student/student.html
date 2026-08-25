@@ -1,0 +1,327 @@
+<!-- student.html -->
+
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+    <title>위드엠투에스학원</title>
+
+    <link
+        rel="stylesheet"
+        href="student.css">
+
+    <link
+        rel="stylesheet"
+        href="studentDiligence.css">
+
+    <link
+        rel="stylesheet"
+        href="../attend/attend.css">
+</head>
+
+<body>
+
+    <main class="studentContainer">
+
+        <!-- 상단 영역 -->
+        <section class="studentHeader">
+
+            <div class="welcomeArea">
+
+                <p class="welcomeText">
+                    안녕하세요.
+                </p>
+
+                <p
+                    class="studentName"
+                    id="studentName">
+                    홍길동님
+                </p>
+
+            </div>
+
+            <div class="headerAction">
+
+                <button
+                    type="button"
+                    id="passwordBtn">
+
+                    비밀번호 변경
+
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- 메인 영역 -->
+        <section class="studentInfo">
+
+            <!-- 성실도 -->
+            <button
+                type="button"
+                id="diligenceBtn"
+                class="studentInfoBtn diligenceCard">
+
+                <img
+                    class="studentCardImage"
+                    src="../imageStudent/성실도.webp"
+                    alt="성실도">
+
+                <div class="studentCardContent">
+
+                    <div class="infoTitle">
+                        나의 성실도
+                    </div>
+
+                    <div class="diligenceValue">
+                        <strong id="diligenceCount">
+                            0
+                        </strong>
+
+                        <span>
+                            /
+                        </span>
+
+                        <strong id="diligenceTotal">
+                            100
+                        </strong>
+                    </div>
+
+                </div>
+
+                <span class="studentCardArrow">
+                    ›
+                </span>
+
+            </button>
+
+
+            <!-- POINT -->
+            <button
+                type="button"
+                id="pointBtn"
+                class="studentInfoBtn pointCard">
+
+                <img
+                    class="studentCardImage"
+                    src="../imageStudent/포인트.webp"
+                    alt="POINT">
+
+                <div class="studentCardContent">
+
+                    <div class="infoTitle">
+                        POINT
+                    </div>
+
+                    <div class="pointValue">
+
+                        <strong id="studentPoint">
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+                <span class="studentCardArrow">
+                    ›
+                </span>
+
+            </button>
+
+
+            <!-- GOLD -->
+            <button
+                type="button"
+                id="goldBtn"
+                class="studentInfoBtn goldCard">
+
+                <img
+                    class="studentCardImage"
+                    src="../imageStudent/골드.webp"
+                    alt="GOLD">
+
+                <div class="studentCardContent">
+
+                    <div class="infoTitle">
+                        GOLD
+                    </div>
+
+                    <div class="goldValue">
+
+                        <strong id="studentGold">
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+                <span class="studentCardArrow">
+                    ›
+                </span>
+
+            </button>
+
+        </section>
+
+    </main>
+
+
+    <!-- 출석 팝업 -->
+    <div
+        id="attendModal"
+        class="attendModal hidden">
+
+        <div class="attendModalBox">
+
+            <img
+                id="resultAttendImage"
+                src=""
+                alt="출석 도장">
+
+            <div
+                id="wisdomTitle"
+                class="wisdomTitle">
+            </div>
+
+            <div
+                id="wisdomMessage"
+                class="wisdomMessage">
+            </div>
+
+            <div class="pointArea">
+
+                <div
+                    id="attendPoint"
+                    class="attendPoint">
+                </div>
+
+            </div>
+
+            <button
+                id="attendConfirmBtn"
+                type="button">
+                확인
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- 성실도 팝업 -->
+    <div
+        id="diligenceModal"
+        class="studentModal hidden">
+
+        <div class="studentModalBox">
+
+            <h2>
+                나의 성실도
+            </h2>
+
+            <div id="diligenceContent"></div>
+
+            <button
+                type="button"
+                id="diligenceCloseBtn">
+                확인
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- POINT 팝업 -->
+    <div
+        id="pointModal"
+        class="studentModal hidden">
+
+        <div class="studentModalBox">
+
+            <h2>
+                POINT
+            </h2>
+
+            <div id="pointContent"></div>
+
+            <button
+                type="button"
+                id="pointCloseBtn">
+                확인
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- GOLD 팝업 -->
+    <div
+        id="goldModal"
+        class="studentModal hidden">
+
+        <div class="studentModalBox">
+
+            <h2>
+                GOLD
+            </h2>
+
+            <div id="goldContent"></div>
+
+            <button
+                type="button"
+                id="goldCloseBtn">
+                확인
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- 하단 구분선 -->
+    <div class="footerLine"></div>
+
+
+    <!-- 하단 왼쪽 정보 -->
+    <div class="footerLeft">
+
+        <div class="footerLine1">
+            위드엠투에스학원
+        </div>
+
+        <div class="footerLine2">
+            경남 김해시 활천로 168, 2층
+        </div>
+
+    </div>
+
+
+    <!-- 하단 오른쪽 정보 -->
+    <div class="footerRight">
+        Ver 1.0.0
+    </div>
+
+
+    <script
+        type="module"
+        src="studentDiligence.js">
+    </script>
+
+    <script
+        type="module"
+        src="student.js">
+    </script>
+
+</body>
+
+</html>

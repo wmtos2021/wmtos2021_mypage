@@ -1,6 +1,5 @@
 // attendFirebase.js
 
-
 import {
     ref,
     get,
@@ -23,6 +22,42 @@ export async function getDeviceInfo(deviceId) {
 
     if (!snapshot.exists()) {
         return null;
+    }
+
+    return snapshot.val();
+}
+
+
+// 학생 정보 가져오기
+export async function getStudentInfo(mobile) {
+    const snapshot =
+        await get(
+            ref(
+                db,
+                `student/${mobile}`
+            )
+        );
+
+    if (!snapshot.exists()) {
+        return null;
+    }
+
+    return snapshot.val();
+}
+
+
+// 학생 출석 기록 가져오기
+export async function getAttendRecords(mobile) {
+    const snapshot =
+        await get(
+            ref(
+                db,
+                `history/${mobile}`
+            )
+        );
+
+    if (!snapshot.exists()) {
+        return {};
     }
 
     return snapshot.val();
@@ -100,7 +135,8 @@ export async function updateWisdom(
     deviceId,
     wisdom
 ) {
-    let nextWisdom =  Number(wisdom) + 1;
+    let nextWisdom = Number(wisdom) + 1;
+
     if (nextWisdom > 24) {
         nextWisdom = 1;
     }
@@ -172,7 +208,6 @@ export async function updateTotalP(
     await runTransaction(
         totalPRef,
         (currentValue) => {
-
             const currentP =
                 Number(currentValue) || 0;
 
