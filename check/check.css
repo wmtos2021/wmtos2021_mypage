@@ -133,20 +133,6 @@ body {
     margin-left: 7.4px;
 }
 
-/* 하단 배경 */
-.footerLine {
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: 58px;
-    background: rgba(0, 0, 0, 0.48);
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
-    border-top: 1px solid rgba(255, 255, 255, 0.2);
-    pointer-events: none;
-    z-index: 1;
-}
 
 /* 하단 왼쪽 정보 */
 .footerLeft {
