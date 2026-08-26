@@ -52,7 +52,7 @@ export async function getAttendRecords(mobile) {
         await get(
             ref(
                 db,
-                `history/${mobile}`
+                `attend/${mobile}`
             )
         );
 
