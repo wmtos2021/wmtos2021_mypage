@@ -64,6 +64,23 @@ export async function getAttendRecords(mobile) {
 }
 
 
+// 오늘 출석 여부 확인
+export async function checkTodayAttend(
+    mobile,
+    date
+) {
+    const snapshot =
+        await get(
+            ref(
+                db,
+                `attend/${mobile}/${date}`
+            )
+        );
+
+    return snapshot.exists();
+}
+
+
 // 반의 오늘 수업시간 가져오기
 export async function getClassTime(
     className,
@@ -82,34 +99,6 @@ export async function getClassTime(
     }
 
     return snapshot.val();
-}
-
-
-// 출석 날짜 저장
-export async function updateLastAttend(
-    deviceId,
-    mobile,
-    date
-) {
-    await update(
-        ref(
-            db,
-            `deviceId/${deviceId}`
-        ),
-        {
-            lastAttend: date
-        }
-    );
-
-    await update(
-        ref(
-            db,
-            `student/${mobile}`
-        ),
-        {
-            lastAttend: date
-        }
-    );
 }
 
 

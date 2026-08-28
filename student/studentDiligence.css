@@ -31,12 +31,12 @@
 }
 
 .statusDot.late {
-    background: #e06f24;
+    background: #f58116;
 }
 
 .statusDot.absent,
 .statusDot.homeworkNotDone {
-    background: #D94343;
+    background: #ce0707;
 }
 
 .statusDot.notStarted {
@@ -164,6 +164,7 @@
 /* 오늘 날짜 표시 */
 .calendarDay.today {
     background: #F1FAF9;
+    padding-top: 3px;
     border: 1px solid #CBE8E5;
 }
 

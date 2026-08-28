@@ -9,7 +9,7 @@ import {
 import {
     getDeviceInfo,
     getClassTime,
-    updateLastAttend,
+    checkTodayAttend,
     saveWisdom,
     updateWisdom,
     saveAttendHistory,
@@ -35,7 +35,6 @@ let todayClassTime = null;
 let todayWisdom = null;
 let todayMobile = null;
 let todayName = "";
-let todayLastAttend = null;
 let attendTimestamp = null;
 let todayLatitude = null;
 let todayLongitude = null;
@@ -69,7 +68,6 @@ async function loadTodayInfo() {
 
     todayMobile = deviceInfo.mobile;
     todayName = deviceInfo.name || "";
-    todayLastAttend = deviceInfo.lastAttend || "";
     attendTimestamp = deviceInfo.attendTimestamp || null;
     todayLatitude = deviceInfo.latitude;
     todayLongitude = deviceInfo.longitude;
@@ -141,14 +139,21 @@ export function isDiligenceStatusAvailable() {
 
 
 // 오늘 이미 출석했는지 확인
-export function isTodayAttended() {
+export async function isTodayAttended() {
+    if (!todayMobile) {
+        return false;
+    }
+
     const today =
         new Date().toLocaleDateString(
             "sv-SE",
             { timeZone: "Asia/Seoul" }
         );
 
-    return todayLastAttend === today;
+    return await checkTodayAttend(
+        todayMobile,
+        today
+    );
 }
 
 
@@ -188,7 +193,7 @@ export async function handleAttend() {
             );
 
         // 오늘 이미 출석한 경우
-        if (todayLastAttend === today) {
+        if (await isTodayAttended()) {
             showAttendMessage("이미 출석을 완료했어요!");
             return false;
         }
@@ -263,13 +268,6 @@ export async function handleAttend() {
                         }
                     );
 
-                // 출석일 저장
-                await updateLastAttend(
-                    deviceId,
-                    todayMobile,
-                    today
-                );
-
                 // 출석 기록 저장
                 const saved = await saveAttendHistory(
                     todayMobile,
@@ -301,8 +299,6 @@ export async function handleAttend() {
                     todayWisdom
                 );
 
-                todayLastAttend = today;
-
                 document.dispatchEvent(
                     new CustomEvent("attendanceCompleted")
                 );
@@ -312,7 +308,6 @@ export async function handleAttend() {
         return true;
 
     } catch (error) {
-        console.error("출석 처리 오류:", error);
         showAttendMessage("출석 처리 중 오류가 발생했습니다.");
         return false;
     }
