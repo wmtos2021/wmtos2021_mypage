@@ -87,6 +87,7 @@ button {
     font-size: 11px;
     font-weight: 700;
     white-space: nowrap;
+
     transition:
         background 0.15s ease,
         transform 0.15s ease;
@@ -119,6 +120,7 @@ button {
     background: transparent;
     overflow: hidden;
     text-align: left;
+
     transition:
         transform 0.15s ease,
         filter 0.15s ease;
@@ -160,98 +162,6 @@ button {
     font-size: 18px;
     font-weight: 700;
     line-height: 1.2;
-}
-
-.diligenceCard .infoTitle {
-    color: #078887;
-}
-
-.pointCard .infoTitle {
-    color: #ebb000;
-}
-
-.goldCard .infoTitle {
-    color: #F15B18;
-}
-
-
-/* 성실도 */
-.diligenceValue {
-    display: flex;
-    align-items: baseline;
-    gap: 4px;
-    margin-top: 5px;
-    color: #333D43;
-}
-
-.diligenceValue strong:first-child {
-    font-size: 35px;
-    font-weight: 700;
-    color: #078887;
-    line-height: 0.95;
-}
-
-.diligenceValue span {
-    font-size: 23px;
-    font-weight: 400;
-    color: #333D43;
-}
-
-.diligenceValue strong:last-child {
-    font-size: 23px;
-    font-weight: 700;
-    color: #333D43;
-}
-
-
-/* POINT / GOLD */
-.pointValue,
-.goldValue {
-    display: flex;
-    align-items: baseline;
-    gap: 4px;
-    margin-top: 5px;
-}
-
-.pointValue strong {
-    font-size: 35px;
-    font-weight: 700;
-    color: #ebb000;
-    line-height: 0.95;
-}
-
-.goldValue strong {
-    font-size: 35px;
-    font-weight: 700;
-    color: #F15B18;
-    line-height: 0.95;
-}
-
-
-/* 카드 화살표 */
-.studentCardArrow {
-    position: absolute;
-    top: 50%;
-    right: 5.5%;
-    z-index: 3;
-    transform: translateY(-50%);
-    font-family: Arial, sans-serif;
-    font-size: 28px;
-    font-weight: 300;
-    line-height: 1;
-    color: #078887;
-}
-
-.diligenceCard .studentCardArrow {
-    color: #078887;
-}
-
-.pointCard .studentCardArrow {
-    color: #F4B900;
-}
-
-.goldCard .studentCardArrow {
-    color: #F15B18;
 }
 
 
@@ -323,10 +233,11 @@ button {
     overflow-y: auto;
 }
 
+
+/* 팝업 제목 */
 .studentModalBox h2 {
     font-size: 21px;
     font-weight: 700;
-    color: #08736F;
 }
 
 

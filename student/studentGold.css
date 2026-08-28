@@ -1,0 +1,31 @@
+/* studentGold.css */
+
+
+/* GOLD 카드 */
+
+.goldCard .infoTitle {
+    color: #F15B18;
+}
+
+
+/* GOLD 값 */
+.goldValue {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+    margin-top: 5px;
+}
+
+.goldValue strong {
+    font-size: 35px;
+    font-weight: 700;
+    color: #F15B18;
+    line-height: 0.95;
+}
+
+
+/* GOLD 팝업 */
+
+#goldModal .studentModalBox h2 {
+    color: #F15B18;
+}

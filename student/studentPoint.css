@@ -1,0 +1,29 @@
+/* studentPoint.css */
+
+
+/* POINT 카드 */
+.pointCard .infoTitle {
+    color: #ebb000;
+}
+
+
+/* POINT 값 */
+.pointValue {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+    margin-top: 5px;
+}
+
+.pointValue strong {
+    font-size: 35px;
+    font-weight: 700;
+    color: #ebb000;
+    line-height: 0.95;
+}
+
+
+/* POINT 팝업 */
+#pointModal .studentModalBox h2 {
+    color: #ebb000;
+}
