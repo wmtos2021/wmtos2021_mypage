@@ -19,6 +19,7 @@ const studentGold = document.getElementById("studentGold");
 const diligenceBtn = document.getElementById("diligenceBtn");
 const diligenceModal = document.getElementById("diligenceModal");
 const diligenceCloseBtn = document.getElementById("diligenceCloseBtn");
+const diligenceModalScore = document.getElementById("diligenceModalScore");
 const pointBtn = document.getElementById("pointBtn");
 const pointModal = document.getElementById("pointModal");
 const pointCloseBtn = document.getElementById("pointCloseBtn");
@@ -93,6 +94,9 @@ async function loadStudentInfo() {
         getDiligenceGrade(diligence) === "A+"
             ? "A<sup>+</sup>"
             : getDiligenceGrade(diligence);
+
+    diligenceModalScore.textContent =
+        `${diligence}/100`;
 
     return true;
 }

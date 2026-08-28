@@ -269,6 +269,11 @@ button {
     font-size: 21px;
     font-weight: 700;
 }
+.diligenceModalTitle strong {
+    color: #000000;
+    font-size: 16px;
+    font-weight: 300;
+}
 
 
 /* 팝업 내용 */
