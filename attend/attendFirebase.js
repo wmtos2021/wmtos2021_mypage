@@ -64,6 +64,24 @@ export async function getAttendRecords(mobile) {
 }
 
 
+// 학생 성실도 전체 기록 가져오기
+export async function getDiligenceRecords(mobile) {
+    const snapshot =
+        await get(
+            ref(
+                db,
+                `diligence/${mobile}`
+            )
+        );
+
+    if (!snapshot.exists()) {
+        return {};
+    }
+
+    return snapshot.val();
+}
+
+
 // 오늘 출석 여부 확인
 export async function checkTodayAttend(
     mobile,

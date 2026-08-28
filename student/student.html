@@ -5,30 +5,13 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>위드엠투에스학원</title>
-
-    <link
-        rel="stylesheet"
-        href="student.css">
-
-    <link
-        rel="stylesheet"
-        href="studentDiligence.css">
-
-    <link
-        rel="stylesheet"
-        href="studentPoint.css">
-
-    <link
-        rel="stylesheet"
-        href="studentGold.css">
-
-    <link
-        rel="stylesheet"
-        href="../attend/attend.css">
+    <link rel="stylesheet" href="student.css">
+    <link rel="stylesheet" href="studentDiligence.css">
+    <link rel="stylesheet" href="studentPoint.css">
+    <link rel="stylesheet" href="studentGold.css">
+    <link rel="stylesheet" href="../attend/attend.css">
 </head>
 
 <body>
@@ -42,80 +25,59 @@
                 <p class="welcomeText">
                     안녕하세요.
                 </p>
-
-                <p
-                    class="studentName"
-                    id="studentName">
+                <p class="studentName" id="studentName">
                     홍길동님
                 </p>
             </div>
 
             <div class="headerAction">
-                <button
-                    type="button"
-                    id="passwordBtn">
-
+                <button type="button" id="passwordBtn">
                     비밀번호 변경
                 </button>
             </div>
 
         </section>
 
-
         <!-- 메인 영역 -->
         <section class="studentInfo">
 
+            <!-- 성실도 -->
+            <button type="button" id="diligenceBtn" class="studentInfoBtn diligenceCard">
 
-        <!-- 성실도 -->
-        <button
-            type="button"
-            id="diligenceBtn"
-            class="studentInfoBtn diligenceCard">
+                <img class="studentCardImage" src="../imageStudent/성실도.webp" alt="성실도">
 
-            <img
-                class="studentCardImage"
-                src="../imageStudent/성실도.webp"
-                alt="성실도">
+                <div class="studentCardContent">
 
-            <div class="studentCardContent">
+                    <div>
+                        <span>
+                            나의 성실도
+                        </span>
+                    </div>
 
-                <div>
-                    <span>나의 성실도</span>
-                </div>
+                    <div class="diligenceValue">
+                        <strong id="diligenceCount">
+                            100
+                        </strong>
+                        <span>
+                            /
+                        </span>
+                        <strong id="diligenceTotal">
+                            100
+                        </strong>
+                    </div>
 
-                <div class="diligenceValue">
-                    <strong id="diligenceCount">
-                        100
-                    </strong>
-
-                    <span>
-                        /
+                    <span id="diligenceGrade">
+                        A<sup>+</sup>
                     </span>
 
-                    <strong id="diligenceTotal">
-                        100
-                    </strong>
                 </div>
 
-                <span id="diligenceGrade">
-                    A<sup>+</sup>
-                </span>
-
-            </div>
-
-        </button>
-
+            </button>
 
             <!-- POINT -->
-            <button
-                type="button"
-                id="pointBtn"
-                class="studentInfoBtn pointCard">
+            <button type="button" id="pointBtn" class="studentInfoBtn pointCard">
 
-                <img
-                    class="studentCardImage"
-                    src="../imageStudent/포인트.webp"
-                    alt="POINT">
+                <img class="studentCardImage" src="../imageStudent/포인트.webp" alt="POINT">
 
                 <div class="studentCardContent">
 
@@ -133,17 +95,10 @@
 
             </button>
 
-
             <!-- GOLD -->
-            <button
-                type="button"
-                id="goldBtn"
-                class="studentInfoBtn goldCard">
+            <button type="button" id="goldBtn" class="studentInfoBtn goldCard">
 
-                <img
-                    class="studentCardImage"
-                    src="../imageStudent/골드.webp"
-                    alt="GOLD">
+                <img class="studentCardImage" src="../imageStudent/골드.webp" alt="GOLD">
 
                 <div class="studentCardContent">
 
@@ -165,68 +120,46 @@
 
     </main>
 
-
     <!-- 출석 팝업 -->
-    <div
-        id="attendModal"
-        class="attendModal hidden">
+    <div id="attendModal" class="attendModal hidden">
 
         <div class="attendModalBox">
 
-            <!-- 닫기 버튼 -->
-            <button
-                id="attendConfirmBtn"
-                type="button"
-                class="attendCloseBtn"
-                aria-label="닫기">
+            <button id="attendConfirmBtn" type="button" class="attendCloseBtn" aria-label="닫기">
             </button>
 
-            <img
-                id="resultAttendImage"
-                src=""
-                alt="출석하기">
+            <img id="resultAttendImage" src="" alt="출석하기">
 
-            <div
-                id="wisdomTitle"
-                class="wisdomTitle">
+            <div id="wisdomTitle" class="wisdomTitle">
             </div>
 
-            <div
-                id="wisdomMessage"
-                class="wisdomMessage">
+            <div id="wisdomMessage" class="wisdomMessage">
             </div>
 
             <div class="pointArea">
-
-                <div
-                    id="attendPoint"
-                    class="attendPoint">
+                <div id="attendPoint" class="attendPoint">
                 </div>
-
             </div>
 
         </div>
 
     </div>
 
-
     <!-- 성실도 팝업 -->
-    <div
-        id="diligenceModal"
-        class="studentModal hidden">
+    <div id="diligenceModal" class="studentModal hidden">
 
         <div class="studentModalBox">
 
-            <button
-                id="diligenceCloseBtn"
-                type="button"
-                class="studentCloseBtn"
-                aria-label="닫기">
+            <button id="diligenceCloseBtn" type="button" class="studentCloseBtn" aria-label="닫기">
             </button>
 
             <h2 class="diligenceModalTitle">
-                <span>나의 성실도</span>
-                <strong id="diligenceModalScore">(100/100)</strong>
+                <span>
+                    나의 성실도
+                </span>
+                <strong id="diligenceModalScore">
+                    (100/100)
+                </strong>
             </h2>
 
             <div id="diligenceContent"></div>
@@ -235,19 +168,12 @@
 
     </div>
 
-
     <!-- POINT 팝업 -->
-    <div
-        id="pointModal"
-        class="studentModal hidden">
+    <div id="pointModal" class="studentModal hidden">
 
         <div class="studentModalBox">
 
-            <button
-                type="button"
-                id="pointCloseBtn"
-                class="studentModalCloseBtn"
-                aria-label="닫기">
+            <button type="button" id="pointCloseBtn" class="studentModalCloseBtn" aria-label="닫기">
             </button>
 
             <h2>
@@ -260,19 +186,12 @@
 
     </div>
 
-
     <!-- GOLD 팝업 -->
-    <div
-        id="goldModal"
-        class="studentModal hidden">
+    <div id="goldModal" class="studentModal hidden">
 
         <div class="studentModalBox">
 
-            <button
-                type="button"
-                id="goldCloseBtn"
-                class="studentModalCloseBtn"
-                aria-label="닫기">
+            <button type="button" id="goldCloseBtn" class="studentModalCloseBtn" aria-label="닫기">
             </button>
 
             <h2>
@@ -285,10 +204,8 @@
 
     </div>
 
-
     <!-- 하단 구분선 -->
     <div class="footerLine"></div>
-
 
     <!-- 하단 왼쪽 정보 -->
     <div class="footerLeft">
@@ -303,22 +220,13 @@
 
     </div>
 
-
     <!-- 하단 오른쪽 정보 -->
     <div class="footerRight">
         Ver 1.0.0
     </div>
 
-
-    <script
-        type="module"
-        src="studentDiligence.js">
-    </script>
-
-    <script
-        type="module"
-        src="student.js">
-    </script>
+    <script type="module" src="studentDiligence.js"></script>
+    <script type="module" src="student.js"></script>
 
 </body>
 

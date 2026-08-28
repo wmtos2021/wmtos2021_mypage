@@ -1,8 +1,6 @@
 /* studentDiligence.css */
 
-
 /* 출석 및 숙제 상태 */
-
 .diligenceStatusRow {
     display: flex;
     align-items: center;
@@ -43,12 +41,10 @@
     background: #BDBDBD;
 }
 
-
 /* 성실도 카드 제목 */
 .diligenceCard .infoTitle {
     color: #078887;
 }
-
 
 /* 성실도 값 */
 .diligenceValue {
@@ -78,12 +74,10 @@
     color: #333D43;
 }
 
-
 /* 성실도 팝업 제목 */
 #diligenceModal .studentModalBox h2 {
     color: #078887;
 }
-
 
 /* 팝업 달력 상단 */
 .calendarHeader {
@@ -115,7 +109,6 @@
     transform: scale(0.9);
 }
 
-
 /* 팝업 달력 */
 .calendar {
     width: 100%;
@@ -135,7 +128,6 @@
     font-weight: 600;
     color: #08736F;
 }
-
 
 /* 팝업 달력 날짜 */
 .calendarDay {
@@ -160,14 +152,12 @@
     color: #444444;
 }
 
-
 /* 오늘 날짜 표시 */
 .calendarDay.today {
     background: #F1FAF9;
     padding-top: 3px;
     border: 1px solid #CBE8E5;
 }
-
 
 /* 오늘 출석 버튼 */
 .todayAttendBtn {
@@ -183,7 +173,6 @@
     justify-content: center;
     align-items: flex-start;
     cursor: pointer;
-
     -webkit-user-select: none;
     -webkit-user-drag: none;
     -webkit-tap-highlight-color: transparent;
@@ -200,7 +189,6 @@
     border-radius: 50%;
     background: #08736F;
     z-index: 0;
-
     box-shadow:
         0 3px 0 #075F5C,
         0 5px 8px rgba(12, 161, 155, 0.20);
@@ -213,15 +201,12 @@
     display: block;
     object-fit: contain;
     z-index: 1;
-
     user-select: none;
     -webkit-user-select: none;
     -webkit-user-drag: none;
     -webkit-tap-highlight-color: transparent;
-
     border: none;
     outline: none;
-
     transition: transform 0.22s ease;
 }
 

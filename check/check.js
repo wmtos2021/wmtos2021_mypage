@@ -150,7 +150,7 @@ async function checkLogin() {
 
         // 정상 로그인
         if (isLogin) {
-            await movePage("../student/student.html");
+            await movePage("../loading/loading.html");
             return;
         }
 

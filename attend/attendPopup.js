@@ -1,34 +1,16 @@
 // attendPopup.js
 
-const attendModal =
-    document.getElementById("attendModal");
-
-const resultAttendImage =
-    document.getElementById("resultAttendImage");
-
-const wisdomTitle =
-    document.getElementById("wisdomTitle");
-
-const wisdomMessage =
-    document.getElementById("wisdomMessage");
-
-const attendPoint =
-    document.getElementById("attendPoint");
-
-const attendConfirmBtn =
-    document.getElementById("attendConfirmBtn");
+const attendModal = document.getElementById("attendModal");
+const resultAttendImage = document.getElementById("resultAttendImage");
+const wisdomTitle = document.getElementById("wisdomTitle");
+const wisdomMessage = document.getElementById("wisdomMessage");
+const attendPoint = document.getElementById("attendPoint");
+const attendConfirmBtn = document.getElementById("attendConfirmBtn");
 
 let confirmCallback = null;
 
-
 // 출석 팝업
-export function showAttendPopup(
-    image,
-    point,
-    title,
-    message,
-    callback
-) {
+export function showAttendPopup(image, point, title, message, callback) {
     setTimeout(() => {
         resultAttendImage.src = image;
         attendPoint.textContent = point;
@@ -49,21 +31,16 @@ export function showAttendPopup(
     }, 500);
 }
 
-
 // 출석 팝업 확인
-attendConfirmBtn.addEventListener(
-    "click",
-    async () => {
-        attendModal.classList.add("hidden");
+attendConfirmBtn.addEventListener("click", async () => {
+    attendModal.classList.add("hidden");
 
-        if (confirmCallback) {
-            const callback = confirmCallback;
-            confirmCallback = null;
-            await callback();
-        }
+    if (confirmCallback) {
+        const callback = confirmCallback;
+        confirmCallback = null;
+        await callback();
     }
-);
-
+});
 
 // 안내 팝업
 export function showAttendMessage(message) {

@@ -1,12 +1,5 @@
 // student.js
 
-import { getDeviceId } from "../utils.js";
-import {
-    getDeviceInfo,
-    getStudentInfo,
-    getAttendRecords,
-    getDiligence
-} from "../attend/attendFirebase.js";
 import {
     setDiligenceData,
     renderDiligenceCalendar
@@ -19,61 +12,45 @@ const studentGold = document.getElementById("studentGold");
 const diligenceBtn = document.getElementById("diligenceBtn");
 const diligenceModal = document.getElementById("diligenceModal");
 const diligenceCloseBtn = document.getElementById("diligenceCloseBtn");
-const diligenceModalScore = document.getElementById("diligenceModalScore");
+const diligenceCount = document.getElementById("diligenceCount");
+const diligenceTotal = document.getElementById("diligenceTotal");
+const diligenceGrade = document.getElementById("diligenceGrade");
 const pointBtn = document.getElementById("pointBtn");
 const pointModal = document.getElementById("pointModal");
 const pointCloseBtn = document.getElementById("pointCloseBtn");
 const goldBtn = document.getElementById("goldBtn");
 const goldModal = document.getElementById("goldModal");
 const goldCloseBtn = document.getElementById("goldCloseBtn");
-const diligenceCount = document.getElementById("diligenceCount");
-const diligenceTotal = document.getElementById("diligenceTotal");
-const diligenceGrade = document.getElementById("diligenceGrade");
 
 // 학생 정보
-let deviceInfo = null;
 let studentInfo = null;
 let attendRecords = {};
+let diligenceRecords = {};
 
 // 학생 정보 가져오기
-async function loadStudentInfo() {
-    const deviceId = getDeviceId();
+function loadStudentInfo() {
+    const studentData = sessionStorage.getItem("studentInfo");
+    const attendData = sessionStorage.getItem("attendRecords");
+    const diligenceData = sessionStorage.getItem("diligenceRecords");
 
-    if (!deviceId) {
+    if (!studentData) {
         return false;
     }
 
-    deviceInfo = await getDeviceInfo(deviceId);
+    studentInfo = JSON.parse(studentData);
+    attendRecords = attendData ? JSON.parse(attendData) : {};
+    diligenceRecords = diligenceData ? JSON.parse(diligenceData) : {};
 
-    if (!deviceInfo) {
-        return false;
-    }
+    const today = new Date().toLocaleDateString("sv-SE", {
+        timeZone: "Asia/Seoul"
+    });
 
-    const mobile = deviceInfo.mobile;
+    const todayMonth = today.slice(0, 7);
 
-    if (!mobile) {
-        return false;
-    }
-
-    studentInfo = await getStudentInfo(mobile);
-
-    if (!studentInfo) {
-        return false;
-    }
-
-    attendRecords = await getAttendRecords(mobile);
-
-    const today =
-        new Date().toLocaleDateString(
-            "sv-SE",
-            { timeZone: "Asia/Seoul" }
-        );
-
-    const diligence =
-        await getDiligence(
-            mobile,
-            today
-        );
+    const todayDiligence =
+        diligenceRecords[todayMonth] !== undefined
+            ? Number(diligenceRecords[todayMonth])
+            : 100;
 
     studentName.textContent =
         `${(studentInfo.name || "학생").replace(/\d+$/g, "")}님`;
@@ -84,19 +61,22 @@ async function loadStudentInfo() {
     studentGold.textContent =
         `${studentInfo.totalG || 0} G`;
 
-    diligenceCount.textContent =
-        diligence;
+    diligenceCount.textContent = todayDiligence;
+    diligenceTotal.textContent = 100;
 
-    diligenceTotal.textContent =
-        100;
+    const grade =
+        getDiligenceGrade(todayDiligence);
 
     diligenceGrade.innerHTML =
-        getDiligenceGrade(diligence) === "A+"
+        grade === "A+"
             ? "A<sup>+</sup>"
-            : getDiligenceGrade(diligence);
+            : grade;
 
-    diligenceModalScore.textContent =
-        `${diligence}/100`;
+    setDiligenceData(
+        studentInfo,
+        attendRecords,
+        diligenceRecords
+    );
 
     return true;
 }
@@ -115,63 +95,42 @@ function getDiligenceGrade(score) {
 }
 
 // 성실도 팝업
-diligenceBtn.addEventListener(
-    "click",
-    async () => {
-        diligenceModal.classList.remove("hidden");
-
-        const loaded = await loadStudentInfo();
-
-        if (!loaded) {
-            return;
-        }
-
-        setDiligenceData(
-            studentInfo,
-            attendRecords
-        );
-
-        renderDiligenceCalendar();
-    }
-);
+diligenceBtn.addEventListener("click", () => {
+    diligenceModal.classList.remove("hidden");
+    renderDiligenceCalendar();
+});
 
 // 성실도 팝업 닫기
-diligenceCloseBtn.addEventListener(
-    "click",
-    () => {
-        diligenceModal.classList.add("hidden");
-    }
-);
+diligenceCloseBtn.addEventListener("click", () => {
+    diligenceModal.classList.add("hidden");
+});
 
 // POINT 팝업
-pointBtn.addEventListener(
-    "click",
-    () => {
-        pointModal.classList.remove("hidden");
-    }
-);
+pointBtn.addEventListener("click", () => {
+    pointModal.classList.remove("hidden");
+});
 
-pointCloseBtn.addEventListener(
-    "click",
-    () => {
-        pointModal.classList.add("hidden");
-    }
-);
+pointCloseBtn.addEventListener("click", () => {
+    pointModal.classList.add("hidden");
+});
 
 // GOLD 팝업
-goldBtn.addEventListener(
-    "click",
-    () => {
-        goldModal.classList.remove("hidden");
-    }
-);
+goldBtn.addEventListener("click", () => {
+    goldModal.classList.remove("hidden");
+});
 
-goldCloseBtn.addEventListener(
-    "click",
-    () => {
-        goldModal.classList.add("hidden");
-    }
-);
+goldCloseBtn.addEventListener("click", () => {
+    goldModal.classList.add("hidden");
+});
 
 // 초기 학생 정보
-loadStudentInfo();
+function initializeStudent() {
+    const loaded = loadStudentInfo();
+
+    if (!loaded) {
+        location.href = "../check/check.html";
+        return;
+    }
+}
+
+initializeStudent();

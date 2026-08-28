@@ -14,10 +14,7 @@ body {
 
 body {
     min-height: 100dvh;
-    background:
-        #F8F5EF
-        url("../imageLogin/로그인화면.webp")
-        center center / cover no-repeat;
+    background: #F8F5EF url("../imageLogin/로그인화면.webp") center center / cover no-repeat;
     font-family: Arial, sans-serif;
     color: #333333;
     overflow: hidden;
@@ -29,8 +26,8 @@ button {
     -webkit-tap-highlight-color: transparent;
 }
 
-
 /* 전체 영역 */
+
 .studentContainer {
     width: 100%;
     max-width: 520px;
@@ -39,8 +36,8 @@ button {
     padding: 48px 44px 90px;
 }
 
-
 /* 상단 */
+
 .studentHeader {
     display: flex;
     justify-content: space-between;
@@ -87,7 +84,6 @@ button {
     font-size: 11px;
     font-weight: 700;
     white-space: nowrap;
-
     transition:
         background 0.15s ease,
         transform 0.15s ease;
@@ -101,8 +97,8 @@ button {
     transform: translateY(1px);
 }
 
-
 /* 메인 카드 */
+
 .studentInfo {
     display: flex;
     flex-direction: column;
@@ -120,7 +116,6 @@ button {
     background: transparent;
     overflow: hidden;
     text-align: left;
-
     transition:
         transform 0.15s ease,
         filter 0.15s ease;
@@ -135,8 +130,8 @@ button {
     transform: translateY(1px);
 }
 
-
 /* 카드 이미지 */
+
 .studentCardImage {
     position: absolute;
     inset: 0;
@@ -147,8 +142,8 @@ button {
     pointer-events: none;
 }
 
-
 /* 카드 내용 */
+
 .studentCardContent {
     position: absolute;
     left: 34%;
@@ -164,8 +159,8 @@ button {
     line-height: 1.2;
 }
 
-
 /* 성실도 레벨 표기 */
+
 .diligenceCard .studentCardContent > div:first-child {
     display: flex;
     align-items: baseline;
@@ -196,6 +191,7 @@ button {
 }
 
 /* 하단 정보 */
+
 .footerLeft {
     position: fixed;
     left: 12px;
@@ -233,8 +229,8 @@ button {
     z-index: 101;
 }
 
-
 /* 팝업 */
+
 .studentModal {
     position: fixed;
     inset: 0;
@@ -263,20 +259,21 @@ button {
     overflow-y: auto;
 }
 
-
 /* 팝업 제목 */
+
 .studentModalBox h2 {
     font-size: 21px;
     font-weight: 700;
 }
+
 .diligenceModalTitle strong {
     color: #000000;
     font-size: 16px;
     font-weight: 300;
 }
 
-
 /* 팝업 내용 */
+
 #diligenceContent,
 #pointContent,
 #goldContent {
@@ -285,8 +282,8 @@ button {
     min-height: 80px;
 }
 
-
 /* 팝업 닫기 X */
+
 .studentModalCloseBtn,
 .studentCloseBtn {
     position: absolute;
