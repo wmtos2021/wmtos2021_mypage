@@ -3,7 +3,6 @@
 import {
     handleAttend,
     isAttendAvailable,
-    isTodayAttended,
     isDiligenceStatusAvailable
 } from "../attend/attend.js";
 
@@ -11,11 +10,13 @@ let currentDate = new Date();
 let studentInfo = null;
 let attendRecords = {};
 
+
 // 성실도 데이터 설정
 export function setDiligenceData(info, records) {
     studentInfo = info;
     attendRecords = records || {};
 }
+
 
 // 성실도 달력 표시
 export function renderDiligenceCalendar() {
@@ -131,6 +132,7 @@ export function renderDiligenceCalendar() {
     }
 }
 
+
 // 달력 날짜 생성
 function createCalendarDays(
     year,
@@ -219,7 +221,7 @@ function createCalendarDays(
 
         const attended =
             isToday &&
-            isTodayAttended();
+            !!record;
 
         const attendAvailable =
             isToday &&
@@ -251,7 +253,7 @@ function createCalendarDays(
                     isToday
                 );
 
-        // 오늘 출석 가능 시간
+        // 오늘 출석 가능 시간 이전
         } else if (
             isToday &&
             !isDiligenceStatusAvailable()
@@ -309,6 +311,7 @@ function createCalendarDays(
     return html;
 }
 
+
 // 출석 상태 변환
 function getAttendStatus(status) {
     if (
@@ -328,6 +331,7 @@ function getAttendStatus(status) {
 
     return "absent";
 }
+
 
 // 숙제 상태 변환
 function getHomeworkStatus(
@@ -351,6 +355,7 @@ function getHomeworkStatus(
 
     return "homeworkNotDone";
 }
+
 
 // 상태 표시
 function createStatus(

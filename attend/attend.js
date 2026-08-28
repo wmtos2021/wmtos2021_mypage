@@ -14,7 +14,7 @@ import {
     updateWisdom,
     saveAttendHistory,
     updateTotalP,
-    saveAttendRecord
+    updateDiligence
 } from "./attendFirebase.js";
 
 import {
@@ -38,7 +38,6 @@ let todayName = "";
 let attendTimestamp = null;
 let todayLatitude = null;
 let todayLongitude = null;
-let attendPointValue = 0;
 
 
 // 오늘 정보 가져오기
@@ -166,6 +165,15 @@ export async function handleAttend() {
             return false;
         }
 
+        // 출석 버튼을 누른 순간의 서울시간
+        const attendTime = getSeoulTime();
+
+        const today =
+            new Date().toLocaleDateString(
+                "sv-SE",
+                { timeZone: "Asia/Seoul" }
+            );
+
         // QR 유효시간 확인
         if (
             !attendTimestamp ||
@@ -186,12 +194,6 @@ export async function handleAttend() {
             return false;
         }
 
-        const today =
-            new Date().toLocaleDateString(
-                "sv-SE",
-                { timeZone: "Asia/Seoul" }
-            );
-
         // 오늘 이미 출석한 경우
         if (await isTodayAttended()) {
             showAttendMessage("이미 출석을 완료했어요!");
@@ -204,22 +206,21 @@ export async function handleAttend() {
             return false;
         }
 
-        const currentTime = getSeoulTime();
         const classParts = todayClassTime.split(":");
-        const currentParts = currentTime.split(":");
+        const attendParts = attendTime.split(":");
 
         const classMinutes =
             Number(classParts[0]) * 60 +
             Number(classParts[1]);
 
-        const currentMinutes =
-            Number(currentParts[0]) * 60 +
-            Number(currentParts[1]);
+        const attendMinutes =
+            Number(attendParts[0]) * 60 +
+            Number(attendParts[1]);
 
         // 출석 가능 시간 확인
         if (
-            currentMinutes < classMinutes - 49 ||
-            currentMinutes > classMinutes + 60
+            attendMinutes < classMinutes - 49 ||
+            attendMinutes > classMinutes + 60
         ) {
             showAttendMessage("현재는 출석 가능 시간이 아닙니다.");
             return false;
@@ -228,25 +229,30 @@ export async function handleAttend() {
         // 출석 상태
         let imageAttend = "";
         let point = "";
-        let attendStatus = "";
+        let getP = 0;
+        let attend = "";
+        let attendSc = 0;
 
-        if (currentMinutes < classMinutes) {
+        if (attendMinutes < classMinutes) {
             imageAttend = "../imageAttend/attend1_투명.webp";
-            point = "+ 100P";
-            attendPointValue = 100;
-            attendStatus = "ontime";
+            point = "100";
+            getP = 100;
+            attend = "ontime";
+            attendSc = 0;
 
-        } else if (currentMinutes < classMinutes + 10) {
+        } else if (attendMinutes < classMinutes + 10) {
             imageAttend = "../imageAttend/attend2_투명.webp";
-            point = "+ 80P";
-            attendPointValue = 80;
-            attendStatus = "late10";
+            point = "80";
+            getP = 80;
+            attend = "late10";
+            attendSc = -1;
 
         } else {
             imageAttend = "../imageAttend/attend3_투명.webp";
-            point = "+ 50P";
-            attendPointValue = 50;
-            attendStatus = "late";
+            point = "50";
+            getP = 50;
+            attend = "late";
+            attendSc = -2;
         }
 
         // 오늘의 명언
@@ -259,37 +265,31 @@ export async function handleAttend() {
             wisdom.title,
             wisdom.message,
             async () => {
-                const time =
-                    new Date().toLocaleTimeString(
-                        "en-GB",
-                        {
-                            timeZone: "Asia/Seoul",
-                            hour12: false
-                        }
-                    );
 
                 // 출석 기록 저장
                 const saved = await saveAttendHistory(
                     todayMobile,
                     today,
-                    time,
-                    attendPointValue
-                );
-
-                // ATTEND 기록 저장
-                await saveAttendRecord(
-                    todayMobile,
-                    today,
-                    attendStatus,
-                    "",
+                    attendTime,
+                    attend,
+                    attendSc,
+                    getP,
                     todayName
                 );
 
-                // 포인트 누적
+                // 저장 성공 후 처리
                 if (saved) {
+
+                    // POINT 누적
                     await updateTotalP(
                         todayMobile,
-                        attendPointValue
+                        getP
+                    );
+
+                    // 성실도 계산 및 저장
+                    await updateDiligence(
+                        todayMobile,
+                        today
                     );
                 }
 

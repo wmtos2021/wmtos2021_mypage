@@ -52,7 +52,7 @@ export async function getAttendRecords(mobile) {
         await get(
             ref(
                 db,
-                `attend/${mobile}`
+                `history/${mobile}`
             )
         );
 
@@ -73,7 +73,7 @@ export async function checkTodayAttend(
         await get(
             ref(
                 db,
-                `attend/${mobile}/${date}`
+                `history/${mobile}/${date}`
             )
         );
 
@@ -124,7 +124,8 @@ export async function updateWisdom(
     deviceId,
     wisdom
 ) {
-    let nextWisdom = Number(wisdom) + 1;
+    let nextWisdom =
+        Number(wisdom) + 1;
 
     if (nextWisdom > 24) {
         nextWisdom = 1;
@@ -149,7 +150,10 @@ export async function saveAttendHistory(
     mobile,
     date,
     time,
-    point
+    attend,
+    attendSc,
+    getP,
+    name
 ) {
     const historyRef =
         ref(
@@ -167,13 +171,17 @@ export async function saveAttendHistory(
     await update(
         historyRef,
         {
+            attend: attend,
+            attendSc: attendSc,
             boardE: "",
             boardS: "",
             dice: "",
             getG: "",
-            getP: String(point),
+            getP: getP,
+            homework: "",
+            homeworkSc: "",
+            name: name,
             time: time,
-            type: "출석",
             useG: "",
             useP: ""
         }
@@ -183,25 +191,105 @@ export async function saveAttendHistory(
 }
 
 
-// ATTEND 기록 저장
-export async function saveAttendRecord(
+// 월별 성실도 계산
+async function calculateDiligence(
     mobile,
-    date,
-    attend,
-    homework,
-    name
+    date
 ) {
+    const month =
+        String(date).slice(0, 7);
+
+    const historySnapshot =
+        await get(
+            ref(
+                db,
+                `history/${mobile}`
+            )
+        );
+
+    if (!historySnapshot.exists()) {
+        return 100;
+    }
+
+    const history =
+        historySnapshot.val();
+
+    let score = 100;
+
+    Object.entries(history).forEach(
+        ([recordDate, record]) => {
+            if (!recordDate.startsWith(month)) {
+                return;
+            }
+
+            if (!record || typeof record !== "object") {
+                return;
+            }
+
+            score +=
+                Number(record.attendSc) || 0;
+
+            score +=
+                Number(record.homeworkSc) || 0;
+        }
+    );
+
+    return Math.max(
+        0,
+        score
+    );
+}
+
+
+// 성실도 저장
+export async function updateDiligence(
+    mobile,
+    date
+) {
+    const month =
+        String(date).slice(0, 7);
+
+    const diligence =
+        await calculateDiligence(
+            mobile,
+            date
+        );
+
     await update(
         ref(
             db,
-            `attend/${mobile}/${date}`
+            `diligence/${mobile}/${month}`
         ),
-        {
-            attend: attend,
-            homework: homework,
-            name: name
-        }
+        diligence
     );
+
+    return diligence;
+}
+
+
+// 성실도 가져오기
+export async function getDiligence(
+    mobile,
+    date
+) {
+    const month =
+        String(date).slice(0, 7);
+
+    const diligence =
+        await calculateDiligence(
+            mobile,
+            date
+        );
+
+    await update(
+        ref(
+            db,
+            `diligence/${mobile}/${month}`
+        ),
+        diligence
+    );
+
+    return diligence;
 }
 
 

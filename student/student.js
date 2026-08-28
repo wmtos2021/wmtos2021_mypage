@@ -4,7 +4,8 @@ import { getDeviceId } from "../utils.js";
 import {
     getDeviceInfo,
     getStudentInfo,
-    getAttendRecords
+    getAttendRecords,
+    getDiligence
 } from "../attend/attendFirebase.js";
 import {
     setDiligenceData,
@@ -24,6 +25,9 @@ const pointCloseBtn = document.getElementById("pointCloseBtn");
 const goldBtn = document.getElementById("goldBtn");
 const goldModal = document.getElementById("goldModal");
 const goldCloseBtn = document.getElementById("goldCloseBtn");
+const diligenceCount = document.getElementById("diligenceCount");
+const diligenceTotal = document.getElementById("diligenceTotal");
+const diligenceGrade = document.getElementById("diligenceGrade");
 
 // 학생 정보
 let deviceInfo = null;
@@ -58,11 +62,52 @@ async function loadStudentInfo() {
 
     attendRecords = await getAttendRecords(mobile);
 
-    studentName.textContent = `${(studentInfo.name || "학생").replace(/\d+$/g, "")}님`;
-    studentPoint.textContent =  `${studentInfo.totalP || 0} P`;
-    studentGold.textContent = `${studentInfo.totalG || 0} G`;
+    const today =
+        new Date().toLocaleDateString(
+            "sv-SE",
+            { timeZone: "Asia/Seoul" }
+        );
+
+    const diligence =
+        await getDiligence(
+            mobile,
+            today
+        );
+
+    studentName.textContent =
+        `${(studentInfo.name || "학생").replace(/\d+$/g, "")}님`;
+
+    studentPoint.textContent =
+        `${studentInfo.totalP || 0} P`;
+
+    studentGold.textContent =
+        `${studentInfo.totalG || 0} G`;
+
+    diligenceCount.textContent =
+        diligence;
+
+    diligenceTotal.textContent =
+        100;
+
+    diligenceGrade.innerHTML =
+        getDiligenceGrade(diligence) === "A+"
+            ? "A<sup>+</sup>"
+            : getDiligenceGrade(diligence);
 
     return true;
+}
+
+// 성실도 등급
+function getDiligenceGrade(score) {
+    if (score >= 95) {
+        return "A+";
+    }
+
+    if (score >= 90) {
+        return "A";
+    }
+
+    return "";
 }
 
 // 성실도 팝업
