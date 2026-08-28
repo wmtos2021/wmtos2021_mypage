@@ -75,9 +75,9 @@
 }
 
 .attendPoint {
-    font-size: 24px;
+    font-size: 28px;
     font-weight: 700;
-    color: #08736F;
+    color: #333333;
 }
 
 /* 출석 팝업 닫기 버튼 */

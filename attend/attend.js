@@ -235,21 +235,21 @@ export async function handleAttend() {
 
         if (attendMinutes < classMinutes) {
             imageAttend = "../imageAttend/attend1_투명.webp";
-            point = "100";
+            point = "+ 100P";
             getP = 100;
             attend = "ontime";
             attendSc = 0;
 
         } else if (attendMinutes < classMinutes + 10) {
             imageAttend = "../imageAttend/attend2_투명.webp";
-            point = "80";
+            point = "+ 80P";
             getP = 80;
             attend = "late10";
             attendSc = -1;
 
         } else {
             imageAttend = "../imageAttend/attend3_투명.webp";
-            point = "50";
+            point = "+ 50P";
             getP = 50;
             attend = "late";
             attendSc = -2;
