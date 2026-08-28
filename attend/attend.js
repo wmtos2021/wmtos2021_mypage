@@ -13,7 +13,8 @@ import {
     saveWisdom,
     updateWisdom,
     saveAttendHistory,
-    updateTotalP
+    updateTotalP,
+    saveAttendRecord
 } from "./attendFirebase.js";
 
 import {
@@ -33,6 +34,7 @@ const deviceId = getDeviceId();
 let todayClassTime = null;
 let todayWisdom = null;
 let todayMobile = null;
+let todayName = "";
 let todayLastAttend = null;
 let attendTimestamp = null;
 let todayLatitude = null;
@@ -66,6 +68,7 @@ async function loadTodayInfo() {
     }
 
     todayMobile = deviceInfo.mobile;
+    todayName = deviceInfo.name || "";
     todayLastAttend = deviceInfo.lastAttend || "";
     attendTimestamp = deviceInfo.attendTimestamp || null;
     todayLatitude = deviceInfo.latitude;
@@ -220,19 +223,23 @@ export async function handleAttend() {
         // 출석 상태
         let imageAttend = "";
         let point = "";
+        let attendStatus = "";
 
         if (currentMinutes < classMinutes) {
             imageAttend = "../imageAttend/attend1_투명.webp";
             point = "+ 100P";
             attendPointValue = 100;
+            attendStatus = "ontime";
         } else if (currentMinutes < classMinutes + 10) {
             imageAttend = "../imageAttend/attend2_투명.webp";
             point = "+ 100P";
             attendPointValue = 100;
+            attendStatus = "ontime";
         } else {
             imageAttend = "../imageAttend/attend3_투명.webp";
             point = "+ 0P";
             attendPointValue = 0;
+            attendStatus = "late";
         }
 
         // 오늘의 명언
@@ -269,6 +276,15 @@ export async function handleAttend() {
                     attendPointValue
                 );
 
+                // ATTEND 기록 저장
+                await saveAttendRecord(
+                    todayMobile,
+                    today,
+                    attendStatus,
+                    "",
+                    todayName
+                );
+
                 // 포인트 누적
                 if (saved) {
                     await updateTotalP(
@@ -294,6 +310,7 @@ export async function handleAttend() {
         return true;
 
     } catch (error) {
+        console.error("출석 처리 오류:", error);
         showAttendMessage("출석 처리 중 오류가 발생했습니다.");
         return false;
     }

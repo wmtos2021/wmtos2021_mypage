@@ -194,6 +194,28 @@ export async function saveAttendHistory(
 }
 
 
+// ATTEND 기록 저장
+export async function saveAttendRecord(
+    mobile,
+    date,
+    attend,
+    homework,
+    name
+) {
+    await update(
+        ref(
+            db,
+            `attend/${mobile}/${date}`
+        ),
+        {
+            attend: attend,
+            homework: homework,
+            name: name
+        }
+    );
+}
+
+
 // 학생 Total Point 누적
 export async function updateTotalP(
     mobile,
@@ -212,27 +234,6 @@ export async function updateTotalP(
                 Number(currentValue) || 0;
 
             return currentP + Number(point);
-        }
-    );
-}
-
-// ATTEND 버튼 출석 기록 저장
-export async function saveAttendRecord(
-    mobile,
-    date,
-    attend,
-    homework,
-    name
-) {
-    await update(
-        ref(
-            db,
-            `attend/${mobile}/${date}`
-        ),
-        {
-            attend: attend,
-            homework: homework,
-            name: name
         }
     );
 }
