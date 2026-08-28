@@ -23,6 +23,7 @@
 }
 
 .attendModalBox {
+    position: relative;
     width: 100%;
     max-width: 360px;
     max-height: 90dvh;
@@ -79,22 +80,48 @@
     color: #08736F;
 }
 
-/* 확인 버튼 */
+/* 출석 팝업 닫기 버튼 */
 #attendConfirmBtn {
-    display: block;
-    width: 90%;
-    height: 45px;
-    margin: 14px auto 0;
+    position: absolute;
+    top: 10px;
+    right: 12px;
+
+    width: 30px;
+    height: 30px;
+
+    padding: 0;
     border: none;
-    border-radius: 9px;
-    background: #0CA19B;
-    color: #FFFFFF;
-    font-size: 15px;
-    font-weight: 600;
+    background: transparent;
+
+    cursor: pointer;
+    z-index: 10;
+}
+
+/* X 모양 */
+#attendConfirmBtn::before,
+#attendConfirmBtn::after {
+    content: "";
+    position: absolute;
+    top: 14px;
+    left: 4px;
+
+    width: 22px;
+    height: 2px;
+
+    background: #555555;
+    border-radius: 2px;
+}
+
+#attendConfirmBtn::before {
+    transform: rotate(45deg);
+}
+
+#attendConfirmBtn::after {
+    transform: rotate(-45deg);
 }
 
 #attendConfirmBtn:active {
-    background: #087E78;
+    transform: scale(0.9);
 }
 
 /* 안내 팝업 */

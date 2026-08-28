@@ -215,3 +215,24 @@ export async function updateTotalP(
         }
     );
 }
+
+// ATTEND 버튼 출석 기록 저장
+export async function saveAttendRecord(
+    mobile,
+    date,
+    attend,
+    homework,
+    name
+) {
+    await update(
+        ref(
+            db,
+            `attend/${mobile}/${date}`
+        ),
+        {
+            attend: attend,
+            homework: homework,
+            name: name
+        }
+    );
+}
