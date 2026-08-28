@@ -14,7 +14,10 @@ body {
 
 body {
     min-height: 100dvh;
-    background: #F8F5EF url("../imageLogin/로그인화면.webp") center center / cover no-repeat;
+    background:
+        #F8F5EF
+        url("../imageLogin/로그인화면.webp")
+        center center / cover no-repeat;
     font-family: Arial, sans-serif;
     color: #333333;
     overflow: hidden;
@@ -26,6 +29,7 @@ button {
     -webkit-tap-highlight-color: transparent;
 }
 
+
 /* 전체 영역 */
 .studentContainer {
     width: 100%;
@@ -35,7 +39,8 @@ button {
     padding: 48px 44px 90px;
 }
 
-/* 상단 영역 */
+
+/* 상단 */
 .studentHeader {
     display: flex;
     justify-content: space-between;
@@ -95,7 +100,8 @@ button {
     transform: translateY(1px);
 }
 
-/* 메인 영역 */
+
+/* 메인 카드 */
 .studentInfo {
     display: flex;
     flex-direction: column;
@@ -103,7 +109,6 @@ button {
     width: 100%;
 }
 
-/* 정보 카드 */
 .studentInfoBtn {
     position: relative;
     width: 100%;
@@ -128,6 +133,7 @@ button {
     transform: translateY(1px);
 }
 
+
 /* 카드 이미지 */
 .studentCardImage {
     position: absolute;
@@ -139,6 +145,7 @@ button {
     pointer-events: none;
 }
 
+
 /* 카드 내용 */
 .studentCardContent {
     position: absolute;
@@ -149,7 +156,6 @@ button {
     z-index: 2;
 }
 
-/* 카드 제목 */
 .infoTitle {
     font-size: 18px;
     font-weight: 700;
@@ -167,6 +173,7 @@ button {
 .goldCard .infoTitle {
     color: #F15B18;
 }
+
 
 /* 성실도 */
 .diligenceValue {
@@ -196,6 +203,7 @@ button {
     color: #333D43;
 }
 
+
 /* POINT / GOLD */
 .pointValue,
 .goldValue {
@@ -219,7 +227,8 @@ button {
     line-height: 0.95;
 }
 
-/* 오른쪽 화살표 */
+
+/* 카드 화살표 */
 .studentCardArrow {
     position: absolute;
     top: 50%;
@@ -246,7 +255,7 @@ button {
 }
 
 
-/* 하단 왼쪽 정보 */
+/* 하단 정보 */
 .footerLeft {
     position: fixed;
     left: 12px;
@@ -272,7 +281,6 @@ button {
     letter-spacing: -0.3px;
 }
 
-/* 하단 오른쪽 정보 */
 .footerRight {
     position: fixed;
     right: 12px;
@@ -285,7 +293,8 @@ button {
     z-index: 101;
 }
 
-/* 학생 정보 팝업 */
+
+/* 팝업 */
 .studentModal {
     position: fixed;
     inset: 0;
@@ -302,6 +311,7 @@ button {
 }
 
 .studentModalBox {
+    position: relative;
     width: 100%;
     max-width: 400px;
     max-height: 88dvh;
@@ -319,6 +329,8 @@ button {
     color: #08736F;
 }
 
+
+/* 팝업 내용 */
 #diligenceContent,
 #pointContent,
 #goldContent {
@@ -327,23 +339,52 @@ button {
     min-height: 80px;
 }
 
-/* 학생 팝업 버튼 */
-#diligenceCloseBtn,
-#pointCloseBtn,
-#goldCloseBtn {
-    width: 90%;
-    height: 45px;
-    margin-top: 20px;
+
+/* 팝업 닫기 X */
+.studentModalCloseBtn,
+.studentCloseBtn {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    width: 32px;
+    height: 32px;
+    padding: 0;
     border: none;
-    border-radius: 9px;
-    background: #0CA19B;
-    color: #FFFFFF;
-    font-size: 18px;
-    font-weight: 600;
+    border-radius: 50%;
+    background: transparent;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
 }
 
-#diligenceCloseBtn:active,
-#pointCloseBtn:active,
-#goldCloseBtn:active {
-    background: #087E78;
+.studentModalCloseBtn::before,
+.studentModalCloseBtn::after,
+.studentCloseBtn::before,
+.studentCloseBtn::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 18px;
+    height: 1.5px;
+    background: #777777;
+    border-radius: 2px;
+}
+
+.studentModalCloseBtn::before,
+.studentCloseBtn::before {
+    transform:
+        translate(-50%, -50%)
+        rotate(45deg);
+}
+
+.studentModalCloseBtn::after,
+.studentCloseBtn::after {
+    transform:
+        translate(-50%, -50%)
+        rotate(-45deg);
+}
+
+.studentModalCloseBtn:active,
+.studentCloseBtn:active {
+    transform: scale(0.9);
 }

@@ -189,16 +189,19 @@
         class="studentModal hidden">
 
         <div class="studentModalBox">
+
+            <button
+                id="diligenceCloseBtn"
+                type="button"
+                class="studentCloseBtn"
+                aria-label="닫기">
+            </button>
+
             <h2>
                 나의 성실도
             </h2>
-            <div id="diligenceContent"></div>
 
-            <button
-                type="button"
-                id="diligenceCloseBtn">
-                닫  기
-            </button>
+            <div id="diligenceContent"></div>
 
         </div>
 
@@ -211,17 +214,19 @@
         class="studentModal hidden">
 
         <div class="studentModalBox">
-            <h2>
-                보유한 POINT
-            </h2>
-
-            <div id="pointContent"></div>
 
             <button
                 type="button"
-                id="pointCloseBtn">
-                닫  기
+                id="pointCloseBtn"
+                class="studentModalCloseBtn"
+                aria-label="닫기">
             </button>
+
+            <h2>
+                POINT
+            </h2>
+
+            <div id="pointContent"></div>
 
         </div>
 
@@ -235,17 +240,18 @@
 
         <div class="studentModalBox">
 
+            <button
+                type="button"
+                id="goldCloseBtn"
+                class="studentModalCloseBtn"
+                aria-label="닫기">
+            </button>
+
             <h2>
-                보유한 GOLD
+                GOLD
             </h2>
 
             <div id="goldContent"></div>
-
-            <button
-                type="button"
-                id="goldCloseBtn">
-                닫  기
-            </button>
 
         </div>
 
