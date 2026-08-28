@@ -58,14 +58,9 @@ async function loadStudentInfo() {
 
     attendRecords = await getAttendRecords(mobile);
 
-    studentName.textContent =
-        `${studentInfo.name || "학생"}님`;
-
-    studentPoint.textContent =
-        `${studentInfo.totalP || 0} P`;
-
-    studentGold.textContent =
-        `${studentInfo.totalG || 0} G`;
+    studentName.textContent = `${(studentInfo.name || "학생").replace(/\d+$/g, "")}님`;
+    studentPoint.textContent =  `${studentInfo.totalP || 0} P`;
+    studentGold.textContent = `${studentInfo.totalG || 0} G`;
 
     return true;
 }
