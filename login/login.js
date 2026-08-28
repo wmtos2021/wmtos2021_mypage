@@ -219,7 +219,7 @@ pwOk.addEventListener(
 
             joinModal.classList.add("hidden");
             resetPopupPosition(joinModal);
-            location.href = "../student.student.html";
+            location.href = "../student/student.html";
 
         } catch (error) {
             showPwError("비밀번호 설정 중 오류가 발생했습니다.");
@@ -262,7 +262,7 @@ passwordOk.addEventListener(
 
             loginModal.classList.add("hidden");
             resetPopupPosition(loginModal);
-            location.href = "../student.student.html";
+            location.href = "../student/student.html";
 
         } catch (error) {
             showPasswordError("비밀번호 확인 중 오류가 발생했습니다.");
