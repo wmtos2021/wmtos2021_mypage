@@ -11,27 +11,36 @@ let currentDate = new Date();
 let studentInfo = null;
 let attendRecords = {};
 
+// 성실도 데이터 설정
 export function setDiligenceData(info, records) {
     studentInfo = info;
     attendRecords = records || {};
 }
 
+// 성실도 달력 표시
 export function renderDiligenceCalendar() {
     const diligenceContent =
         document.getElementById("diligenceContent");
 
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth();
+
     const lastDate =
-        new Date(year, month + 1, 0).getDate();
+        new Date(
+            year,
+            month + 1,
+            0
+        ).getDate();
+
     const today = new Date();
 
-    // 현재 달을 포함한 최근 6개월
-    const minDate = new Date(
-        today.getFullYear(),
-        today.getMonth() - 5,
-        1
-    );
+    // 최근 6개월
+    const minDate =
+        new Date(
+            today.getFullYear(),
+            today.getMonth() - 5,
+            1
+        );
 
     const isCurrentMonth =
         year === today.getFullYear() &&
@@ -122,6 +131,7 @@ export function renderDiligenceCalendar() {
     }
 }
 
+// 달력 날짜 생성
 function createCalendarDays(
     year,
     month,
@@ -132,10 +142,21 @@ function createCalendarDays(
     let html = "";
 
     const firstDay =
-        new Date(year, month, 1).getDay();
+        new Date(
+            year,
+            month,
+            1
+        ).getDay();
 
-    if (firstDay >= 1 && firstDay <= 5) {
-        for (let i = 1; i < firstDay; i++) {
+    if (
+        firstDay >= 1 &&
+        firstDay <= 5
+    ) {
+        for (
+            let i = 1;
+            i < firstDay;
+            i++
+        ) {
             html += `
                 <div class="calendarDay empty"></div>
             `;
@@ -151,7 +172,9 @@ function createCalendarDays(
 
     const enrollment =
         studentInfo?.enrollment
-            ? String(studentInfo.enrollment).slice(0, 10)
+            ? String(
+                studentInfo.enrollment
+            ).slice(0, 10)
             : "";
 
     for (
@@ -224,7 +247,8 @@ function createCalendarDays(
 
             homeworkStatus =
                 getHomeworkStatus(
-                    record.homework
+                    record.homework,
+                    isToday
                 );
 
         // 오늘 출석 가능 시간
@@ -285,7 +309,6 @@ function createCalendarDays(
     return html;
 }
 
-
 // 출석 상태 변환
 function getAttendStatus(status) {
     if (
@@ -302,16 +325,28 @@ function getAttendStatus(status) {
     return "absent";
 }
 
-
 // 숙제 상태 변환
-function getHomeworkStatus(status) {
+function getHomeworkStatus(
+    status,
+    isToday
+) {
     if (status === "done") {
         return "homeworkDone";
     }
 
+    if (status === "notdone") {
+        return "homeworkNotDone";
+    }
+
+    if (
+        isToday &&
+        status === ""
+    ) {
+        return "notStarted";
+    }
+
     return "homeworkNotDone";
 }
-
 
 // 상태 표시
 function createStatus(
