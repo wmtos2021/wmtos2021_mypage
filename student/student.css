@@ -105,9 +105,10 @@ button {
 .studentInfoBtn {
     position: relative;
     width: 100%;
-    height: 138px;
+    aspect-ratio: 1846 / 726;
     padding: 0;
     border: none;
+    border-radius: 50px;
     background: transparent;
     overflow: hidden;
     text-align: left;
