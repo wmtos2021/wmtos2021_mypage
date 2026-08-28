@@ -164,10 +164,12 @@ export async function saveAttendHistory(
     const snapshot =
         await get(historyRef);
 
+    // 이미 기록이 있으면 다시 저장하지 않음
     if (snapshot.exists()) {
         return false;
     }
 
+    // 출석 기록 저장
     await update(
         historyRef,
         {
@@ -187,83 +189,54 @@ export async function saveAttendHistory(
         }
     );
 
+    // 출석 기록 저장 직후 성실도 차감
+    await updateDiligence(
+        mobile,
+        date,
+        attendSc
+    );
+
     return true;
 }
 
 
-// 월별 성실도 계산
-async function calculateDiligence(
-    mobile,
-    date
-) {
-    const month =
-        String(date).slice(0, 7);
-
-    const historySnapshot =
-        await get(
-            ref(
-                db,
-                `history/${mobile}`
-            )
-        );
-
-    if (!historySnapshot.exists()) {
-        return 100;
-    }
-
-    const history =
-        historySnapshot.val();
-
-    let score = 100;
-
-    Object.entries(history).forEach(
-        ([recordDate, record]) => {
-            if (!recordDate.startsWith(month)) {
-                return;
-            }
-
-            if (!record || typeof record !== "object") {
-                return;
-            }
-
-            score +=
-                Number(record.attendSc) || 0;
-
-            score +=
-                Number(record.homeworkSc) || 0;
-        }
-    );
-
-    return Math.max(
-        0,
-        score
-    );
-}
-
-
-// 성실도 저장
+// 성실도 저장 및 차감
 export async function updateDiligence(
     mobile,
-    date
+    date,
+    attendSc
 ) {
     const month =
         String(date).slice(0, 7);
 
-    const diligence =
-        await calculateDiligence(
-            mobile,
-            date
-        );
-
-    await update(
+    const diligenceRef =
         ref(
             db,
             `diligence/${mobile}/${month}`
-        ),
-        diligence
-    );
+        );
 
-    return diligence;
+    const result =
+        await runTransaction(
+            diligenceRef,
+            (currentValue) => {
+                const currentScore =
+                    currentValue === null
+                        ? 100
+                        : Number(currentValue);
+
+                const deduction =
+                    Number(attendSc) || 0;
+
+                return Math.max(
+                    0,
+                    currentScore - deduction
+                );
+            }
+        );
+
+    return Number(
+        result.snapshot.val()
+    ) || 0;
 }
 
 
@@ -275,21 +248,22 @@ export async function getDiligence(
     const month =
         String(date).slice(0, 7);
 
-    const diligence =
-        await calculateDiligence(
-            mobile,
-            date
-        );
-
-    await update(
+    const diligenceRef =
         ref(
             db,
             `diligence/${mobile}/${month}`
-        ),
-        diligence
-    );
+        );
 
-    return diligence;
+    const snapshot =
+        await get(diligenceRef);
+
+    if (!snapshot.exists()) {
+        return 100;
+    }
+
+    return Number(
+        snapshot.val()
+    ) || 0;
 }
 
 

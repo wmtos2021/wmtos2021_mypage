@@ -179,13 +179,14 @@ button {
 
 #diligenceGrade {
     position: absolute;
-    left: 178px;
-    top: -28%;
-    transform: translateY(20%);
+    left: 148px;
+    top: 50%;
+    transform: translateY(-50%);
     color: #A52A2A;
     font-size: 68px;
     font-weight: 700;
     line-height: 1;
+    white-space: nowrap;
 }
 
 #diligenceGrade sup {

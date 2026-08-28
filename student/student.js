@@ -114,6 +114,8 @@ function getDiligenceGrade(score) {
 diligenceBtn.addEventListener(
     "click",
     async () => {
+        diligenceModal.classList.remove("hidden");
+
         const loaded = await loadStudentInfo();
 
         if (!loaded) {
@@ -126,8 +128,6 @@ diligenceBtn.addEventListener(
         );
 
         renderDiligenceCalendar();
-
-        diligenceModal.classList.remove("hidden");
     }
 );
 
