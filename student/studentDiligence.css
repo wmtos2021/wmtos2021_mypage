@@ -26,13 +26,17 @@
     background: #06A439;
 }
 
-.statusDot.late {
+.statusDot.late10 {
     background: #E5A93D;
+}
+
+.statusDot.late {
+    background: #e06f24;
 }
 
 .statusDot.absent,
 .statusDot.homeworkNotDone {
-    background: #D95C5C;
+    background: #D94343;
 }
 
 .statusDot.notStarted {

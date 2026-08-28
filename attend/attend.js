@@ -112,8 +112,8 @@ export function isAttendAvailable() {
         Number(currentParts[1]);
 
     return (
-        currentMinutes >= classMinutes - 90 &&
-        currentMinutes <= classMinutes + 90
+        currentMinutes >= classMinutes - 49 &&
+        currentMinutes <= classMinutes + 60
     );
 }
 
@@ -213,8 +213,8 @@ export async function handleAttend() {
 
         // 출석 가능 시간 확인
         if (
-            currentMinutes < classMinutes - 90 ||
-            currentMinutes > classMinutes + 90
+            currentMinutes < classMinutes - 49 ||
+            currentMinutes > classMinutes + 60
         ) {
             showAttendMessage("현재는 출석 가능 시간이 아닙니다.");
             return false;
@@ -230,15 +230,17 @@ export async function handleAttend() {
             point = "+ 100P";
             attendPointValue = 100;
             attendStatus = "ontime";
+
         } else if (currentMinutes < classMinutes + 10) {
             imageAttend = "../imageAttend/attend2_투명.webp";
-            point = "+ 100P";
-            attendPointValue = 100;
-            attendStatus = "ontime";
+            point = "+ 80P";
+            attendPointValue = 80;
+            attendStatus = "late10";
+
         } else {
             imageAttend = "../imageAttend/attend3_투명.webp";
-            point = "+ 0P";
-            attendPointValue = 0;
+            point = "+ 50P";
+            attendPointValue = 50;
             attendStatus = "late";
         }
 

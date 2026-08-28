@@ -318,6 +318,10 @@ function getAttendStatus(status) {
         return "onTime";
     }
 
+    if (status === "late10") {
+        return "late10";
+    }
+
     if (status === "late") {
         return "late";
     }
