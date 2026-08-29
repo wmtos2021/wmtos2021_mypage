@@ -48,11 +48,12 @@ body {
 .loadingText {
     display: inline-block;
     white-space: nowrap;
+    letter-spacing: 1px;
 }
 
 .loadingDots {
     position: absolute;
-    left: calc(50% + 80px);
+    left: calc(50% + 52px);
     display: inline-flex;
     align-items: flex-end;
     width: auto;
