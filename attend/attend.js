@@ -13,8 +13,7 @@ import {
     saveWisdom,
     updateWisdom,
     saveAttendHistory,
-    updateTotalP,
-    updateDiligence
+    updateTotalP
 } from "./attendFirebase.js";
 
 import {
@@ -39,7 +38,6 @@ let attendTimestamp = null;
 let todayLatitude = null;
 let todayLongitude = null;
 
-
 // 오늘 정보 가져오기
 async function loadTodayInfo() {
     const deviceInfo = await getDeviceInfo(deviceId);
@@ -49,20 +47,12 @@ async function loadTodayInfo() {
         return false;
     }
 
-    todayClassTime = await getClassTime(
-        deviceInfo.class,
-        getSeoulDay()
-    );
-
+    todayClassTime = await getClassTime(deviceInfo.class, getSeoulDay());
     todayWisdom = deviceInfo.wisdom;
 
     if (!todayWisdom) {
         todayWisdom = Math.floor(Math.random() * 24) + 1;
-
-        await saveWisdom(
-            deviceId,
-            todayWisdom
-        );
+        await saveWisdom(deviceId, todayWisdom);
     }
 
     todayMobile = deviceInfo.mobile;
@@ -74,21 +64,16 @@ async function loadTodayInfo() {
     return true;
 }
 
-
 // 오늘 정보 로딩
-const todayInfoPromise =
-    loadTodayInfo()
-        .catch(() => {
-            showAttendMessage("학원생이 아닙니다.\n선생님께 문의하세요.");
-            return false;
-        });
-
+const todayInfoPromise = loadTodayInfo().catch(() => {
+    showAttendMessage("학원생이 아닙니다.\n선생님께 문의하세요.");
+    return false;
+});
 
 // 오늘 정보 로딩 완료 대기
 export async function waitTodayInfo() {
     return await todayInfoPromise;
 }
-
 
 // 출석 버튼 가능 여부
 export function isAttendAvailable() {
@@ -99,21 +84,11 @@ export function isAttendAvailable() {
     const currentTime = getSeoulTime();
     const classParts = todayClassTime.split(":");
     const currentParts = currentTime.split(":");
+    const classMinutes = Number(classParts[0]) * 60 + Number(classParts[1]);
+    const currentMinutes = Number(currentParts[0]) * 60 + Number(currentParts[1]);
 
-    const classMinutes =
-        Number(classParts[0]) * 60 +
-        Number(classParts[1]);
-
-    const currentMinutes =
-        Number(currentParts[0]) * 60 +
-        Number(currentParts[1]);
-
-    return (
-        currentMinutes >= classMinutes - 49 &&
-        currentMinutes <= classMinutes + 60
-    );
+    return currentMinutes >= classMinutes - 49 && currentMinutes <= classMinutes + 60;
 }
-
 
 // 성실도 상태 표시 가능 여부
 export function isDiligenceStatusAvailable() {
@@ -124,18 +99,11 @@ export function isDiligenceStatusAvailable() {
     const currentTime = getSeoulTime();
     const classParts = todayClassTime.split(":");
     const currentParts = currentTime.split(":");
-
-    const classMinutes =
-        Number(classParts[0]) * 60 +
-        Number(classParts[1]);
-
-    const currentMinutes =
-        Number(currentParts[0]) * 60 +
-        Number(currentParts[1]);
+    const classMinutes = Number(classParts[0]) * 60 + Number(classParts[1]);
+    const currentMinutes = Number(currentParts[0]) * 60 + Number(currentParts[1]);
 
     return currentMinutes >= classMinutes + 90;
 }
-
 
 // 오늘 이미 출석했는지 확인
 export async function isTodayAttended() {
@@ -143,18 +111,12 @@ export async function isTodayAttended() {
         return false;
     }
 
-    const today =
-        new Date().toLocaleDateString(
-            "sv-SE",
-            { timeZone: "Asia/Seoul" }
-        );
+    const today = new Date().toLocaleDateString("sv-SE", {
+        timeZone: "Asia/Seoul"
+    });
 
-    return await checkTodayAttend(
-        todayMobile,
-        today
-    );
+    return await checkTodayAttend(todayMobile, today);
 }
-
 
 // 출석 처리
 export async function handleAttend() {
@@ -165,29 +127,19 @@ export async function handleAttend() {
             return false;
         }
 
-        // 출석 버튼을 누른 순간의 서울시간
         const attendTime = getSeoulTime();
-
-        const today =
-            new Date().toLocaleDateString(
-                "sv-SE",
-                { timeZone: "Asia/Seoul" }
-            );
+        const today = new Date().toLocaleDateString("sv-SE", {
+            timeZone: "Asia/Seoul"
+        });
 
         // QR 유효시간 확인
-        if (
-            !attendTimestamp ||
-            Date.now() - attendTimestamp > 5 * 60 * 1000
-        ) {
+        if (!attendTimestamp || Date.now() - attendTimestamp > 5 * 60 * 1000) {
             showAttendMessage("출석체크 QR을 새로 인식해주세요.");
             return false;
         }
 
         // 학원과의 거리 확인
-        const distance = checkAcademyDistance(
-            todayLatitude,
-            todayLongitude
-        );
+        const distance = checkAcademyDistance(todayLatitude, todayLongitude);
 
         if (distance > ALLOW_DISTANCE) {
             showAttendMessage("학원에 등원 후 출석해주세요.");
@@ -208,20 +160,11 @@ export async function handleAttend() {
 
         const classParts = todayClassTime.split(":");
         const attendParts = attendTime.split(":");
-
-        const classMinutes =
-            Number(classParts[0]) * 60 +
-            Number(classParts[1]);
-
-        const attendMinutes =
-            Number(attendParts[0]) * 60 +
-            Number(attendParts[1]);
+        const classMinutes = Number(classParts[0]) * 60 + Number(classParts[1]);
+        const attendMinutes = Number(attendParts[0]) * 60 + Number(attendParts[1]);
 
         // 출석 가능 시간 확인
-        if (
-            attendMinutes < classMinutes - 49 ||
-            attendMinutes > classMinutes + 60
-        ) {
+        if (attendMinutes < classMinutes - 49 || attendMinutes > classMinutes + 60) {
             showAttendMessage("현재는 출석 가능 시간이 아닙니다.");
             return false;
         }
@@ -239,14 +182,12 @@ export async function handleAttend() {
             getP = 100;
             attend = "ontime";
             attendSc = 0;
-
         } else if (attendMinutes < classMinutes + 10) {
             imageAttend = "../imageAttend/attend2_투명.webp";
             point = "+ 80P";
             getP = 80;
             attend = "late10";
             attendSc = -1;
-
         } else {
             imageAttend = "../imageAttend/attend3_투명.webp";
             point = "+ 50P";
@@ -265,8 +206,6 @@ export async function handleAttend() {
             wisdom.title,
             wisdom.message,
             async () => {
-
-                // 출석 기록 저장
                 const saved = await saveAttendHistory(
                     todayMobile,
                     today,
@@ -277,36 +216,19 @@ export async function handleAttend() {
                     todayName
                 );
 
-                // 저장 성공 후 처리
                 if (saved) {
+                    await updateTotalP(todayMobile, getP);
 
-                    // POINT 누적
-                    await updateTotalP(
-                        todayMobile,
-                        getP
-                    );
-
-                    // 성실도 계산 및 저장
-                    await updateDiligence(
-                        todayMobile,
-                        today
+                    document.dispatchEvent(
+                        new CustomEvent("attendanceCompleted")
                     );
                 }
 
-                // 다음 명언 저장
-                todayWisdom = await updateWisdom(
-                    deviceId,
-                    todayWisdom
-                );
-
-                document.dispatchEvent(
-                    new CustomEvent("attendanceCompleted")
-                );
+                todayWisdom = await updateWisdom(deviceId, todayWisdom);
             }
         );
 
         return true;
-
     } catch (error) {
         showAttendMessage("출석 처리 중 오류가 발생했습니다.");
         return false;

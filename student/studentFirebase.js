@@ -2,7 +2,9 @@
 
 import {
     ref,
-    get
+    get,
+    update,
+    runTransaction
 } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
 
 import { db } from "../firebase.js";
@@ -12,7 +14,8 @@ export async function getPreviousRecords(mobile) {
     const today = new Date();
     const attendRecords = {};
     const diligenceRecords = {};
-    const requests = [];
+
+    const monthKeys = [];
 
     for (let i = 1; i <= 2; i++) {
         const date =
@@ -22,44 +25,156 @@ export async function getPreviousRecords(mobile) {
                 1
             );
 
-        const monthKey =
+        monthKeys.push(
             `${date.getFullYear()}-${String(
                 date.getMonth() + 1
-            ).padStart(2, "0")}`;
-
-        requests.push(
-            get(
-                ref(
-                    db,
-                    `history/${mobile}/${monthKey}`
-                )
-            ).then(snapshot => {
-                if (snapshot.exists()) {
-                    attendRecords[monthKey] =
-                        snapshot.val();
-                }
-            })
-        );
-
-        requests.push(
-            get(
-                ref(
-                    db,
-                    `diligence/${mobile}/${monthKey}`
-                )
-            ).then(snapshot => {
-                if (snapshot.exists()) {
-                    diligenceRecords[monthKey] =
-                        Number(snapshot.val());
-                }
-            })
+            ).padStart(2, "0")}`
         );
     }
 
-    await Promise.all(requests);
+    const historySnapshot =
+        await get(
+            ref(
+                db,
+                `history/${mobile}/diligence`
+            )
+        );
+
+    if (historySnapshot.exists()) {
+        const historyData =
+            historySnapshot.val();
+
+        Object.entries(historyData).forEach(
+            ([dateKey, timeData]) => {
+                const monthKey =
+                    dateKey.slice(0, 7);
+
+                if (monthKeys.includes(monthKey)) {
+                    if (!attendRecords[monthKey]) {
+                        attendRecords[monthKey] = {};
+                    }
+
+                    attendRecords[monthKey][dateKey] =
+                        timeData;
+                }
+            }
+        );
+    }
+
+    const diligenceSnapshot =
+        await get(
+            ref(
+                db,
+                `diligence/${mobile}`
+            )
+        );
+
+    if (diligenceSnapshot.exists()) {
+        const diligenceData =
+            diligenceSnapshot.val();
+
+        monthKeys.forEach(
+            monthKey => {
+                if (
+                    diligenceData[monthKey] !== undefined
+                ) {
+                    diligenceRecords[monthKey] =
+                        Number(
+                            diligenceData[monthKey]
+                        );
+                }
+            }
+        );
+    }
 
     return {
         attendRecords,
         diligenceRecords
     };
+}
+
+// 전월 성실도 가져오기
+export async function getPreviousDiligence(
+    mobile,
+    monthKey
+) {
+    const snapshot =
+        await get(
+            ref(
+                db,
+                `diligence/${mobile}/${monthKey}`
+            )
+        );
+
+    if (!snapshot.exists()) {
+        return 100;
+    }
+
+    return Number(
+        snapshot.val()
+    ) || 0;
+}
+
+// 전월 성실도 보상 지급 여부 확인
+export async function getRewardStatus(
+    mobile,
+    currentMonth
+) {
+    const snapshot =
+        await get(
+            ref(
+                db,
+                `history/${mobile}/reward/${currentMonth}`
+            )
+        );
+
+    return snapshot.exists();
+}
+
+// 전월 성실도 보상 지급
+export async function saveDiligenceReward(
+    mobile,
+    currentMonth,
+    previousMonth,
+    score,
+    point
+) {
+    const rewardRef =
+        ref(
+            db,
+            `history/${mobile}/reward/${currentMonth}`
+        );
+
+    const rewardSnapshot =
+        await get(rewardRef);
+
+    if (rewardSnapshot.exists()) {
+        return false;
+    }
+
+    if (Number(point) > 0) {
+        await runTransaction(
+            ref(
+                db,
+                `student/${mobile}/totalP`
+            ),
+            currentValue => {
+                const currentP =
+                    Number(currentValue) || 0;
+
+                return currentP + Number(point);
+            }
+        );
+    }
+
+    await update(
+        rewardRef,
+        {
+            rewardMonth: previousMonth,
+            rewardP: Number(point) || 0,
+            rewardSc: Number(score) || 0
+        }
+    );
+
+    return true;
 }

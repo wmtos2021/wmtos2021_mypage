@@ -108,8 +108,6 @@ export async function renderDiligenceCalendar() {
         return;
     }
 
-    await loadPreviousRecords();
-
     const year =
         currentDate.getFullYear();
 
@@ -187,10 +185,12 @@ export async function renderDiligenceCalendar() {
 
     document
         .getElementById("prevMonthBtn")
-        .addEventListener("click", () => {
+        .addEventListener("click", async () => {
             if (isMinMonth) {
                 return;
             }
+
+            await loadPreviousRecords();
 
             currentDate.setMonth(
                 currentDate.getMonth() - 1

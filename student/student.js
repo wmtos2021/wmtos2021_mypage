@@ -52,7 +52,7 @@ function loadStudentInfo() {
     const todayDiligence =
         diligenceData !== null
             ? Number(diligenceData)
-            : 100;
+            : 0;
 
     diligenceRecords = {
         [todayMonth]: todayDiligence

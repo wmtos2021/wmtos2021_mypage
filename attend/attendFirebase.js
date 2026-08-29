@@ -9,16 +9,14 @@ import {
 
 import { db } from "../firebase.js";
 
-
 // Device ID로 학생 정보 가져오기
 export async function getDeviceInfo(deviceId) {
-    const snapshot =
-        await get(
-            ref(
-                db,
-                `deviceId/${deviceId}`
-            )
-        );
+    const snapshot = await get(
+        ref(
+            db,
+            `deviceId/${deviceId}`
+        )
+    );
 
     if (!snapshot.exists()) {
         return null;
@@ -26,17 +24,15 @@ export async function getDeviceInfo(deviceId) {
 
     return snapshot.val();
 }
-
 
 // 학생 정보 가져오기
 export async function getStudentInfo(mobile) {
-    const snapshot =
-        await get(
-            ref(
-                db,
-                `student/${mobile}`
-            )
-        );
+    const snapshot = await get(
+        ref(
+            db,
+            `student/${mobile}`
+        )
+    );
 
     if (!snapshot.exists()) {
         return null;
@@ -45,16 +41,14 @@ export async function getStudentInfo(mobile) {
     return snapshot.val();
 }
 
-
-// 학생 출석 기록 가져오기
+// 학생 성실도 기록 가져오기
 export async function getAttendRecords(mobile) {
-    const snapshot =
-        await get(
-            ref(
-                db,
-                `history/${mobile}`
-            )
-        );
+    const snapshot = await get(
+        ref(
+            db,
+            `history/${mobile}/diligence`
+        )
+    );
 
     if (!snapshot.exists()) {
         return {};
@@ -62,17 +56,15 @@ export async function getAttendRecords(mobile) {
 
     return snapshot.val();
 }
-
 
 // 학생 성실도 전체 기록 가져오기
 export async function getDiligenceRecords(mobile) {
-    const snapshot =
-        await get(
-            ref(
-                db,
-                `diligence/${mobile}`
-            )
-        );
+    const snapshot = await get(
+        ref(
+            db,
+            `diligence/${mobile}`
+        )
+    );
 
     if (!snapshot.exists()) {
         return {};
@@ -80,37 +72,33 @@ export async function getDiligenceRecords(mobile) {
 
     return snapshot.val();
 }
-
 
 // 오늘 출석 여부 확인
 export async function checkTodayAttend(
     mobile,
     date
 ) {
-    const snapshot =
-        await get(
-            ref(
-                db,
-                `history/${mobile}/${date}`
-            )
-        );
+    const snapshot = await get(
+        ref(
+            db,
+            `history/${mobile}/diligence/${date}`
+        )
+    );
 
     return snapshot.exists();
 }
-
 
 // 반의 오늘 수업시간 가져오기
 export async function getClassTime(
     className,
     day
 ) {
-    const snapshot =
-        await get(
-            ref(
-                db,
-                `class/${className}/${day}`
-            )
-        );
+    const snapshot = await get(
+        ref(
+            db,
+            `class/${className}/${day}`
+        )
+    );
 
     if (!snapshot.exists()) {
         return null;
@@ -118,7 +106,6 @@ export async function getClassTime(
 
     return snapshot.val();
 }
-
 
 // Wisdom 번호 저장
 export async function saveWisdom(
@@ -135,7 +122,6 @@ export async function saveWisdom(
         }
     );
 }
-
 
 // 다음 Wisdom 번호 저장
 export async function updateWisdom(
@@ -162,7 +148,6 @@ export async function updateWisdom(
     return nextWisdom;
 }
 
-
 // 출석 기록 저장
 export async function saveAttendHistory(
     mobile,
@@ -173,41 +158,32 @@ export async function saveAttendHistory(
     getP,
     name
 ) {
-    const historyRef =
-        ref(
-            db,
-            `history/${mobile}/${date}`
-        );
+    const historyRef = ref(
+        db,
+        `history/${mobile}/diligence/${date}/${time}`
+    );
 
     const snapshot =
         await get(historyRef);
 
-    // 이미 기록이 있으면 다시 저장하지 않음
     if (snapshot.exists()) {
         return false;
     }
 
-    // 출석 기록 저장
     await update(
         historyRef,
         {
             attend: attend,
+            attendP: getP,
             attendSc: attendSc,
-            boardE: "",
-            boardS: "",
-            dice: "",
-            getG: "",
-            getP: getP,
             homework: "",
-            homeworkSc: "",
+            homeworkP: "",
+            homeworkSc: 0,
             name: name,
-            time: time,
-            useG: "",
-            useP: ""
+            time: time
         }
     );
 
-    // 출석 기록 저장 직후 성실도 차감
     await updateDiligence(
         mobile,
         date,
@@ -216,7 +192,6 @@ export async function saveAttendHistory(
 
     return true;
 }
-
 
 // 성실도 저장 및 차감
 export async function updateDiligence(
@@ -236,7 +211,7 @@ export async function updateDiligence(
     const result =
         await runTransaction(
             diligenceRef,
-            (currentValue) => {
+            currentValue => {
                 const currentScore =
                     currentValue === null
                         ? 100
@@ -256,7 +231,6 @@ export async function updateDiligence(
         result.snapshot.val()
     ) || 0;
 }
-
 
 // 성실도 가져오기
 export async function getDiligence(
@@ -284,7 +258,6 @@ export async function getDiligence(
     ) || 0;
 }
 
-
 // 학생 Total Point 누적
 export async function updateTotalP(
     mobile,
@@ -298,7 +271,7 @@ export async function updateTotalP(
 
     await runTransaction(
         totalPRef,
-        (currentValue) => {
+        currentValue => {
             const currentP =
                 Number(currentValue) || 0;
 
