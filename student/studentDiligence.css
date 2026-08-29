@@ -1,82 +1,25 @@
 /* studentDiligence.css */
 
-/* 출석 및 숙제 상태 */
-.diligenceStatusRow {
+/* 성실도 팝업 제목 */
+#diligenceModal .studentModalBox h2 {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 4px;
-    height: 13px;
-    font-size: 12px;
-    letter-spacing: 0.8px;
-    color: #666666;
-}
-
-.statusDot {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    display: inline-block;
-}
-
-.statusDot.onTime,
-.statusDot.homeworkDone {
-    background: #06A439;
-}
-
-.statusDot.late10 {
-    background: #E5A93D;
-}
-
-.statusDot.late {
-    background: #f58116;
-}
-
-.statusDot.absent,
-.statusDot.homeworkNotDone {
-    background: #ce0707;
-}
-
-.statusDot.notStarted {
-    background: #BDBDBD;
-}
-
-/* 성실도 카드 제목 */
-.diligenceCard .infoTitle {
     color: #078887;
 }
 
-/* 성실도 값 */
-.diligenceValue {
-    display: flex;
-    align-items: baseline;
-    gap: 4px;
-    margin-top: 5px;
-    color: #333D43;
+#diligenceModal .studentModalBox h2 strong {
+    position: absolute;
+    margin-top: 6px;
+    left: 18px;
+    color: #000000;
+    font-size: 16px;
+    font-weight: 300;
 }
 
-.diligenceValue strong:first-child {
-    font-size: 35px;
-    font-weight: 700;
-    color: #078887;
-    line-height: 0.95;
-}
-
-.diligenceValue span {
-    font-size: 23px;
-    font-weight: 400;
-    color: #333D43;
-}
-
-.diligenceValue strong:last-child {
-    font-size: 23px;
-    font-weight: 700;
-    color: #333D43;
-}
-
-/* 성실도 팝업 제목 */
-#diligenceModal .studentModalBox h2 {
-    color: #078887;
+#diligenceModal .studentModalBox h2 span {
+    margin: 0 auto;
 }
 
 /* 팝업 달력 상단 */
@@ -150,6 +93,47 @@
     font-size: 14px;
     line-height: 1;
     color: #444444;
+}
+
+/* 출석 및 숙제 상태 */
+.diligenceStatusRow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    height: 13px;
+    font-size: 12px;
+    letter-spacing: 0.8px;
+    color: #666666;
+}
+
+.statusDot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.statusDot.onTime,
+.statusDot.homeworkDone {
+    background: #06A439;
+}
+
+.statusDot.late10 {
+    background: #E5A93D;
+}
+
+.statusDot.late {
+    background: #f58116;
+}
+
+.statusDot.absent,
+.statusDot.homeworkNotDone {
+    background: #ce0707;
+}
+
+.statusDot.notStarted {
+    background: #BDBDBD;
 }
 
 /* 오늘 날짜 표시 */

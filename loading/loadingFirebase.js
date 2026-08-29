@@ -16,79 +16,67 @@ export async function loadStudentData() {
         return false;
     }
 
-    const deviceSnapshot =
-        await get(
-            ref(
-                db,
-                `deviceId/${deviceId}`
-            )
-        );
+    const deviceSnapshot = await get(
+        ref(
+            db,
+            `deviceId/${deviceId}`
+        )
+    );
 
     if (!deviceSnapshot.exists()) {
         return false;
     }
 
-    const deviceInfo =
-        deviceSnapshot.val();
-
-    const mobile =
-        deviceInfo.mobile;
+    const deviceInfo = deviceSnapshot.val();
+    const mobile = deviceInfo.mobile;
 
     if (!mobile) {
         return false;
     }
 
-    const studentSnapshot =
-        await get(
-            ref(
-                db,
-                `student/${mobile}`
-            )
-        );
+    const studentSnapshot = await get(
+        ref(
+            db,
+            `student/${mobile}`
+        )
+    );
 
     if (!studentSnapshot.exists()) {
         return false;
     }
 
-    const studentInfo =
-        studentSnapshot.val();
+    const studentInfo = studentSnapshot.val();
 
-    const today =
-        new Date().toLocaleDateString(
-            "sv-SE",
-            {
-                timeZone: "Asia/Seoul"
-            }
-        );
+    const today = new Date().toLocaleDateString(
+        "sv-SE",
+        {
+            timeZone: "Asia/Seoul"
+        }
+    );
 
-    const monthKey =
-        today.slice(0, 7);
+    const monthKey = today.slice(0, 7);
 
-    const attendSnapshot =
-        await get(
-            ref(
-                db,
-                `history/${mobile}/${monthKey}`
-            )
-        );
+    const historySnapshot = await get(
+        ref(
+            db,
+            `history/${mobile}/${monthKey}`
+        )
+    );
 
-    const diligenceSnapshot =
-        await get(
-            ref(
-                db,
-                `diligence/${mobile}/${monthKey}`
-            )
-        );
+    const diligenceSnapshot = await get(
+        ref(
+            db,
+            `diligence/${mobile}/${monthKey}`
+        )
+    );
 
-    const attendRecords =
-        attendSnapshot.exists()
-            ? attendSnapshot.val()
-            : {};
+    const attendRecords = historySnapshot.exists()
+        ? historySnapshot.val()
+        : {};
 
-    const diligenceRecords =
-        diligenceSnapshot.exists()
-            ? diligenceSnapshot.val()
-            : {};
+    const diligence = diligenceSnapshot.exists()
+        ? Number(diligenceSnapshot.val())
+        : 100;
 
     sessionStorage.setItem(
         "studentInfo",
@@ -102,12 +90,14 @@ export async function loadStudentData() {
 
     sessionStorage.setItem(
         "attendRecords",
-        JSON.stringify(attendRecords)
+        JSON.stringify({
+            [monthKey]: attendRecords
+        })
     );
 
     sessionStorage.setItem(
-        "diligenceRecords",
-        JSON.stringify(diligenceRecords)
+        "diligence",
+        String(diligence)
     );
 
     return true;

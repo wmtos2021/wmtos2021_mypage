@@ -1,5 +1,6 @@
 /* student.css */
 
+/* 기본 설정 */
 * {
     margin: 0;
     padding: 0;
@@ -26,8 +27,7 @@ button {
     -webkit-tap-highlight-color: transparent;
 }
 
-/* 전체 영역 */
-
+/* 학생 화면 전체 영역 */
 .studentContainer {
     width: 100%;
     max-width: 520px;
@@ -36,8 +36,7 @@ button {
     padding: 48px 44px 90px;
 }
 
-/* 상단 */
-
+/* 상단 인사 영역 */
 .studentHeader {
     display: flex;
     justify-content: space-between;
@@ -67,6 +66,7 @@ button {
     line-height: 1.1;
 }
 
+/* 비밀번호 변경 버튼 */
 .headerAction {
     display: flex;
     align-items: flex-start;
@@ -97,8 +97,7 @@ button {
     transform: translateY(1px);
 }
 
-/* 메인 카드 */
-
+/* 학생 정보 카드 영역 */
 .studentInfo {
     display: flex;
     flex-direction: column;
@@ -106,6 +105,7 @@ button {
     width: 100%;
 }
 
+/* 학생 정보 카드 공통 */
 .studentInfoBtn {
     position: relative;
     width: 100%;
@@ -130,8 +130,7 @@ button {
     transform: translateY(1px);
 }
 
-/* 카드 이미지 */
-
+/* 카드 배경 이미지 */
 .studentCardImage {
     position: absolute;
     inset: 0;
@@ -142,8 +141,7 @@ button {
     pointer-events: none;
 }
 
-/* 카드 내용 */
-
+/* 카드 내부 내용 */
 .studentCardContent {
     position: absolute;
     left: 34%;
@@ -159,19 +157,39 @@ button {
     line-height: 1.2;
 }
 
-/* 성실도 레벨 표기 */
-
-.diligenceCard .studentCardContent > div:first-child {
-    display: flex;
-    align-items: baseline;
+/* 성실도 카드 */
+.diligenceCard .infoTitle {
+    color: #078887;
 }
 
 .diligenceValue {
     display: flex;
     align-items: baseline;
-    margin-top: 3px;
+    margin-top: 5px;
+    gap: 4px;
+    color: #333D43;
 }
 
+.diligenceValue strong:first-child {
+    font-size: 35px;
+    font-weight: 700;
+    color: #078887;
+    line-height: 0.95;
+}
+
+.diligenceValue span {
+    font-size: 23px;
+    font-weight: 400;
+    color: #333D43;
+}
+
+.diligenceValue strong:last-child {
+    font-size: 24px;
+    font-weight: 700;
+    color: #333D43;
+}
+
+/* 성실도 등급 */
 #diligenceGrade {
     position: absolute;
     left: 134px;
@@ -190,8 +208,45 @@ button {
     top: -0.25em;
 }
 
-/* 하단 정보 */
+/* POINT 카드 */
+.pointCard .infoTitle {
+    color: #EBB000;
+}
 
+.pointValue {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+    margin-top: 5px;
+}
+
+.pointValue strong {
+    font-size: 35px;
+    font-weight: 700;
+    color: #EBB000;
+    line-height: 0.95;
+}
+
+/* GOLD 카드 */
+.goldCard .infoTitle {
+    color: #F15B18;
+}
+
+.goldValue {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+    margin-top: 5px;
+}
+
+.goldValue strong {
+    font-size: 35px;
+    font-weight: 700;
+    color: #F15B18;
+    line-height: 0.95;
+}
+
+/* 하단 학원 정보 */
 .footerLeft {
     position: fixed;
     left: 12px;
@@ -229,8 +284,7 @@ button {
     z-index: 101;
 }
 
-/* 팝업 */
-
+/* 학생 팝업 공통 */
 .studentModal {
     position: fixed;
     inset: 0;
@@ -259,21 +313,48 @@ button {
     overflow-y: auto;
 }
 
-/* 팝업 제목 */
-
+/* 팝업 제목 공통 */
 .studentModalBox h2 {
     font-size: 21px;
     font-weight: 700;
 }
 
+/* 성실도 팝업 제목 */
+.diligenceModalTitle {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .diligenceModalTitle strong {
+    position: absolute;
+    left: 18px;
+    margin-top: 6px;
     color: #000000;
     font-size: 16px;
     font-weight: 300;
 }
 
-/* 팝업 내용 */
+.diligenceModalTitle span {
+    margin: 0 auto;
+}
 
+#diligenceModal .studentModalBox h2 {
+    color: #078887;
+}
+
+/* POINT 팝업 제목 */
+#pointModal .studentModalBox h2 {
+    color: #EBB000;
+}
+
+/* GOLD 팝업 제목 */
+#goldModal .studentModalBox h2 {
+    color: #F15B18;
+}
+
+/* 팝업 내용 영역 */
 #diligenceContent,
 #pointContent,
 #goldContent {
@@ -282,8 +363,7 @@ button {
     min-height: 80px;
 }
 
-/* 팝업 닫기 X */
-
+/* 팝업 닫기 버튼 */
 .studentModalCloseBtn,
 .studentCloseBtn {
     position: absolute;
@@ -296,9 +376,11 @@ button {
     border-radius: 50%;
     background: transparent;
     cursor: pointer;
+    z-index: 10;
     -webkit-tap-highlight-color: transparent;
 }
 
+/* 팝업 닫기 X */
 .studentModalCloseBtn::before,
 .studentModalCloseBtn::after,
 .studentCloseBtn::before,

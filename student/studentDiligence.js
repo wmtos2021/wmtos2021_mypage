@@ -37,19 +37,6 @@ function getMonthDiligence(year, month) {
     return Number(diligenceRecords[monthKey]) || 0;
 }
 
-// 성실도 등급
-function getDiligenceGrade(score) {
-    if (score >= 95) {
-        return "A+";
-    }
-
-    if (score >= 90) {
-        return "A";
-    }
-
-    return "";
-}
-
 // 이전 2개월 데이터 가져오기
 async function loadPreviousRecords() {
     if (previousRecordsLoaded) {
@@ -108,20 +95,7 @@ function updateDiligenceScore() {
 
     if (diligenceModalScore) {
         diligenceModalScore.textContent =
-            `(${score}/100)`;
-    }
-
-    const diligenceGrade =
-        document.getElementById("diligenceGrade");
-
-    if (diligenceGrade) {
-        const grade =
-            getDiligenceGrade(score);
-
-        diligenceGrade.innerHTML =
-            grade === "A+"
-                ? "A<sup>+</sup>"
-                : grade;
+            `${score}/100`;
     }
 }
 
