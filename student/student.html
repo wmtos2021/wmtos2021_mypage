@@ -69,11 +69,12 @@
                     <span id="diligenceGrade">
                         A<sup>+</sup>
                     </span>
+
                 </div>
             </button>
 
             <!-- POINT -->
-            <button type="button" id="pointBtn" class="studentInfoBtn pointCard">
+            <div id="pointBtn" class="studentInfoBtn pointCard">
 
                 <img class="studentCardImage" src="../imageStudent/포인트.webp" alt="POINT">
 
@@ -87,9 +88,16 @@
                         <strong id="studentPoint">
                             0
                         </strong>
+
+                        <button
+                            type="button"
+                            id="boardGameMainBtn">
+                            보드게임
+                        </button>
                     </div>
+
                 </div>
-            </button>
+            </div>
 
             <!-- GOLD -->
             <button type="button" id="goldBtn" class="studentInfoBtn goldCard">
@@ -110,6 +118,7 @@
 
                 </div>
             </button>
+
         </section>
 
     </main>
@@ -119,7 +128,11 @@
 
         <div class="attendModalBox">
 
-            <button id="attendConfirmBtn" type="button" class="attendCloseBtn" aria-label="닫기">
+            <button
+                id="attendConfirmBtn"
+                type="button"
+                class="attendCloseBtn"
+                aria-label="닫기">
             </button>
 
             <img id="resultAttendImage" src="" alt="출석하기">
@@ -143,7 +156,11 @@
 
         <div class="studentModalBox">
 
-            <button id="diligenceCloseBtn" type="button" class="studentCloseBtn" aria-label="닫기">
+            <button
+                id="diligenceCloseBtn"
+                type="button"
+                class="studentCloseBtn"
+                aria-label="닫기">
             </button>
 
             <h2 class="diligenceModalTitle">
@@ -165,11 +182,25 @@
 
         <div class="studentModalBox">
 
-            <button type="button" id="pointCloseBtn" class="studentModalCloseBtn" aria-label="닫기">
+            <button
+                type="button"
+                id="pointCloseBtn"
+                class="studentModalCloseBtn"
+                aria-label="닫기">
             </button>
 
-            <h2>
-                POINT
+            <h2 class="pointModalTitle">
+
+                <button
+                    type="button"
+                    id="boardGameBtn">
+                    보드게임
+                </button>
+
+                <span>
+                    POINT
+                </span>
+
             </h2>
 
             <div id="pointContent"></div>
@@ -182,7 +213,11 @@
 
         <div class="studentModalBox">
 
-            <button type="button" id="goldCloseBtn" class="studentModalCloseBtn" aria-label="닫기">
+            <button
+                type="button"
+                id="goldCloseBtn"
+                class="studentModalCloseBtn"
+                aria-label="닫기">
             </button>
 
             <h2>
@@ -194,19 +229,19 @@
         </div>
     </div>
 
-
     <!-- 성실도 보상 팝업 -->
     <div id="rewardModal" class="studentModal hidden">
 
         <div class="studentModalBox">
 
-            <h2>
-                성실도 보상
-            </h2>
+            <div id="rewardTitle">
+                <span id="rewardMonth"></span>
+                <strong>
+                    나의 성실도
+                </strong>
+            </div>
 
             <div id="rewardContent">
-
-                <p id="rewardMonth"></p>
 
                 <strong id="rewardGrade"></strong>
 
@@ -221,9 +256,9 @@
                 </button>
 
             </div>
+
         </div>
     </div>
-
 
     <!-- 하단 구분선 -->
     <div class="footerLine"></div>
@@ -246,11 +281,10 @@
         Ver 1.0.0
     </div>
 
-
     <script type="module" src="studentDiligence.js"></script>
     <script type="module" src="studentReward.js"></script>
+    <script type="module" src="studentPoint.js"></script>
     <script type="module" src="student.js"></script>
-
 
 </body>
 

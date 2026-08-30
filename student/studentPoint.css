@@ -1,7 +1,38 @@
 /* studentPoint.css */
 
-
 /* POINT 팝업 */
+
 #pointModal .studentModalBox h2 {
-    color: #ebb000;
+    color: #EBB000;
+}
+
+.pointModalTitle {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pointModalTitle button {
+    position: absolute;
+    left: 18px;
+    margin-top: 6px;
+    min-width: 64px;
+    height: 28px;
+    padding: 0 10px;
+    border: none;
+    border-radius: 7px;
+    background: #EBB000;
+    color: #FFFFFF;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.pointModalTitle span {
+    margin: 0 auto;
+}
+
+.pointModalTitle button:active {
+    transform: scale(0.95);
 }
