@@ -100,7 +100,7 @@ body {
 
 #checkDots {
     position: absolute;
-    left: calc(50% + 78px);
+    left: calc(50% + 76px);
     display: inline-flex;
     align-items: flex-end;
     width: auto;

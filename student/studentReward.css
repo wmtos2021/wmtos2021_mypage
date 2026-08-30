@@ -6,7 +6,7 @@
     flex-direction: column;
     align-items: center;
     gap: 4px;
-    color: #078887;
+    color: #FF4F93;
 }
 
 #rewardMonth {
@@ -52,7 +52,7 @@
     margin-top: 10px;
     font-size: 30px;
     font-weight: 700;
-    color: #F15B18;
+    color: #FF4F93;
 }
 
 /* 상금받기 버튼 */
@@ -63,7 +63,7 @@
     padding: 0 20px;
     border: none;
     border-radius: 10px;
-    background: #078887;
+    background: #FF4F93;
     color: #FFFFFF;
     font-size: 15px;
     font-weight: 700;

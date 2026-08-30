@@ -203,6 +203,7 @@ button {
 }
 
 #diligenceGrade sup {
+    margin-left: -4px;
     font-size: 0.6em;
     position: relative;
     top: -0.25em;

@@ -53,7 +53,7 @@ body {
 
 .loadingDots {
     position: absolute;
-    left: calc(50% + 52px);
+    left: calc(50% + 49px);
     display: inline-flex;
     align-items: flex-end;
     width: auto;
