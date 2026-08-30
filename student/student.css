@@ -192,7 +192,7 @@ button {
 /* 성실도 등급 */
 #diligenceGrade {
     position: absolute;
-    left: 134px;
+    left: 128px;
     top: 50%;
     transform: translateY(-50%);
     color: #A52A2A;

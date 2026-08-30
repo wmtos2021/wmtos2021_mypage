@@ -40,19 +40,14 @@ function loadStudentInfo() {
     studentInfo = JSON.parse(studentData);
     attendRecords = attendData ? JSON.parse(attendData) : {};
 
-    const today = new Date().toLocaleDateString(
-        "sv-SE",
-        {
-            timeZone: "Asia/Seoul"
-        }
-    );
-
+    const today = new Date().toLocaleDateString("sv-SE", {
+        timeZone: "Asia/Seoul"
+    });
     const todayMonth = today.slice(0, 7);
 
-    const todayDiligence =
-        diligenceData !== null
-            ? Number(diligenceData)
-            : 0;
+    const todayDiligence = diligenceData !== null
+        ? Number(diligenceData)
+        : 100;
 
     diligenceRecords = {
         [todayMonth]: todayDiligence
@@ -67,16 +62,10 @@ function loadStudentInfo() {
     studentGold.textContent =
         `${studentInfo.totalG || 0} G`;
 
-    diligenceCount.textContent =
-        todayDiligence;
+    diligenceCount.textContent = todayDiligence;
+    diligenceTotal.textContent = 100;
 
-    diligenceTotal.textContent =
-        100;
-
-    const grade =
-        getDiligenceGrade(
-            todayDiligence
-        );
+    const grade = getDiligenceGrade(todayDiligence);
 
     diligenceGrade.innerHTML =
         grade === "A+"
@@ -106,73 +95,40 @@ function getDiligenceGrade(score) {
 }
 
 // 성실도 팝업
-diligenceBtn.addEventListener(
-    "click",
-    () => {
-        diligenceModal.classList.remove(
-            "hidden"
-        );
-
-        renderDiligenceCalendar();
-    }
-);
+diligenceBtn.addEventListener("click", () => {
+    diligenceModal.classList.remove("hidden");
+    renderDiligenceCalendar();
+});
 
 // 성실도 팝업 닫기
-diligenceCloseBtn.addEventListener(
-    "click",
-    () => {
-        diligenceModal.classList.add(
-            "hidden"
-        );
-    }
-);
+diligenceCloseBtn.addEventListener("click", () => {
+    diligenceModal.classList.add("hidden");
+});
 
 // POINT 팝업
-pointBtn.addEventListener(
-    "click",
-    () => {
-        pointModal.classList.remove(
-            "hidden"
-        );
-    }
-);
+pointBtn.addEventListener("click", () => {
+    pointModal.classList.remove("hidden");
+});
 
-pointCloseBtn.addEventListener(
-    "click",
-    () => {
-        pointModal.classList.add(
-            "hidden"
-        );
-    }
-);
+pointCloseBtn.addEventListener("click", () => {
+    pointModal.classList.add("hidden");
+});
 
 // GOLD 팝업
-goldBtn.addEventListener(
-    "click",
-    () => {
-        goldModal.classList.remove(
-            "hidden"
-        );
-    }
-);
+goldBtn.addEventListener("click", () => {
+    goldModal.classList.remove("hidden");
+});
 
-goldCloseBtn.addEventListener(
-    "click",
-    () => {
-        goldModal.classList.add(
-            "hidden"
-        );
-    }
-);
+goldCloseBtn.addEventListener("click", () => {
+    goldModal.classList.add("hidden");
+});
 
 // 초기 학생 정보
 function initializeStudent() {
-    const loaded =
-        loadStudentInfo();
+    const loaded = loadStudentInfo();
 
     if (!loaded) {
-        location.href =
-            "../check/check.html";
+        location.href = "../check/check.html";
         return;
     }
 }

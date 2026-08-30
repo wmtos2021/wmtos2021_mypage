@@ -1,0 +1,74 @@
+/* studentReward.css */
+
+/* 성실도 보상 제목 */
+#rewardTitle {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    color: #078887;
+}
+
+#rewardMonth {
+    font-size: 16px;
+    font-weight: 400;
+    color: #333333;
+}
+
+#rewardTitle strong {
+    font-size: 21px;
+    font-weight: 700;
+}
+
+/* 성실도 보상 내용 */
+#rewardContent {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 24px;
+}
+
+#rewardGrade {
+    color: #A52A2A;
+    font-size: 68px;
+    font-weight: 700;
+    line-height: 1;
+}
+
+#rewardGrade sup {
+    font-size: 0.6em;
+    position: relative;
+    top: -0.25em;
+}
+
+#rewardScore {
+    margin-top: 10px;
+    font-size: 22px;
+    font-weight: 700;
+    color: #333D43;
+}
+
+#rewardPoint {
+    margin-top: 10px;
+    font-size: 30px;
+    font-weight: 700;
+    color: #F15B18;
+}
+
+/* 상금받기 버튼 */
+#rewardReceiveBtn {
+    margin-top: 24px;
+    min-width: 120px;
+    height: 42px;
+    padding: 0 20px;
+    border: none;
+    border-radius: 10px;
+    background: #078887;
+    color: #FFFFFF;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+#rewardReceiveBtn:active {
+    transform: translateY(1px);
+}

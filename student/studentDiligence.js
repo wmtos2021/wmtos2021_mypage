@@ -3,11 +3,9 @@
 import {
     handleAttend
 } from "../attend/attend.js";
-
 import {
     renderCalendarDays
 } from "./diligenceCalendar.js";
-
 import {
     getPreviousRecords
 } from "./studentFirebase.js";
@@ -27,8 +25,7 @@ export function setDiligenceData(info, records, diligence) {
 
 // 성실도 점수 가져오기
 function getMonthDiligence(year, month) {
-    const monthKey =
-        `${year}-${String(month + 1).padStart(2, "0")}`;
+    const monthKey = `${year}-${String(month + 1).padStart(2, "0")}`;
 
     if (diligenceRecords[monthKey] === undefined) {
         return 100;
@@ -43,25 +40,20 @@ async function loadPreviousRecords() {
         return;
     }
 
-    const deviceData =
-        sessionStorage.getItem("deviceInfo");
+    const deviceData = sessionStorage.getItem("deviceInfo");
 
     if (!deviceData) {
         return;
     }
 
-    const deviceInfo =
-        JSON.parse(deviceData);
-
-    const mobile =
-        deviceInfo.mobile;
+    const deviceInfo = JSON.parse(deviceData);
+    const mobile = deviceInfo.mobile;
 
     if (!mobile) {
         return;
     }
 
-    const previousRecords =
-        await getPreviousRecords(mobile);
+    const previousRecords = await getPreviousRecords(mobile);
 
     attendRecords = {
         ...attendRecords,
@@ -84,45 +76,35 @@ async function loadPreviousRecords() {
 
 // 성실도 팝업 점수 변경
 function updateDiligenceScore() {
-    const score =
-        getMonthDiligence(
-            currentDate.getFullYear(),
-            currentDate.getMonth()
-        );
+    const score = getMonthDiligence(
+        currentDate.getFullYear(),
+        currentDate.getMonth()
+    );
 
-    const diligenceModalScore =
-        document.getElementById("diligenceModalScore");
+    const diligenceModalScore = document.getElementById("diligenceModalScore");
 
     if (diligenceModalScore) {
-        diligenceModalScore.textContent =
-            `${score}/100`;
+        diligenceModalScore.textContent = `${score}/100`;
     }
 }
 
 // 성실도 달력 표시
 export async function renderDiligenceCalendar() {
-    const diligenceContent =
-        document.getElementById("diligenceContent");
+    const diligenceContent = document.getElementById("diligenceContent");
 
     if (!diligenceContent) {
         return;
     }
 
-    const year =
-        currentDate.getFullYear();
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth();
+    const today = new Date();
 
-    const month =
-        currentDate.getMonth();
-
-    const today =
-        new Date();
-
-    const minDate =
-        new Date(
-            today.getFullYear(),
-            today.getMonth() - 2,
-            1
-        );
+    const minDate = new Date(
+        today.getFullYear(),
+        today.getMonth() - 2,
+        1
+    );
 
     const isCurrentMonth =
         year === today.getFullYear() &&
@@ -134,12 +116,11 @@ export async function renderDiligenceCalendar() {
 
     updateDiligenceScore();
 
-    const lastDate =
-        new Date(
-            year,
-            month + 1,
-            0
-        ).getDate();
+    const lastDate = new Date(
+        year,
+        month + 1,
+        0
+    ).getDate();
 
     diligenceContent.innerHTML = `
         <div class="calendarHeader">
@@ -183,43 +164,35 @@ export async function renderDiligenceCalendar() {
         </div>
     `;
 
-    document
-        .getElementById("prevMonthBtn")
-        .addEventListener("click", async () => {
-            if (isMinMonth) {
-                return;
-            }
+    document.getElementById("prevMonthBtn").addEventListener("click", async () => {
+        if (isMinMonth) {
+            return;
+        }
 
-            await loadPreviousRecords();
+        await loadPreviousRecords();
 
-            currentDate.setMonth(
-                currentDate.getMonth() - 1
-            );
+        currentDate.setMonth(
+            currentDate.getMonth() - 1
+        );
 
-            renderDiligenceCalendar();
-        });
+        renderDiligenceCalendar();
+    });
 
-    document
-        .getElementById("nextMonthBtn")
-        .addEventListener("click", () => {
-            if (isCurrentMonth) {
-                return;
-            }
+    document.getElementById("nextMonthBtn").addEventListener("click", () => {
+        if (isCurrentMonth) {
+            return;
+        }
 
-            currentDate.setMonth(
-                currentDate.getMonth() + 1
-            );
+        currentDate.setMonth(
+            currentDate.getMonth() + 1
+        );
 
-            renderDiligenceCalendar();
-        });
+        renderDiligenceCalendar();
+    });
 
-    const attendBtn =
-        document.getElementById("todayAttendBtn");
+    const attendBtn = document.getElementById("todayAttendBtn");
 
     if (attendBtn) {
-        attendBtn.addEventListener(
-            "click",
-            handleAttend
-        );
+        attendBtn.addEventListener("click", handleAttend);
     }
 }

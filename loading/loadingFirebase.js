@@ -16,12 +16,7 @@ export async function loadStudentData() {
         return false;
     }
 
-    const deviceSnapshot = await get(
-        ref(
-            db,
-            `deviceId/${deviceId}`
-        )
-    );
+    const deviceSnapshot = await get(ref(db, `deviceId/${deviceId}`));
 
     if (!deviceSnapshot.exists()) {
         return false;
@@ -34,12 +29,7 @@ export async function loadStudentData() {
         return false;
     }
 
-    const studentSnapshot = await get(
-        ref(
-            db,
-            `student/${mobile}`
-        )
-    );
+    const studentSnapshot = await get(ref(db, `student/${mobile}`));
 
     if (!studentSnapshot.exists()) {
         return false;
@@ -47,32 +37,31 @@ export async function loadStudentData() {
 
     const studentInfo = studentSnapshot.val();
 
-    const today = new Date().toLocaleDateString(
-        "sv-SE",
-        {
-            timeZone: "Asia/Seoul"
-        }
-    );
+    const today = new Date().toLocaleDateString("sv-SE", {
+        timeZone: "Asia/Seoul"
+    });
 
     const monthKey = today.slice(0, 7);
 
     const historySnapshot = await get(
-        ref(
-            db,
-            `history/${mobile}/${monthKey}`
-        )
+        ref(db, `history/${mobile}/diligence`)
     );
 
     const diligenceSnapshot = await get(
-        ref(
-            db,
-            `diligence/${mobile}/${monthKey}`
-        )
+        ref(db, `diligence/${mobile}/${monthKey}`)
     );
 
-    const attendRecords = historySnapshot.exists()
+    const historyData = historySnapshot.exists()
         ? historySnapshot.val()
         : {};
+
+    const attendRecords = {};
+
+    Object.entries(historyData).forEach(([dateKey, timeData]) => {
+        if (dateKey.slice(0, 7) === monthKey) {
+            attendRecords[dateKey] = timeData;
+        }
+    });
 
     const diligence = diligenceSnapshot.exists()
         ? Number(diligenceSnapshot.val())

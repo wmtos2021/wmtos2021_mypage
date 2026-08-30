@@ -5,7 +5,6 @@ import {
     getSeoulDay,
     getSeoulTime
 } from "../utils.js";
-
 import {
     getDeviceInfo,
     getClassTime,
@@ -15,17 +14,14 @@ import {
     saveAttendHistory,
     updateTotalP
 } from "./attendFirebase.js";
-
 import {
     checkAcademyDistance,
     ALLOW_DISTANCE
 } from "./gps.js";
-
 import {
     showAttendPopup,
     showAttendMessage
 } from "./attendPopup.js";
-
 import { getWisdom } from "./wisdom.js";
 
 const deviceId = getDeviceId();
@@ -187,13 +183,13 @@ export async function handleAttend() {
             point = "+ 80P";
             getP = 80;
             attend = "late10";
-            attendSc = -1;
+            attendSc = 1;
         } else {
             imageAttend = "../imageAttend/attend3_투명.webp";
             point = "+ 50P";
             getP = 50;
             attend = "late";
-            attendSc = -2;
+            attendSc = 2;
         }
 
         // 오늘의 명언
