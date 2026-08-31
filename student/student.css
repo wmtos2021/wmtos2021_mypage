@@ -248,9 +248,8 @@ button {
     white-space: nowrap;
     transform: translateY(-72%);
 }
-
 #boardGameMainBtn:active {
-    transform: translateY(-50%) scale(0.97);
+    transform: translateY(-72%) scale(0.97);
 }
 
 /* GOLD 카드 */
@@ -292,9 +291,8 @@ button {
     white-space: nowrap;
     transform: translateY(-72%);
 }
-
 #goldShopMainBtn:active {
-    transform: translateY(-50%) scale(0.97);
+    transform: translateY(-72%) scale(0.97);
 }
 
 /* 학생 팝업 공통 */
