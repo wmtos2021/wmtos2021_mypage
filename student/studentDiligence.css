@@ -22,6 +22,7 @@
     margin: 0 auto;
 }
 
+
 /* 팝업 달력 상단 */
 .calendarHeader {
     display: flex;
@@ -51,6 +52,7 @@
 .monthBtn:active {
     transform: scale(0.9);
 }
+
 
 /* 팝업 달력 */
 .calendar {
@@ -95,6 +97,7 @@
     color: #444444;
 }
 
+
 /* 출석 및 숙제 상태 */
 .diligenceStatusRow {
     display: flex;
@@ -124,17 +127,18 @@
 }
 
 .statusDot.late {
-    background: #f58116;
+    background: #F58116;
 }
 
 .statusDot.absent,
 .statusDot.homeworkNotDone {
-    background: #ce0707;
+    background: #CE0707;
 }
 
 .statusDot.notStarted {
     background: #BDBDBD;
 }
+
 
 /* 오늘 날짜 표시 */
 .calendarDay.today {
@@ -142,6 +146,7 @@
     padding-top: 3px;
     border: 1px solid #CBE8E5;
 }
+
 
 /* 오늘 출석 버튼 */
 .todayAttendBtn {
