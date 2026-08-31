@@ -80,23 +80,25 @@ export async function updateWisdom(deviceId, wisdom) {
 }
 
 // 출석 기록 저장
-export async function saveAttendHistory(mobile, date, time, attend, attendSc, getP, name) {
+export async function saveAttendHistory(mobile, date, time, attend, attendSc, getP) {
     const historyRef = ref(db, `history/${mobile}/attendance/${date}/${time}`);
     const snapshot = await get(historyRef);
+
     if (snapshot.exists()) {
         return false;
     }
+
     await update(historyRef, {
         attend: attend,
         attendP: getP,
         attendSc: attendSc,
         homework: "",
         homeworkP: "",
-        homeworkSc: 0,
-        name: name,
-        time: time
+        homeworkSc: 0
     });
+
     await updateDiligence(mobile, date, attendSc);
+
     return true;
 }
 

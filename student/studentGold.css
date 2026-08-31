@@ -1,8 +1,13 @@
 /* studentGold.css */
 
 /* GOLD 팝업 */
+
 #goldModal .studentModalBox h2 {
     color: #F15B18;
+}
+
+#goldModal .studentModalBox {
+    overflow: hidden;
 }
 
 .goldModalTitle {
@@ -10,6 +15,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    padding-bottom: 30px;
+    border-bottom: 1px solid #E5E5E5;
 }
 
 .goldModalTitle button {
@@ -34,4 +41,14 @@
 
 .goldModalTitle button:active {
     transform: scale(0.95);
+}
+
+/* GOLD 내역 */
+
+#goldContent {
+    width: calc(100% - 34px);
+    max-height: 60dvh;
+    margin: 1.8px auto 0;
+    overflow-y: auto;
+    overflow-x: hidden;
 }

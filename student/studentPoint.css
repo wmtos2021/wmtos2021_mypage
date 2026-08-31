@@ -1,9 +1,11 @@
-/* studentPoint.css */
-
-
 /* POINT 팝업 */
+
 #pointModal .studentModalBox h2 {
     color: #EBB000;
+}
+
+#pointModal .studentModalBox {
+    overflow: hidden;
 }
 
 .pointModalTitle {
@@ -39,11 +41,14 @@
     transform: scale(0.95);
 }
 
-
 /* POINT 내역 */
+
 #pointContent {
     width: calc(100% - 34px);
+    max-height: 60dvh;
     margin: 1.8px auto 0;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .pointHistoryRow {

@@ -1,4 +1,4 @@
-// studentPoint.js
+// studentGold.js
 
 import {
     ref,
@@ -7,8 +7,8 @@ import {
 
 import { db } from "../firebase.js";
 
-const pointBtn = document.getElementById("pointBtn");
-const pointContent = document.getElementById("pointContent");
+const goldBtn = document.getElementById("goldBtn");
+const goldContent = document.getElementById("goldContent");
 
 // 최근 3개월
 function getRecentMonthKeys() {
@@ -31,18 +31,18 @@ function getRecentMonthKeys() {
 }
 
 // 숫자 변환
-function getPoint(value) {
-    const point = Number(value);
+function getGold(value) {
+    const gold = Number(value);
 
-    if (!Number.isFinite(point) || point <= 0) {
+    if (!Number.isFinite(gold) || gold <= 0) {
         return 0;
     }
 
-    return point;
+    return gold;
 }
 
-// POINT 기록 가져오기
-async function getPointHistory() {
+// GOLD 기록 가져오기
+async function getGoldHistory() {
     const deviceData = sessionStorage.getItem("deviceInfo");
 
     if (!deviceData) {
@@ -58,24 +58,24 @@ async function getPointHistory() {
 
     const monthKeys = getRecentMonthKeys();
 
-    const attendanceSnapshot = await get(
-        ref(db, `history/${mobile}/attendance`)
-    );
-
     const boardSnapshot = await get(
         ref(db, `history/${mobile}/board`)
+    );
+
+    const shopSnapshot = await get(
+        ref(db, `history/${mobile}/shop`)
     );
 
     const rewardSnapshot = await get(
         ref(db, `history/${mobile}/reward`)
     );
 
-    const attendanceData = attendanceSnapshot.exists()
-        ? attendanceSnapshot.val()
-        : {};
-
     const boardData = boardSnapshot.exists()
         ? boardSnapshot.val()
+        : {};
+
+    const shopData = shopSnapshot.exists()
+        ? shopSnapshot.val()
         : {};
 
     const rewardData = rewardSnapshot.exists()
@@ -88,41 +88,7 @@ async function getPointHistory() {
         records[monthKey] = [];
     });
 
-    // 출석 및 숙제 POINT
-    Object.entries(attendanceData).forEach(([dateKey, timeData]) => {
-        const monthKey = dateKey.slice(0, 7);
-
-        if (!monthKeys.includes(monthKey)) {
-            return;
-        }
-
-        Object.entries(timeData || {}).forEach(([timeKey, data]) => {
-            const attendP = getPoint(data.attendP);
-            const homeworkP = getPoint(data.homeworkP);
-
-            if (attendP > 0) {
-                records[monthKey].push({
-                    date: dateKey,
-                    time: timeKey,
-                    type: "받음",
-                    detail: "출석",
-                    point: attendP
-                });
-            }
-
-            if (homeworkP > 0) {
-                records[monthKey].push({
-                    date: dateKey,
-                    time: timeKey,
-                    type: "받음",
-                    detail: "숙제",
-                    point: homeworkP
-                });
-            }
-        });
-    });
-
-    // 보드게임 POINT
+    // 보드게임 GOLD
     Object.entries(boardData).forEach(([dateKey, timeData]) => {
         const monthKey = dateKey.slice(0, 7);
 
@@ -131,46 +97,80 @@ async function getPointHistory() {
         }
 
         Object.entries(timeData || {}).forEach(([timeKey, data]) => {
-            const getP = getPoint(data.getP);
-            const useP = getPoint(data.useP);
+            const getG = getGold(data.getG);
+            const useG = getGold(data.useG);
 
-            if (getP > 0) {
+            if (getG > 0) {
                 records[monthKey].push({
                     date: dateKey,
                     time: timeKey,
                     type: "받음",
-                    detail: "보드게임참여",
-                    point: getP
+                    detail: "게임보상",
+                    gold: getG
                 });
             }
 
-            if (useP > 0) {
+            if (useG > 0) {
                 records[monthKey].push({
                     date: dateKey,
                     time: timeKey,
                     type: "사용",
-                    detail: "보드게임참여",
-                    point: useP
+                    detail: "게임 참여",
+                    gold: useG
                 });
             }
         });
     });
 
-    // 성실도 보상 POINT
+    // 골드상점 GOLD
+    Object.entries(shopData).forEach(([dateKey, timeData]) => {
+        const monthKey = dateKey.slice(0, 7);
+
+        if (!monthKeys.includes(monthKey)) {
+            return;
+        }
+
+        Object.entries(timeData || {}).forEach(([timeKey, data]) => {
+            const getG = getGold(data.getG);
+            const useG = getGold(data.useG);
+
+            if (getG > 0) {
+                records[monthKey].push({
+                    date: dateKey,
+                    time: timeKey,
+                    type: "받음",
+                    detail: data.type || "",
+                    gold: getG
+                });
+            }
+
+            if (useG > 0) {
+                records[monthKey].push({
+                    date: dateKey,
+                    time: timeKey,
+                    type: "사용",
+                    detail: data.type || "상점사용",
+                    gold: useG
+                });
+            }
+        });
+    });
+
+    // 성실도 보상 GOLD
     Object.entries(rewardData).forEach(([monthKey, data]) => {
         if (!monthKeys.includes(monthKey)) {
             return;
         }
 
-        const rewardP = getPoint(data.rewardP);
+        const rewardG = getGold(data.rewardG);
 
-        if (rewardP > 0) {
+        if (rewardG > 0) {
             records[monthKey].push({
                 date: `${monthKey}-01`,
                 time: "",
                 type: "받음",
                 detail: `${data.rewardMonth} 성실도`,
-                point: rewardP
+                gold: rewardG
             });
         }
     });
@@ -178,11 +178,11 @@ async function getPointHistory() {
     return records;
 }
 
-// POINT 내역 표시
-async function renderPointHistory() {
-    pointContent.innerHTML = "";
+// GOLD 내역 표시
+async function renderGoldHistory() {
+    goldContent.innerHTML = "";
 
-    const records = await getPointHistory();
+    const records = await getGoldHistory();
     const monthKeys = getRecentMonthKeys();
 
     let hasRecord = false;
@@ -205,36 +205,36 @@ async function renderPointHistory() {
 
         monthRecords.forEach(record => {
             const row = document.createElement("div");
-            row.className = "pointHistoryRow";
+            row.className = "goldHistoryRow";
 
             const date = document.createElement("span");
-            date.className = "pointHistoryDate";
+            date.className = "goldHistoryDate";
             date.textContent = record.date;
 
             const detail = document.createElement("span");
-            detail.className = "pointHistoryDetail";
+            detail.className = "goldHistoryDetail";
             detail.textContent = record.detail;
 
             const sign = document.createElement("span");
             sign.className =
                 record.type === "받음"
-                    ? "pointHistorySign pointHistoryPlus"
-                    : "pointHistorySign pointHistoryMinus";
+                    ? "goldHistorySign goldHistoryPlus"
+                    : "goldHistorySign goldHistoryMinus";
             sign.textContent = record.type === "받음" ? "+" : "-";
 
             const value = document.createElement("strong");
             value.className =
                 record.type === "받음"
-                    ? "pointHistoryValue pointHistoryPlus"
-                    : "pointHistoryValue pointHistoryMinus";
-            value.textContent = record.point.toLocaleString();
+                    ? "goldHistoryValue goldHistoryPlus"
+                    : "goldHistoryValue goldHistoryMinus";
+            value.textContent = record.gold.toLocaleString();
 
             const unit = document.createElement("span");
             unit.className =
                 record.type === "받음"
-                    ? "pointHistoryUnit pointHistoryPlus"
-                    : "pointHistoryUnit pointHistoryMinus";
-            unit.textContent = "P";
+                    ? "goldHistoryUnit goldHistoryPlus"
+                    : "goldHistoryUnit goldHistoryMinus";
+            unit.textContent = "G";
 
             row.appendChild(date);
             row.appendChild(detail);
@@ -242,19 +242,19 @@ async function renderPointHistory() {
             row.appendChild(value);
             row.appendChild(unit);
 
-            pointContent.appendChild(row);
+            goldContent.appendChild(row);
         });
     });
 
     if (!hasRecord) {
         const empty = document.createElement("div");
-        empty.className = "pointHistoryEmpty";
-        empty.textContent = "최근 3개월의 POINT 내역이 없습니다.";
-        pointContent.appendChild(empty);
+        empty.className = "goldHistoryEmpty";
+        empty.textContent = "최근 3개월의 GOLD 내역이 없습니다.";
+        goldContent.appendChild(empty);
     }
 }
 
-// POINT 팝업 열 때 내역 갱신
-pointBtn.addEventListener("click", () => {
-    renderPointHistory();
+// GOLD 팝업 열 때 내역 갱신
+goldBtn.addEventListener("click", () => {
+    renderGoldHistory();
 });
