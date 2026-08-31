@@ -68,6 +68,12 @@ function getMonthKeys() {
     };
 }
 
+// 월을 숫자로 변환
+function getMonthNumber(monthKey) {
+    const [year, month] = monthKey.split("-").map(Number);
+    return year * 12 + month;
+}
+
 // 보상 팝업 표시
 function showRewardPopup(monthKey, score, reward) {
     const [year, month] = monthKey.split("-");
@@ -96,12 +102,15 @@ async function checkPreviousMonthReward() {
     }
 
     const deviceData = sessionStorage.getItem("deviceInfo");
+    const studentData = sessionStorage.getItem("studentInfo");
 
-    if (!deviceData) {
+    if (!deviceData || !studentData) {
         return;
     }
 
     const deviceInfo = JSON.parse(deviceData);
+    const studentInfo = JSON.parse(studentData);
+
     const mobile = deviceInfo.mobile;
 
     if (!mobile) {
@@ -109,14 +118,37 @@ async function checkPreviousMonthReward() {
     }
 
     const monthKeys = getMonthKeys();
-    const rewarded = await getRewardStatus(mobile, monthKeys.currentMonth);
+
+    // 입학월 이전의 성실도는 리워드 대상에서 제외
+    const enrollment = studentInfo?.enrollment;
+
+    if (enrollment) {
+        const enrollmentMonth = enrollment.slice(0, 7);
+
+        if (
+            getMonthNumber(monthKeys.previousMonth) <
+            getMonthNumber(enrollmentMonth)
+        ) {
+            rewardShown = true;
+            return;
+        }
+    }
+
+    const rewarded = await getRewardStatus(
+        mobile,
+        monthKeys.currentMonth
+    );
 
     if (rewarded) {
         rewardShown = true;
         return;
     }
 
-    const score = await getPreviousDiligence(mobile, monthKeys.previousMonth);
+    const score = await getPreviousDiligence(
+        mobile,
+        monthKeys.previousMonth
+    );
+
     const reward = getReward(score);
 
     rewardMobile = mobile;
