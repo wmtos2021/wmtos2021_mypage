@@ -7,6 +7,13 @@ import {
 
 import { checkSession } from "../session.js";
 
+// 뒤로가기 방지
+history.pushState(null, "", location.href);
+
+window.addEventListener("popstate", () => {
+    history.pushState(null, "", location.href);
+});
+
 // HTML 요소
 const studentName = document.getElementById("studentName");
 const studentPoint = document.getElementById("studentPoint");

@@ -12,16 +12,14 @@ const SESSION_KEY = "sessionExpiresAt";
 
 let sessionTimer = null;
 let sessionStarted = false;
+let sessionExpired = false;
 
 // 로그인 세션 시작
 export function startSession() {
+    sessionStarted = true;
     const expiresAt = Date.now() + SESSION_TIME;
 
-    sessionStorage.setItem(
-        SESSION_KEY,
-        String(expiresAt)
-    );
-
+    sessionStorage.setItem(SESSION_KEY, String(expiresAt));
     startSessionTimer();
 }
 
@@ -61,17 +59,14 @@ function startSessionTimer() {
         return;
     }
 
-    sessionTimer = setTimeout(
-        () => {
-            expireSession();
-        },
-        remaining
-    );
+    sessionTimer = setTimeout(() => {
+        expireSession();
+    }, remaining);
 }
 
 // 사용자 활동 갱신
 function updateSession() {
-    if (!sessionStarted) {
+    if (!sessionStarted || sessionExpired) {
         return;
     }
 
@@ -98,12 +93,17 @@ function updateSession() {
 
 // 세션 만료
 async function expireSession() {
+    if (sessionExpired) {
+        return;
+    }
+
+    sessionExpired = true;
+    sessionStarted = false;
+
     if (sessionTimer) {
         clearTimeout(sessionTimer);
         sessionTimer = null;
     }
-
-    sessionStarted = false;
 
     sessionStorage.removeItem(SESSION_KEY);
     sessionStorage.removeItem("studentInfo");
@@ -114,10 +114,31 @@ async function expireSession() {
     try {
         await signOut(auth);
     } catch (error) {
-        // 로그아웃 실패와 관계없이 로그인 화면으로 이동
+        // 로그아웃 실패와 관계없이 진행
     }
 
-    location.replace("../login/login.html");
+    showSessionExpiredMessage();
+}
+
+// 세션 만료 안내
+function showSessionExpiredMessage() {
+    const sessionExpiredModal = document.getElementById("sessionExpired");
+    const sessionExpiredMessage = document.getElementById("sessionExpiredMessage");
+    const sessionExpiredOk = document.getElementById("sessionExpiredOk");
+
+    if (!sessionExpiredModal || !sessionExpiredMessage || !sessionExpiredOk) {
+        location.replace("../login/login.html");
+        return;
+    }
+
+    sessionExpiredMessage.textContent =
+        "세션이 만료되었습니다.\n다시 로그인해주세요.";
+
+    sessionExpiredModal.classList.remove("hidden");
+
+    sessionExpiredOk.onclick = () => {
+        location.replace("../login/login.html");
+    };
 }
 
 // Firebase 로그인 상태 확인
@@ -173,35 +194,27 @@ function setupActivityDetection() {
         document.addEventListener(
             eventName,
             updateSession,
-            {
-                passive: true
-            }
+            { passive: true }
         );
     });
 }
 
 // 페이지가 다시 표시될 때 세션 확인
 function setupPageShowDetection() {
-    window.addEventListener(
-        "pageshow",
-        async () => {
-            if (!sessionStarted) {
-                return;
-            }
-
-            const expiresAt = getSessionExpiresAt();
-
-            if (
-                !expiresAt ||
-                expiresAt <= Date.now()
-            ) {
-                await expireSession();
-                return;
-            }
-
-            startSessionTimer();
+    window.addEventListener("pageshow", async () => {
+        if (!sessionStarted || sessionExpired) {
+            return;
         }
-    );
+
+        const expiresAt = getSessionExpiresAt();
+
+        if (!expiresAt || expiresAt <= Date.now()) {
+            await expireSession();
+            return;
+        }
+
+        startSessionTimer();
+    });
 }
 
 // 세션 초기화
