@@ -1,8 +1,6 @@
 <!-- student.html -->
-
 <!DOCTYPE html>
 <html lang="ko">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,14 +12,10 @@
     <link rel="stylesheet" href="studentReward.css">
     <link rel="stylesheet" href="../attend/attend.css">
 </head>
-
 <body>
-
     <main class="studentContainer">
-
         <!-- 상단 영역 -->
         <section class="studentHeader">
-
             <div class="welcomeArea">
                 <p class="welcomeText">
                     안녕하세요.
@@ -30,7 +24,6 @@
                     홍길동님
                 </p>
             </div>
-
             <div class="headerAction">
                 <button type="button" id="passwordBtn">
                     비밀번호 변경
@@ -40,20 +33,15 @@
 
         <!-- 메인 영역 -->
         <section class="studentInfo">
-
             <!-- 성실도 -->
             <button type="button" id="diligenceBtn" class="studentInfoBtn diligenceCard">
-
                 <img class="studentCardImage" src="../imageStudent/성실도.webp" alt="성실도">
-
                 <div class="studentCardContent">
-
                     <div>
                         <span class="infoTitle">
                             나의 성실도
                         </span>
                     </div>
-
                     <div class="diligenceValue">
                         <strong id="diligenceCount">
                             0
@@ -65,110 +53,72 @@
                             100
                         </strong>
                     </div>
-
                     <span id="diligenceGrade">
                         A<sup>+</sup>
                     </span>
-
                 </div>
             </button>
 
             <!-- POINT -->
             <div id="pointBtn" class="studentInfoBtn pointCard">
-
                 <img class="studentCardImage" src="../imageStudent/포인트.webp" alt="POINT">
-
                 <div class="studentCardContent">
-
                     <div class="infoTitle">
                         POINT
                     </div>
-
                     <div class="pointValue">
                         <strong id="studentPoint">
                             0
                         </strong>
-
-                        <button
-                            type="button"
-                            id="boardGameMainBtn">
+                        <button type="button" id="boardGameMainBtn">
                             보드게임
                         </button>
                     </div>
-
                 </div>
             </div>
 
             <!-- GOLD -->
-            <button type="button" id="goldBtn" class="studentInfoBtn goldCard">
-
+            <div id="goldBtn" class="studentInfoBtn goldCard">
                 <img class="studentCardImage" src="../imageStudent/골드.webp" alt="GOLD">
-
                 <div class="studentCardContent">
-
                     <div class="infoTitle">
                         GOLD
                     </div>
-
                     <div class="goldValue">
                         <strong id="studentGold">
                             0
                         </strong>
-
-                        <button
-                            type="button"
-                            id="goldShopMainBtn">
+                        <button type="button" id="goldShopMainBtn">
                             골드상점
                         </button>
                     </div>
-
                 </div>
-            </button>
-
+            </div>
         </section>
-
     </main>
 
     <!-- 출석 팝업 -->
     <div id="attendModal" class="attendModal hidden">
-
         <div class="attendModalBox">
-
-            <button
-                id="attendConfirmBtn"
-                type="button"
-                class="attendCloseBtn"
-                aria-label="닫기">
+            <button id="attendConfirmBtn" type="button" class="attendCloseBtn" aria-label="닫기">
             </button>
-
             <img id="resultAttendImage" src="" alt="출석하기">
-
             <div id="wisdomTitle" class="wisdomTitle">
             </div>
-
             <div id="wisdomMessage" class="wisdomMessage">
             </div>
-
             <div class="pointArea">
                 <div id="attendPoint" class="attendPoint">
                 </div>
             </div>
-
         </div>
     </div>
 
     <!-- 성실도 팝업 -->
     <div id="diligenceModal" class="studentModal hidden">
-
         <div class="studentModalBox">
-
-            <button
-                id="diligenceCloseBtn"
-                type="button"
-                class="studentCloseBtn"
-                aria-label="닫기">
+            <button id="diligenceCloseBtn" type="button" class="studentCloseBtn" aria-label="닫기">
             </button>
-
             <h2 class="diligenceModalTitle">
                 <strong id="diligenceModalScore">
                     94/100
@@ -177,102 +127,61 @@
                     나의 성실도
                 </span>
             </h2>
-
             <div id="diligenceContent"></div>
-
         </div>
     </div>
 
     <!-- POINT 팝업 -->
     <div id="pointModal" class="studentModal hidden">
-
         <div class="studentModalBox">
-
-            <button
-                type="button"
-                id="pointCloseBtn"
-                class="studentModalCloseBtn"
-                aria-label="닫기">
+            <button type="button" id="pointCloseBtn" class="studentModalCloseBtn" aria-label="닫기">
             </button>
-
             <h2 class="pointModalTitle">
-
-                <button
-                    type="button"
-                    id="boardGameBtn">
+                <button type="button" id="boardGameBtn">
                     보드게임
                 </button>
-
                 <span>
                     POINT
                 </span>
-
             </h2>
-
             <div id="pointContent"></div>
-
         </div>
     </div>
 
     <!-- GOLD 팝업 -->
     <div id="goldModal" class="studentModal hidden">
-
         <div class="studentModalBox">
-
-            <button
-                type="button"
-                id="goldCloseBtn"
-                class="studentModalCloseBtn"
-                aria-label="닫기">
+            <button type="button" id="goldCloseBtn" class="studentModalCloseBtn" aria-label="닫기">
             </button>
-
             <h2 class="goldModalTitle">
-
-                <button
-                    type="button"
-                    id="goldShopBtn">
+                <button type="button" id="goldShopBtn">
                     골드상점
                 </button>
-
                 <span>
                     GOLD
                 </span>
-
             </h2>
-
             <div id="goldContent"></div>
-
         </div>
     </div>
 
     <!-- 성실도 보상 팝업 -->
     <div id="rewardModal" class="studentModal hidden">
-
         <div class="studentModalBox">
-
             <div id="rewardTitle">
                 <span id="rewardMonth"></span>
                 <strong>
                     나의 성실도
                 </strong>
             </div>
-
             <div id="rewardContent">
-
                 <strong id="rewardGrade"></strong>
-
                 <p id="rewardScore"></p>
-
                 <strong id="rewardPoint"></strong>
-
-                <button
-                    type="button"
-                    id="rewardReceiveBtn">
+                <button type="button" id="rewardReceiveBtn">
                     상금받기
                 </button>
-
             </div>
-
         </div>
     </div>
 
@@ -281,15 +190,12 @@
 
     <!-- 하단 왼쪽 정보 -->
     <div class="footerLeft">
-
         <div class="footerLine1">
             위드엠투에스학원
         </div>
-
         <div class="footerLine2">
             경남 김해시 활천로 168, 2층
         </div>
-
     </div>
 
     <!-- 하단 오른쪽 정보 -->
@@ -301,7 +207,5 @@
     <script type="module" src="studentReward.js"></script>
     <script type="module" src="studentPoint.js"></script>
     <script type="module" src="student.js"></script>
-
 </body>
-
 </html>
