@@ -130,9 +130,12 @@
     background: #F58116;
 }
 
-.statusDot.absent,
-.statusDot.homeworkNotDone {
+.statusDot.absent {
     background: #CE0707;
+}
+
+.statusDot.homeworkNotDone {
+    background: #BDBDBD;
 }
 
 .statusDot.notStarted {

@@ -1,7 +1,6 @@
 /* studentGold.css */
 
 /* GOLD 팝업 */
-
 #goldModal .studentModalBox h2 {
     color: #F15B18;
 }
@@ -44,11 +43,95 @@
 }
 
 /* GOLD 내역 */
-
 #goldContent {
     width: calc(100% - 34px);
     max-height: 60dvh;
     margin: 1.8px auto 0;
     overflow-y: auto;
     overflow-x: hidden;
+}
+
+.goldHistoryRow {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    min-height: 34px;
+    padding: 7px 2px;
+    border-bottom: 1px solid #F0F0F0;
+}
+
+.goldHistoryDate {
+    flex: 0 0 82px;
+    margin-right: 4px;
+    color: #999999;
+    font-size: 12px;
+    font-weight: 400;
+    text-align: left;
+}
+
+.goldHistoryDetail {
+    flex: 1;
+    margin-right: 20px;
+    color: #333D43;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: left;
+}
+
+.goldHistorySign {
+    flex: 0 0 14px;
+    margin-right: 2px;
+    font-size: 14px;
+    font-weight: 700;
+    text-align: left;
+}
+
+.goldHistoryValue {
+    flex: 0 0 44px;
+    font-size: 14px;
+    font-weight: 700;
+    text-align: right;
+}
+
+.goldHistoryUnit {
+    flex: 0 0 14px;
+    margin-left: 1px;
+    font-size: 14px;
+    font-weight: 700;
+    text-align: left;
+}
+
+.goldHistoryPlus {
+    color: #1976D2;
+}
+
+.goldHistoryMinus {
+    color: #E53935;
+}
+
+.goldHistoryEmpty {
+    padding: 30px 0;
+    color: #999999;
+    font-size: 14px;
+    text-align: center;
+}
+
+/* 더보기 버튼 */
+.goldMoreBtn {
+    display: block;
+    width: 100%;
+    height: 36px;
+    margin: 10px 0 4px;
+    padding: 0;
+    border: none;
+    border-radius: 7px;
+    background: #F5F5F5;
+    color: #666666;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.goldMoreBtn:active {
+    transform: scale(0.98);
+    background: #EEEEEE;
 }

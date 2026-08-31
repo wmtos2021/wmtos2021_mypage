@@ -309,11 +309,17 @@ async function loadPreviousMonth() {
 
         if (records.length > 0) {
             renderRecords(records);
+        } else {
+            moreBtn.textContent = "더 이상 조회할 내용이 없습니다.";
+            moreBtn.disabled = true;
+            return;
         }
 
         if (loadedMonths.length >= MAX_MONTHS) {
-            removeMoreButton();
+            moreBtn.textContent = "과거 내역은 최대 2개월 조회 가능합니다.";
+            moreBtn.disabled = true;
         }
+
     } catch (error) {
         if (moreBtn) {
             moreBtn.disabled = false;
