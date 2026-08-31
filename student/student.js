@@ -21,6 +21,8 @@ const pointCloseBtn = document.getElementById("pointCloseBtn");
 const goldBtn = document.getElementById("goldBtn");
 const goldModal = document.getElementById("goldModal");
 const goldCloseBtn = document.getElementById("goldCloseBtn");
+const boardGameMainBtn = document.getElementById("boardGameMainBtn");
+const boardGameBtn = document.getElementById("boardGameBtn");
 
 // 학생 정보
 let studentInfo = null;
@@ -57,10 +59,10 @@ function loadStudentInfo() {
         `${(studentInfo.name || "학생").replace(/\d+$/g, "")}님`;
 
     studentPoint.textContent =
-        `${studentInfo.totalP || 0}P`;
+        `${(studentInfo.totalP || 0).toLocaleString()}P`;
 
     studentGold.textContent =
-        `${studentInfo.totalG || 0}G`;
+        `${(studentInfo.totalG || 0).toLocaleString()}G`;
 
     diligenceCount.textContent = todayDiligence;
     diligenceTotal.textContent = 100;
@@ -121,6 +123,15 @@ goldBtn.addEventListener("click", () => {
 
 goldCloseBtn.addEventListener("click", () => {
     goldModal.classList.add("hidden");
+});
+
+// 보드게임
+boardGameMainBtn.addEventListener("click", () => {
+    location.href = "../board/board.html";
+});
+
+boardGameBtn.addEventListener("click", () => {
+    location.href = "../board/board.html";
 });
 
 // 초기 학생 정보

@@ -194,7 +194,7 @@ button {
     position: absolute;
     left: 128px;
     top: 50%;
-    transform: translateY(-50%);
+    transform: translateY(-48%);
     color: #A52A2A;
     font-size: 68px;
     font-weight: 700;
@@ -217,8 +217,8 @@ button {
 .pointValue {
     display: flex;
     align-items: baseline;
-    gap: 4px;
     margin-top: 5px;
+    width: 100%;
 }
 
 .pointValue strong {
@@ -231,7 +231,7 @@ button {
 /* 보드게임 외부 버튼 */
 #boardGameMainBtn {
     height: 48px;
-    margin-left: 32px;
+    margin-left: auto;
     padding: 0 14px;
     border: none;
     border-radius: 10px;
