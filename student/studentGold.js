@@ -1,15 +1,8 @@
 // studentGold.js
 
 import {
-    ref,
-    get,
-    query,
-    orderByKey,
-    startAt,
-    endAt
-} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
-
-import { db } from "../firebase.js";
+    getGoldHistory
+} from "./studentGoldFirebase.js";
 
 const goldBtn = document.getElementById("goldBtn");
 const goldContent = document.getElementById("goldContent");
@@ -217,13 +210,35 @@ function createMoreButton() {
 }
 
 // 현재 월 표시
-function renderInitialHistory() {
+async function renderInitialHistory() {
     const historyData = getInitialGoldHistory();
     const monthKey = getMonthKey(new Date());
 
     loadedMonths = [monthKey];
 
-    const records = createMonthRecords(monthKey, historyData);
+    const deviceData = sessionStorage.getItem("deviceInfo");
+
+    if (deviceData) {
+        try {
+            const deviceInfo = JSON.parse(deviceData);
+            const mobile = deviceInfo.mobile;
+
+            if (mobile) {
+                const firebaseData =
+                    await getGoldHistory(mobile, monthKey);
+
+                historyData.board = firebaseData.board;
+                historyData.shop = firebaseData.shop;
+                historyData.reward = firebaseData.reward;
+            }
+        } catch (error) {
+        }
+    }
+
+    const records = createMonthRecords(
+        monthKey,
+        historyData
+    );
 
     if (records.length > 0) {
         renderRecords(records);
@@ -262,53 +277,17 @@ async function loadPreviousMonth() {
             return;
         }
 
-        const lastMonth = loadedMonths[loadedMonths.length - 1];
-        const previousMonth = getPreviousMonth(lastMonth);
-        const monthStart = `${previousMonth}-01`;
+        const lastMonth =
+            loadedMonths[loadedMonths.length - 1];
 
-        const [year, month] = previousMonth.split("-").map(Number);
-        const lastDate = new Date(year, month, 0).getDate();
-        const monthEnd =
-            `${previousMonth}-${String(lastDate).padStart(2, "0")}`;
+        const previousMonth =
+            getPreviousMonth(lastMonth);
 
-        const boardSnapshot = await get(
-            query(
-                ref(db, `history/${mobile}/board`),
-                orderByKey(),
-                startAt(monthStart),
-                endAt(monthEnd)
-            )
-        );
-
-        const shopSnapshot = await get(
-            query(
-                ref(db, `history/${mobile}/shop`),
-                orderByKey(),
-                startAt(monthStart),
-                endAt(monthEnd)
-            )
-        );
-
-        const rewardSnapshot = await get(
-            query(
-                ref(db, `history/${mobile}/reward`),
-                orderByKey(),
-                startAt(previousMonth),
-                endAt(previousMonth)
-            )
-        );
-
-        const historyData = {
-            board: boardSnapshot.exists()
-                ? boardSnapshot.val()
-                : {},
-            shop: shopSnapshot.exists()
-                ? shopSnapshot.val()
-                : {},
-            reward: rewardSnapshot.exists()
-                ? rewardSnapshot.val()
-                : {}
-        };
+        const historyData =
+            await getGoldHistory(
+                mobile,
+                previousMonth
+            );
 
         loadedMonths.push(previousMonth);
 
@@ -324,6 +303,7 @@ async function loadPreviousMonth() {
         if (loadedMonths.length >= MAX_MONTHS) {
             removeMoreButton();
         }
+
     } catch (error) {
         if (moreBtn) {
             moreBtn.disabled = false;
@@ -351,14 +331,17 @@ function showMoreButton() {
         return;
     }
 
-    goldContent.appendChild(createMoreButton());
+    goldContent.appendChild(
+        createMoreButton()
+    );
 }
 
 // GOLD 팝업 열기
-goldBtn.addEventListener("click", () => {
+goldBtn.addEventListener("click", async () => {
     goldContent.innerHTML = "";
 
-    const hasRecord = renderInitialHistory();
+    const hasRecord =
+        await renderInitialHistory();
 
     if (!hasRecord) {
         const empty = document.createElement("div");

@@ -1,15 +1,8 @@
 // studentPoint.js
 
 import {
-    ref,
-    get,
-    query,
-    orderByKey,
-    startAt,
-    endAt
-} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
-
-import { db } from "../firebase.js";
+    getPointHistory
+} from "./studentPointFirebase.js";
 
 const pointBtn = document.getElementById("pointBtn");
 const pointContent = document.getElementById("pointContent");
@@ -231,31 +224,23 @@ async function renderInitialHistory() {
             const mobile = deviceInfo.mobile;
 
             if (mobile) {
-                const monthStart = `${monthKey}-01`;
-                const [year, month] = monthKey.split("-").map(Number);
-                const lastDate = new Date(year, month, 0).getDate();
-                const monthEnd =
-                    `${monthKey}-${String(lastDate).padStart(2, "0")}`;
-
-                const attendanceSnapshot = await get(
-                    query(
-                        ref(db, `history/${mobile}/attendance`),
-                        orderByKey(),
-                        startAt(monthStart),
-                        endAt(monthEnd)
-                    )
-                );
+                const firebaseData =
+                    await getPointHistory(
+                        mobile,
+                        monthKey
+                    );
 
                 historyData.attendance =
-                    attendanceSnapshot.exists()
-                        ? attendanceSnapshot.val()
-                        : {};
+                    firebaseData.attendance;
             }
         } catch (error) {
         }
     }
 
-    const records = createMonthRecords(monthKey, historyData);
+    const records = createMonthRecords(
+        monthKey,
+        historyData
+    );
 
     if (records.length > 0) {
         renderRecords(records);
@@ -273,7 +258,8 @@ async function loadPreviousMonth() {
 
     loadingMore = true;
 
-    const moreBtn = document.getElementById("pointMoreBtn");
+    const moreBtn =
+        document.getElementById("pointMoreBtn");
 
     if (moreBtn) {
         moreBtn.disabled = true;
@@ -281,74 +267,54 @@ async function loadPreviousMonth() {
     }
 
     try {
-        const deviceData = sessionStorage.getItem("deviceInfo");
+        const deviceData =
+            sessionStorage.getItem("deviceInfo");
 
         if (!deviceData) {
             return;
         }
 
-        const deviceInfo = JSON.parse(deviceData);
+        const deviceInfo =
+            JSON.parse(deviceData);
+
         const mobile = deviceInfo.mobile;
 
         if (!mobile) {
             return;
         }
 
-        const lastMonth = loadedMonths[loadedMonths.length - 1];
-        const previousMonth = getPreviousMonth(lastMonth);
-        const monthStart = `${previousMonth}-01`;
+        const lastMonth =
+            loadedMonths[loadedMonths.length - 1];
 
-        const [year, month] = previousMonth.split("-").map(Number);
-        const lastDate = new Date(year, month, 0).getDate();
-        const monthEnd = `${previousMonth}-${String(lastDate).padStart(2, "0")}`;
+        const previousMonth =
+            getPreviousMonth(lastMonth);
 
-        const attendanceSnapshot = await get(
-            query(
-                ref(db, `history/${mobile}/attendance`),
-                orderByKey(),
-                startAt(monthStart),
-                endAt(monthEnd)
-            )
-        );
-
-        const boardSnapshot = await get(
-            query(
-                ref(db, `history/${mobile}/board`),
-                orderByKey(),
-                startAt(monthStart),
-                endAt(monthEnd)
-            )
-        );
-
-        const rewardSnapshot = await get(
-            query(
-                ref(db, `history/${mobile}/reward`),
-                orderByKey(),
-                startAt(previousMonth),
-                endAt(previousMonth)
-            )
-        );
-
-        const historyData = {
-            attendance: attendanceSnapshot.exists() ? attendanceSnapshot.val() : {},
-            board: boardSnapshot.exists() ? boardSnapshot.val() : {},
-            reward: rewardSnapshot.exists() ? rewardSnapshot.val() : {}
-        };
+        const historyData =
+            await getPointHistory(
+                mobile,
+                previousMonth
+            );
 
         loadedMonths.push(previousMonth);
 
-        const records = createMonthRecords(previousMonth, historyData);
+        const records =
+            createMonthRecords(
+                previousMonth,
+                historyData
+            );
 
         if (records.length > 0) {
             renderRecords(records);
         } else {
-            moreBtn.textContent = "더 이상 조회할 내용이 없습니다.";
+            moreBtn.textContent =
+                "더 이상 조회할 내용이 없습니다.";
             moreBtn.disabled = true;
             return;
         }
 
         if (loadedMonths.length >= MAX_MONTHS) {
-            moreBtn.textContent = "과거 내역은 최대 2개월 조회 가능합니다.";
+            moreBtn.textContent =
+                "과거 내역은 최대 2개월 조회 가능합니다.";
             moreBtn.disabled = true;
         }
 
@@ -364,7 +330,8 @@ async function loadPreviousMonth() {
 
 // 더보기 버튼 제거
 function removeMoreButton() {
-    const moreBtn = document.getElementById("pointMoreBtn");
+    const moreBtn =
+        document.getElementById("pointMoreBtn");
 
     if (moreBtn) {
         moreBtn.remove();
@@ -379,19 +346,28 @@ function showMoreButton() {
         return;
     }
 
-    pointContent.appendChild(createMoreButton());
+    pointContent.appendChild(
+        createMoreButton()
+    );
 }
 
 // POINT 팝업 열기
 pointBtn.addEventListener("click", async () => {
     pointContent.innerHTML = "";
 
-    const hasRecord = await renderInitialHistory();
+    const hasRecord =
+        await renderInitialHistory();
 
     if (!hasRecord) {
-        const empty = document.createElement("div");
-        empty.className = "pointHistoryEmpty";
-        empty.textContent = "POINT 내역이 없습니다.";
+        const empty =
+            document.createElement("div");
+
+        empty.className =
+            "pointHistoryEmpty";
+
+        empty.textContent =
+            "POINT 내역이 없습니다.";
+
         pointContent.appendChild(empty);
     }
 

@@ -1,14 +1,8 @@
 // studentDiligence.js
 
-import {
-    handleAttend
-} from "../attend/attend.js";
-import {
-    renderCalendarDays
-} from "./diligenceCalendar.js";
-import {
-    getPreviousRecords
-} from "./studentFirebase.js";
+import { handleAttend } from "../attend/attend.js";
+import { renderCalendarDays } from "./diligenceCalendar.js";
+import { getPreviousRecords } from "./studentDiligenceFirebase.js";
 
 let currentDate = new Date();
 let studentInfo = null;
@@ -25,7 +19,8 @@ export function setDiligenceData(info, records, diligence) {
 
 // 성실도 점수 가져오기
 function getMonthDiligence(year, month) {
-    const monthKey = `${year}-${String(month + 1).padStart(2, "0")}`;
+    const monthKey =
+        `${year}-${String(month + 1).padStart(2, "0")}`;
 
     if (diligenceRecords[monthKey] === undefined) {
         return 100;
@@ -81,16 +76,19 @@ function updateDiligenceScore() {
         currentDate.getMonth()
     );
 
-    const diligenceModalScore = document.getElementById("diligenceModalScore");
+    const diligenceModalScore =
+        document.getElementById("diligenceModalScore");
 
     if (diligenceModalScore) {
-        diligenceModalScore.textContent = `${score}/100`;
+        diligenceModalScore.textContent =
+            `${score}/100`;
     }
 }
 
 // 성실도 달력 표시
 export async function renderDiligenceCalendar() {
-    const diligenceContent = document.getElementById("diligenceContent");
+    const diligenceContent =
+        document.getElementById("diligenceContent");
 
     if (!diligenceContent) {
         return;
@@ -164,44 +162,56 @@ export async function renderDiligenceCalendar() {
         </div>
     `;
 
-    document.getElementById("prevMonthBtn").addEventListener("click", async () => {
-        if (isMinMonth) {
-            return;
-        }
+    document
+        .getElementById("prevMonthBtn")
+        .addEventListener("click", async () => {
+            if (isMinMonth) {
+                return;
+            }
 
-        await loadPreviousRecords();
+            await loadPreviousRecords();
 
-        currentDate.setMonth(
-            currentDate.getMonth() - 1
-        );
+            currentDate.setMonth(
+                currentDate.getMonth() - 1
+            );
 
-        renderDiligenceCalendar();
-    });
+            renderDiligenceCalendar();
+        });
 
-    document.getElementById("nextMonthBtn").addEventListener("click", () => {
-        if (isCurrentMonth) {
-            return;
-        }
+    document
+        .getElementById("nextMonthBtn")
+        .addEventListener("click", () => {
+            if (isCurrentMonth) {
+                return;
+            }
 
-        currentDate.setMonth(
-            currentDate.getMonth() + 1
-        );
+            currentDate.setMonth(
+                currentDate.getMonth() + 1
+            );
 
-        renderDiligenceCalendar();
-    });
+            renderDiligenceCalendar();
+        });
 
-    const attendBtn = document.getElementById("todayAttendBtn");
+    const attendBtn =
+        document.getElementById("todayAttendBtn");
 
     if (attendBtn) {
-        attendBtn.addEventListener("click", handleAttend);
+        attendBtn.addEventListener(
+            "click",
+            handleAttend
+        );
     }
 }
 
 // 출석 완료 후 출석 버튼 제거
-document.addEventListener("attendanceCompleted", () => {
-    const attendBtn = document.getElementById("todayAttendBtn");
+document.addEventListener(
+    "attendanceCompleted",
+    () => {
+        const attendBtn =
+            document.getElementById("todayAttendBtn");
 
-    if (attendBtn) {
-        attendBtn.remove();
+        if (attendBtn) {
+            attendBtn.remove();
+        }
     }
-});
+);
