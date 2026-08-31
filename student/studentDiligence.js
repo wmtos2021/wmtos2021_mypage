@@ -1,6 +1,9 @@
 // studentDiligence.js
 
-import { handleAttend } from "../attend/attend.js";
+import {
+    handleAttend,
+    waitTodayInfo
+} from "../attend/attend.js";
 import { renderCalendarDays } from "./diligenceCalendar.js";
 import { getPreviousRecords } from "./studentDiligenceFirebase.js";
 
@@ -93,6 +96,8 @@ export async function renderDiligenceCalendar() {
     if (!diligenceContent) {
         return;
     }
+
+    await waitTodayInfo();
 
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth();
