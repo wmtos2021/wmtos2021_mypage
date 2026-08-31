@@ -59,10 +59,10 @@ function loadStudentInfo() {
         `${(studentInfo.name || "학생").replace(/\d+$/g, "")}님`;
 
     studentPoint.textContent =
-        `${(studentInfo.totalP || 0).toLocaleString()}P`;
+        `${(studentInfo.totalP || 0).toLocaleString()}`;
 
     studentGold.textContent =
-        `${(studentInfo.totalG || 0).toLocaleString()}G`;
+        `${(studentInfo.totalG || 0).toLocaleString()}`;
 
     diligenceCount.textContent = todayDiligence;
     diligenceTotal.textContent = 100;
