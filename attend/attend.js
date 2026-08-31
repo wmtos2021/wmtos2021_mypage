@@ -192,6 +192,24 @@ export async function handleAttend() {
             attendSc = 2;
         }
 
+        // 출석 기록 저장
+        const saved = await saveAttendHistory(
+            todayMobile,
+            today,
+            attendTime,
+            attend,
+            attendSc,
+            getP
+        );
+
+        if (!saved) {
+            showAttendMessage("이미 출석을 완료했어요!");
+            return false;
+        }
+
+        // POINT 누적
+        await updateTotalP(todayMobile, getP);
+
         // 오늘의 명언
         const wisdom = getWisdom(todayWisdom);
 
@@ -202,29 +220,18 @@ export async function handleAttend() {
             wisdom.title,
             wisdom.message,
             async () => {
-                const saved = await saveAttendHistory(
-                    todayMobile,
-                    today,
-                    attendTime,
-                    attend,
-                    attendSc,
-                    getP,
-                    todayName
+                todayWisdom = await updateWisdom(
+                    deviceId,
+                    todayWisdom
                 );
 
-                if (saved) {
-                    await updateTotalP(todayMobile, getP);
-
-                    document.dispatchEvent(
-                        new CustomEvent("attendanceCompleted", {
-                            detail: {
-                                point: getP
-                            }
-                        })
-                    );
-                }
-
-                todayWisdom = await updateWisdom(deviceId, todayWisdom);
+                document.dispatchEvent(
+                    new CustomEvent("attendanceCompleted", {
+                        detail: {
+                            point: getP
+                        }
+                    })
+                );
             }
         );
 
