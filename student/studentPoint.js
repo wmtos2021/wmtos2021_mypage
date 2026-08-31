@@ -217,11 +217,43 @@ function createMoreButton() {
 }
 
 // 현재 월 표시
-function renderInitialHistory() {
+async function renderInitialHistory() {
     const historyData = getInitialPointHistory();
     const monthKey = getMonthKey(new Date());
 
     loadedMonths = [monthKey];
+
+    const deviceData = sessionStorage.getItem("deviceInfo");
+
+    if (deviceData) {
+        try {
+            const deviceInfo = JSON.parse(deviceData);
+            const mobile = deviceInfo.mobile;
+
+            if (mobile) {
+                const monthStart = `${monthKey}-01`;
+                const [year, month] = monthKey.split("-").map(Number);
+                const lastDate = new Date(year, month, 0).getDate();
+                const monthEnd =
+                    `${monthKey}-${String(lastDate).padStart(2, "0")}`;
+
+                const attendanceSnapshot = await get(
+                    query(
+                        ref(db, `history/${mobile}/attendance`),
+                        orderByKey(),
+                        startAt(monthStart),
+                        endAt(monthEnd)
+                    )
+                );
+
+                historyData.attendance =
+                    attendanceSnapshot.exists()
+                        ? attendanceSnapshot.val()
+                        : {};
+            }
+        } catch (error) {
+        }
+    }
 
     const records = createMonthRecords(monthKey, historyData);
 
@@ -351,10 +383,10 @@ function showMoreButton() {
 }
 
 // POINT 팝업 열기
-pointBtn.addEventListener("click", () => {
+pointBtn.addEventListener("click", async () => {
     pointContent.innerHTML = "";
 
-    const hasRecord = renderInitialHistory();
+    const hasRecord = await renderInitialHistory();
 
     if (!hasRecord) {
         const empty = document.createElement("div");

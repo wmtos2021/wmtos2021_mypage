@@ -158,6 +158,21 @@ goldShopBtn.addEventListener("click", (event) => {
     location.href = "../shop/shop.html";
 });
 
+// 출석 완료
+document.addEventListener("attendanceCompleted", (event) => {
+    const point = Number(event.detail?.point || 0);
+
+    if (point <= 0) {
+        return;
+    }
+
+    const currentPoint =
+        Number(studentPoint.textContent.replace(/,/g, "")) || 0;
+
+    studentPoint.textContent =
+        `${(currentPoint + point).toLocaleString()}`;
+});
+
 // 초기 학생 정보
 async function initializeStudent() {
     const sessionValid = await checkSession();

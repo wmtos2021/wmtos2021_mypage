@@ -216,7 +216,11 @@ export async function handleAttend() {
                     await updateTotalP(todayMobile, getP);
 
                     document.dispatchEvent(
-                        new CustomEvent("attendanceCompleted")
+                        new CustomEvent("attendanceCompleted", {
+                            detail: {
+                                point: getP
+                            }
+                        })
                     );
                 }
 

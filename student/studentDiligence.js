@@ -196,3 +196,12 @@ export async function renderDiligenceCalendar() {
         attendBtn.addEventListener("click", handleAttend);
     }
 }
+
+// 출석 완료 후 출석 버튼 제거
+document.addEventListener("attendanceCompleted", () => {
+    const attendBtn = document.getElementById("todayAttendBtn");
+
+    if (attendBtn) {
+        attendBtn.remove();
+    }
+});
