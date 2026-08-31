@@ -11,12 +11,12 @@
 
 #rewardMonth {
     font-size: 16px;
-    font-weight: 400;
+    font-weight: 700;
     color: #333333;
 }
 
 #rewardTitle strong {
-    font-size: 21px;
+    font-size: 24px;
     font-weight: 700;
 }
 
@@ -29,6 +29,7 @@
 }
 
 #rewardGrade {
+    margin-top: 10px;
     color: #A52A2A;
     font-size: 68px;
     font-weight: 700;
@@ -42,9 +43,17 @@
 }
 
 #rewardScore {
-    margin-top: 10px;
+    margin-top: 0;
     font-size: 22px;
     font-weight: 700;
+    color: #333D43;
+}
+
+#rewardScore strong {
+    color: #FF4F93;
+}
+
+#rewardScore span {
     color: #333D43;
 }
 

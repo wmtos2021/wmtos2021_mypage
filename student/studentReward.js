@@ -84,7 +84,9 @@ function showRewardPopup(monthKey, score, reward) {
             ? "A<sup>+</sup>"
             : reward.grade;
 
-    rewardScore.textContent = `${score}/100`;
+    rewardScore.innerHTML = `
+        <strong>${score}</strong><span>/100</span>
+    `;
 
     if (reward.gold > 0) {
         rewardPoint.textContent = `${reward.gold}G`;
