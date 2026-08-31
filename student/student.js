@@ -23,6 +23,8 @@ const goldModal = document.getElementById("goldModal");
 const goldCloseBtn = document.getElementById("goldCloseBtn");
 const boardGameMainBtn = document.getElementById("boardGameMainBtn");
 const boardGameBtn = document.getElementById("boardGameBtn");
+const goldShopMainBtn = document.getElementById("goldShopMainBtn");
+const goldShopBtn = document.getElementById("goldShopBtn");
 
 // 학생 정보
 let studentInfo = null;
@@ -126,12 +128,25 @@ goldCloseBtn.addEventListener("click", () => {
 });
 
 // 보드게임
-boardGameMainBtn.addEventListener("click", () => {
+boardGameMainBtn.addEventListener("click", (event) => {
+    event.stopPropagation();
     location.href = "../board/board.html";
 });
 
-boardGameBtn.addEventListener("click", () => {
+boardGameBtn.addEventListener("click", (event) => {
+    event.stopPropagation();
     location.href = "../board/board.html";
+});
+
+// 골드상점
+goldShopMainBtn.addEventListener("click", (event) => {
+    event.stopPropagation();
+    location.href = "../shop/shop.html";
+});
+
+goldShopBtn.addEventListener("click", (event) => {
+    event.stopPropagation();
+    location.href = "../shop/shop.html";
 });
 
 // 초기 학생 정보
