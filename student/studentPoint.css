@@ -1,18 +1,17 @@
 /* studentPoint.css */
 
 /* POINT 팝업 */
-
 #pointModal .studentModalBox h2 {
     color: #EBB000;
 }
-
 .pointModalTitle {
     position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
+    padding-bottom: 30px;
+    border-bottom: 1px solid #E5E5E5;
 }
-
 .pointModalTitle button {
     position: absolute;
     left: 18px;
@@ -28,11 +27,68 @@
     font-weight: 700;
     line-height: 1;
 }
-
 .pointModalTitle span {
     margin: 0 auto;
 }
-
 .pointModalTitle button:active {
     transform: scale(0.95);
+}
+
+/* POINT 내역 */
+#pointContent {
+    width: 100%;
+    margin-top: 1.8px;
+}
+.pointHistoryRow {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    min-height: 34px;
+    padding: 7px 2px;
+    border-bottom: 1px solid #F0F0F0;
+}
+.pointHistoryDate {
+    flex: 0 0 82px;
+    color: #999999;
+    font-size: 12px;
+    font-weight: 400;
+    text-align: left;
+}
+.pointHistoryDetail {
+    flex: 1;
+    color: #333D43;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: left;
+}
+.pointHistorySign {
+    flex: 0 0 18px;
+    font-size: 14px;
+    font-weight: 700;
+    text-align: center;
+}
+.pointHistoryValue {
+    flex: 0 0 72px;
+    font-size: 14px;
+    font-weight: 700;
+    text-align: right;
+}
+.pointHistoryUnit {
+    flex: 0 0 18px;
+    margin-left: 3px;
+    font-size: 14px;
+    font-weight: 700;
+    text-align: left;
+}
+.pointHistoryPlus {
+    color: #1976D2;
+}
+.pointHistoryMinus {
+    color: #E53935;
+}
+.pointHistoryEmpty {
+    padding: 30px 0;
+    color: #999999;
+    font-size: 14px;
+    text-align: center;
 }

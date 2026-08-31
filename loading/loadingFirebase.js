@@ -44,7 +44,7 @@ export async function loadStudentData() {
     const monthKey = today.slice(0, 7);
 
     const historySnapshot = await get(
-        ref(db, `history/${mobile}/diligence`)
+        ref(db, `history/${mobile}/attendance`)
     );
 
     const diligenceSnapshot = await get(

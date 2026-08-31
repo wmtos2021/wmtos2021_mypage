@@ -27,9 +27,9 @@ export async function getStudentInfo(mobile) {
     return snapshot.val();
 }
 
-// 학생 성실도 기록 가져오기
+// 학생 출석 기록 가져오기
 export async function getAttendRecords(mobile) {
-    const snapshot = await get(ref(db, `history/${mobile}/diligence`));
+    const snapshot = await get(ref(db, `history/${mobile}/attendance`));
     if (!snapshot.exists()) {
         return {};
     }
@@ -47,7 +47,7 @@ export async function getDiligenceRecords(mobile) {
 
 // 오늘 출석 여부 확인
 export async function checkTodayAttend(mobile, date) {
-    const snapshot = await get(ref(db, `history/${mobile}/diligence/${date}`));
+    const snapshot = await get(ref(db, `history/${mobile}/attendance/${date}`));
     return snapshot.exists();
 }
 
@@ -81,7 +81,7 @@ export async function updateWisdom(deviceId, wisdom) {
 
 // 출석 기록 저장
 export async function saveAttendHistory(mobile, date, time, attend, attendSc, getP, name) {
-    const historyRef = ref(db, `history/${mobile}/diligence/${date}/${time}`);
+    const historyRef = ref(db, `history/${mobile}/attendance/${date}/${time}`);
     const snapshot = await get(historyRef);
     if (snapshot.exists()) {
         return false;
