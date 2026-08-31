@@ -194,13 +194,15 @@ button {
 
 /* POINT 카드 */
 .pointCard .infoTitle {
+    position: relative;
+    top: -6px;
     color: #EBB000;
 }
 .pointValue {
     position: relative;
     display: flex;
     align-items: baseline;
-    margin-top: 5px;
+    margin-top: -4px;
     width: 100%;
 }
 .pointValue strong {
@@ -225,7 +227,7 @@ button {
     font-weight: 700;
     line-height: 1;
     white-space: nowrap;
-    transform: translateY(-50%);
+    transform: translateY(-78%);
 }
 #boardGameMainBtn:active {
     transform: translateY(-50%) scale(0.97);
@@ -233,13 +235,15 @@ button {
 
 /* GOLD 카드 */
 .goldCard .infoTitle {
+    position: relative;
+    top: -6px;
     color: #F15B18;
 }
 .goldValue {
     position: relative;
     display: flex;
     align-items: baseline;
-    margin-top: 5px;
+    margin-top: -4px;
     width: 100%;
 }
 .goldValue strong {
@@ -264,7 +268,7 @@ button {
     font-weight: 700;
     line-height: 1;
     white-space: nowrap;
-    transform: translateY(-50%);
+    transform: translateY(-78%);
 }
 #goldShopMainBtn:active {
     transform: translateY(-50%) scale(0.97);

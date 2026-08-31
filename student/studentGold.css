@@ -1,7 +1,38 @@
 /* studentGold.css */
 
-
 /* GOLD 팝업 */
+
 #goldModal .studentModalBox h2 {
     color: #F15B18;
+}
+
+.goldModalTitle {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.goldModalTitle button {
+    position: absolute;
+    left: 18px;
+    margin-top: 6px;
+    min-width: 64px;
+    height: 28px;
+    padding: 0 10px;
+    border: none;
+    border-radius: 7px;
+    background: #F15B18;
+    color: #FFFFFF;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.goldModalTitle span {
+    margin: 0 auto;
+}
+
+.goldModalTitle button:active {
+    transform: scale(0.95);
 }
