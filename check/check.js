@@ -6,7 +6,7 @@ import {
     getAuthUser
 } from "./checkFirebase.js";
 
-import { startSession } from "../session.js";
+import { startSession } from "../end/session.js";
 
 const checkMessage = document.getElementById("checkMessage");
 const locationModal = document.getElementById("locationModal");

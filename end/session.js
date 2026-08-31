@@ -5,7 +5,7 @@ import {
     onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
 
-import { auth } from "./firebase.js";
+import { auth } from "../firebase.js";
 
 const SESSION_TIME = 5 * 60 * 1000;
 const SESSION_KEY = "sessionExpiresAt";
@@ -29,7 +29,7 @@ export function startSession() {
     startSessionTimer();
 }
 
-// 세션 만료 시간 가져오기
+// 세션 만료 시간
 function getSessionExpiresAt() {
     const value = sessionStorage.getItem(SESSION_KEY);
 
@@ -46,7 +46,7 @@ function getSessionExpiresAt() {
     return expiresAt;
 }
 
-// 세션 타이머 시작
+// 세션 타이머
 function startSessionTimer() {
     if (sessionTimer) {
         clearTimeout(sessionTimer);
@@ -78,20 +78,14 @@ function updateSession() {
 
     const expiresAt = getSessionExpiresAt();
 
-    if (!expiresAt) {
-        return;
-    }
-
-    if (expiresAt <= Date.now()) {
+    if (!expiresAt || expiresAt <= Date.now()) {
         expireSession();
         return;
     }
 
-    const newExpiresAt = Date.now() + SESSION_TIME;
-
     sessionStorage.setItem(
         SESSION_KEY,
-        String(newExpiresAt)
+        String(Date.now() + SESSION_TIME)
     );
 
     startSessionTimer();
@@ -104,6 +98,8 @@ function clearSessionData() {
     sessionStorage.removeItem("deviceInfo");
     sessionStorage.removeItem("attendRecords");
     sessionStorage.removeItem("diligence");
+    sessionStorage.removeItem("pointHistory");
+    sessionStorage.removeItem("goldHistory");
 }
 
 // 세션 만료
@@ -125,56 +121,10 @@ async function expireSession() {
     try {
         await signOut(auth);
     } catch (error) {
-        // 로그아웃 실패와 관계없이 진행
+        // 로그아웃 실패와 관계없이 종료 페이지로 이동
     }
 
-    showSessionExpiredMessage();
-}
-
-// 세션 만료 안내
-function showSessionExpiredMessage() {
-    const sessionExpiredModal = document.getElementById("sessionExpired");
-    const sessionExpiredMessage = document.getElementById("sessionExpiredMessage");
-    const sessionExpiredOk = document.getElementById("sessionExpiredOk");
-
-    if (!sessionExpiredModal || !sessionExpiredMessage || !sessionExpiredOk) {
-        location.replace("../login/login.html");
-        return;
-    }
-
-    sessionExpiredMessage.textContent =
-        "세션이 만료되었습니다.\n다시 로그인해주세요.";
-
-    sessionExpiredModal.classList.remove("hidden");
-
-    sessionExpiredOk.onclick = () => {
-        location.replace("../login/login.html");
-    };
-}
-
-// 세션 종료
-export async function logoutSession() {
-    if (sessionExpired) {
-        return;
-    }
-
-    sessionExpired = true;
-    sessionStarted = false;
-
-    if (sessionTimer) {
-        clearTimeout(sessionTimer);
-        sessionTimer = null;
-    }
-
-    clearSessionData();
-
-    try {
-        await signOut(auth);
-    } catch (error) {
-        // 로그아웃 실패와 관계없이 진행
-    }
-
-    location.replace("../login/login.html");
+    location.replace("../end/end.html");
 }
 
 // Firebase 로그인 상태 확인
@@ -195,7 +145,7 @@ export async function checkSession() {
     const expiresAt = getSessionExpiresAt();
 
     if (!expiresAt) {
-        location.replace("../login/login.html");
+        location.replace("../end/end.html");
         return false;
     }
 
@@ -208,11 +158,13 @@ export async function checkSession() {
 
     if (!user) {
         clearSessionData();
-        location.replace("../login/login.html");
+        location.replace("../end/end.html");
         return false;
     }
 
     sessionStarted = true;
+    sessionExpired = false;
+
     startSessionTimer();
 
     return true;
@@ -223,10 +175,12 @@ function setupActivityDetection() {
     const events = [
         "click",
         "touchstart",
-        "keydown"
+        "pointerdown",
+        "keydown",
+        "scroll"
     ];
 
-    events.forEach(eventName => {
+    events.forEach((eventName) => {
         document.addEventListener(
             eventName,
             updateSession,
@@ -237,20 +191,23 @@ function setupActivityDetection() {
 
 // 페이지가 다시 표시될 때 세션 확인
 function setupPageShowDetection() {
-    window.addEventListener("pageshow", async () => {
-        if (!sessionStarted || sessionExpired) {
-            return;
+    window.addEventListener(
+        "pageshow",
+        async () => {
+            if (!sessionStarted || sessionExpired) {
+                return;
+            }
+
+            const expiresAt = getSessionExpiresAt();
+
+            if (!expiresAt || expiresAt <= Date.now()) {
+                await expireSession();
+                return;
+            }
+
+            startSessionTimer();
         }
-
-        const expiresAt = getSessionExpiresAt();
-
-        if (!expiresAt || expiresAt <= Date.now()) {
-            await expireSession();
-            return;
-        }
-
-        startSessionTimer();
-    });
+    );
 }
 
 // 세션 초기화

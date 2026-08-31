@@ -6,7 +6,7 @@ import {
     loginStudent
 } from "./loginFirebase.js";
 
-import { startSession } from "../session.js";
+import { startSession } from "../end/session.js";
 
 // HTML 요소
 const phoneInput = document.getElementById("phoneInput");

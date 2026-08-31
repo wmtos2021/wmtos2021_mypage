@@ -131,8 +131,7 @@ body {
     text-align: center;
 }
 
-#phoneErrorMessage,
-#sessionExpiredMessage {
+#phoneErrorMessage {
     margin-bottom: 20px;
     font-size: 14px;
     line-height: 1.5;
@@ -140,8 +139,7 @@ body {
     white-space: pre-line;
 }
 
-#phoneErrorOk,
-#sessionExpiredOk {
+#phoneErrorOk {
     width: 100%;
     height: 45px;
     border: none;
@@ -153,8 +151,7 @@ body {
     cursor: pointer;
 }
 
-#phoneErrorOk:active,
-#sessionExpiredOk:active {
+#phoneErrorOk:active {
     background: #087E78;
 }
 

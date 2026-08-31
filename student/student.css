@@ -234,7 +234,7 @@ button {
 /* 보드게임 외부 버튼 */
 #boardGameMainBtn {
     position: absolute;
-    right: -8px;
+    right: -12px;
     top: 50%;
     height: 48px;
     padding: 0 14px;
@@ -277,7 +277,7 @@ button {
 /* 골드상점 외부 버튼 */
 #goldShopMainBtn {
     position: absolute;
-    right: -8px;
+    right: -12px;
     top: 50%;
     height: 48px;
     padding: 0 14px;
@@ -388,32 +388,6 @@ button {
 .studentModalCloseBtn:active,
 .studentCloseBtn:active {
     transform: scale(0.9);
-}
-
-
-/* 세션 만료 */
-#sessionExpiredMessage {
-    margin-bottom: 20px;
-    font-size: 14px;
-    line-height: 1.5;
-    color: #444444;
-    white-space: pre-line;
-}
-
-#sessionExpiredOk {
-    width: 100%;
-    height: 45px;
-    border: none;
-    border-radius: 8px;
-    background: #0CA19B;
-    color: #FFFFFF;
-    font-size: 15px;
-    font-weight: 600;
-    cursor: pointer;
-}
-
-#sessionExpiredOk:active {
-    background: #087E78;
 }
 
 

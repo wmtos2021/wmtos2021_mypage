@@ -5,7 +5,7 @@ import {
     renderDiligenceCalendar
 } from "./studentDiligence.js";
 
-import { checkSession } from "../session.js";
+import { checkSession } from "../end/session.js";
 
 // 뒤로가기 방지
 history.pushState(null, "", location.href);

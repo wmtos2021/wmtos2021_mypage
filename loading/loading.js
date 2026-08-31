@@ -4,6 +4,8 @@ import {
     loadStudentData
 } from "./loadingFirebase.js";
 
+import { checkSession } from "../end/session.js";
+
 const dot1 = document.querySelector(".loadingDots i:nth-child(1)");
 const dot2 = document.querySelector(".loadingDots i:nth-child(2)");
 const dot3 = document.querySelector(".loadingDots i:nth-child(3)");
@@ -32,7 +34,7 @@ function dotAnimation() {
                 }, 700);
             }, 700);
         }, 700);
-    }, 500);
+    }, 700);
 }
 
 dotAnimation();
@@ -40,6 +42,12 @@ dotAnimation();
 // 학생 기본 정보 준비
 async function startLoading() {
     try {
+        const sessionValid = await checkSession();
+
+        if (!sessionValid) {
+            return;
+        }
+
         const loaded = await loadStudentData();
 
         if (!loaded) {
