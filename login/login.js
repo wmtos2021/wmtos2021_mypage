@@ -293,7 +293,9 @@ pwOk.addEventListener(
 
             // 로그인 세션 시작
             startSession();
-
+            alert(
+                `로그인 직후 세션값: ${sessionStorage.getItem("sessionExpiresAt")}`
+            );
             joinModal.classList.add("hidden");
             resetPopupPosition(joinModal);
 
@@ -355,7 +357,9 @@ passwordOk.addEventListener(
 
             // 로그인 세션 시작
             startSession();
-
+            alert(
+                `로그인 직후 세션값: ${sessionStorage.getItem("sessionExpiresAt")}`
+            );
             loginModal.classList.add("hidden");
             resetPopupPosition(loginModal);
 

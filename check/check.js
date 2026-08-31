@@ -6,6 +6,8 @@ import {
     getAuthUser
 } from "./checkFirebase.js";
 
+import { startSession } from "../session.js";
+
 const checkMessage = document.getElementById("checkMessage");
 const locationModal = document.getElementById("locationModal");
 const locationMessage = document.getElementById("locationMessage");
@@ -150,6 +152,7 @@ async function checkLogin() {
 
         // 정상 로그인
         if (isLogin) {
+            startSession();
             await movePage("../loading/loading.html");
             return;
         }

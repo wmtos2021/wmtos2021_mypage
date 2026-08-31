@@ -393,6 +393,32 @@ button {
 }
 
 
+/* 세션 만료 */
+#sessionExpiredMessage {
+    margin-bottom: 20px;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #444444;
+    white-space: pre-line;
+}
+
+#sessionExpiredOk {
+    width: 100%;
+    height: 45px;
+    border: none;
+    border-radius: 8px;
+    background: #0CA19B;
+    color: #FFFFFF;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+#sessionExpiredOk:active {
+    background: #087E78;
+}
+
+
 /* 하단 학원 정보 */
 .footerLeft {
     position: fixed;

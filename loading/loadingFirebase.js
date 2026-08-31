@@ -2,7 +2,11 @@
 
 import {
     ref,
-    get
+    get,
+    query,
+    orderByKey,
+    startAt,
+    endAt
 } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
 
 import { db } from "../firebase.js";
@@ -16,7 +20,9 @@ export async function loadStudentData() {
         return false;
     }
 
-    const deviceSnapshot = await get(ref(db, `deviceId/${deviceId}`));
+    const deviceSnapshot = await get(
+        ref(db, `deviceId/${deviceId}`)
+    );
 
     if (!deviceSnapshot.exists()) {
         return false;
@@ -29,7 +35,9 @@ export async function loadStudentData() {
         return false;
     }
 
-    const studentSnapshot = await get(ref(db, `student/${mobile}`));
+    const studentSnapshot = await get(
+        ref(db, `student/${mobile}`)
+    );
 
     if (!studentSnapshot.exists()) {
         return false;
@@ -42,26 +50,74 @@ export async function loadStudentData() {
     });
 
     const monthKey = today.slice(0, 7);
+    const monthStart = `${monthKey}-01`;
+
+    const nextMonth = new Date(
+        Number(monthKey.slice(0, 4)),
+        Number(monthKey.slice(5, 7)),
+        1
+    );
+
+    nextMonth.setDate(0);
+
+    const monthEnd =
+        `${monthKey}-${String(nextMonth.getDate()).padStart(2, "0")}`;
 
     const historySnapshot = await get(
-        ref(db, `history/${mobile}/attendance`)
+        query(
+            ref(db, `history/${mobile}/attendance`),
+            orderByKey(),
+            startAt(monthStart),
+            endAt(monthEnd)
+        )
     );
 
     const diligenceSnapshot = await get(
         ref(db, `diligence/${mobile}/${monthKey}`)
     );
 
+    const boardSnapshot = await get(
+        query(
+            ref(db, `history/${mobile}/board`),
+            orderByKey(),
+            startAt(monthStart),
+            endAt(monthEnd)
+        )
+    );
+
+    const shopSnapshot = await get(
+        query(
+            ref(db, `history/${mobile}/shop`),
+            orderByKey(),
+            startAt(monthStart),
+            endAt(monthEnd)
+        )
+    );
+
+    const rewardSnapshot = await get(
+        query(
+            ref(db, `history/${mobile}/reward`),
+            orderByKey(),
+            startAt(monthKey),
+            endAt(monthKey)
+        )
+    );
+
     const historyData = historySnapshot.exists()
         ? historySnapshot.val()
         : {};
 
-    const attendRecords = {};
+    const boardData = boardSnapshot.exists()
+        ? boardSnapshot.val()
+        : {};
 
-    Object.entries(historyData).forEach(([dateKey, timeData]) => {
-        if (dateKey.slice(0, 7) === monthKey) {
-            attendRecords[dateKey] = timeData;
-        }
-    });
+    const shopData = shopSnapshot.exists()
+        ? shopSnapshot.val()
+        : {};
+
+    const rewardData = rewardSnapshot.exists()
+        ? rewardSnapshot.val()
+        : {};
 
     const diligence = diligenceSnapshot.exists()
         ? Number(diligenceSnapshot.val())
@@ -80,13 +136,31 @@ export async function loadStudentData() {
     sessionStorage.setItem(
         "attendRecords",
         JSON.stringify({
-            [monthKey]: attendRecords
+            [monthKey]: historyData
         })
     );
 
     sessionStorage.setItem(
         "diligence",
         String(diligence)
+    );
+
+    sessionStorage.setItem(
+        "pointHistory",
+        JSON.stringify({
+            attendance: historyData,
+            board: boardData,
+            reward: rewardData
+        })
+    );
+
+    sessionStorage.setItem(
+        "goldHistory",
+        JSON.stringify({
+            board: boardData,
+            shop: shopData,
+            reward: rewardData
+        })
     );
 
     return true;

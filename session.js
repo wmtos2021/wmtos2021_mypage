@@ -17,9 +17,15 @@ let sessionExpired = false;
 // 로그인 세션 시작
 export function startSession() {
     sessionStarted = true;
+    sessionExpired = false;
+
     const expiresAt = Date.now() + SESSION_TIME;
 
-    sessionStorage.setItem(SESSION_KEY, String(expiresAt));
+    sessionStorage.setItem(
+        SESSION_KEY,
+        String(expiresAt)
+    );
+
     startSessionTimer();
 }
 
@@ -91,6 +97,15 @@ function updateSession() {
     startSessionTimer();
 }
 
+// 세션 데이터 삭제
+function clearSessionData() {
+    sessionStorage.removeItem(SESSION_KEY);
+    sessionStorage.removeItem("studentInfo");
+    sessionStorage.removeItem("deviceInfo");
+    sessionStorage.removeItem("attendRecords");
+    sessionStorage.removeItem("diligence");
+}
+
 // 세션 만료
 async function expireSession() {
     if (sessionExpired) {
@@ -105,11 +120,7 @@ async function expireSession() {
         sessionTimer = null;
     }
 
-    sessionStorage.removeItem(SESSION_KEY);
-    sessionStorage.removeItem("studentInfo");
-    sessionStorage.removeItem("deviceInfo");
-    sessionStorage.removeItem("attendRecords");
-    sessionStorage.removeItem("diligence");
+    clearSessionData();
 
     try {
         await signOut(auth);
@@ -139,6 +150,31 @@ function showSessionExpiredMessage() {
     sessionExpiredOk.onclick = () => {
         location.replace("../login/login.html");
     };
+}
+
+// 세션 종료
+export async function logoutSession() {
+    if (sessionExpired) {
+        return;
+    }
+
+    sessionExpired = true;
+    sessionStarted = false;
+
+    if (sessionTimer) {
+        clearTimeout(sessionTimer);
+        sessionTimer = null;
+    }
+
+    clearSessionData();
+
+    try {
+        await signOut(auth);
+    } catch (error) {
+        // 로그아웃 실패와 관계없이 진행
+    }
+
+    location.replace("../login/login.html");
 }
 
 // Firebase 로그인 상태 확인
@@ -171,7 +207,7 @@ export async function checkSession() {
     const user = await waitForAuth();
 
     if (!user) {
-        sessionStorage.removeItem(SESSION_KEY);
+        clearSessionData();
         location.replace("../login/login.html");
         return false;
     }

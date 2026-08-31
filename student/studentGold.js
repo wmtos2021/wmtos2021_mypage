@@ -2,7 +2,11 @@
 
 import {
     ref,
-    get
+    get,
+    query,
+    orderByKey,
+    startAt,
+    endAt
 } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
 
 import { db } from "../firebase.js";
@@ -10,25 +14,10 @@ import { db } from "../firebase.js";
 const goldBtn = document.getElementById("goldBtn");
 const goldContent = document.getElementById("goldContent");
 
-// 최근 3개월
-function getRecentMonthKeys() {
-    const today = new Date();
-    const monthKeys = [];
+const MAX_MONTHS = 3;
 
-    for (let i = 0; i < 3; i++) {
-        const date = new Date(
-            today.getFullYear(),
-            today.getMonth() - i,
-            1
-        );
-
-        monthKeys.push(
-            `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`
-        );
-    }
-
-    return monthKeys;
-}
+let loadedMonths = [];
+let loadingMore = false;
 
 // 숫자 변환
 function getGold(value) {
@@ -41,58 +30,49 @@ function getGold(value) {
     return gold;
 }
 
-// GOLD 기록 가져오기
-async function getGoldHistory() {
-    const deviceData = sessionStorage.getItem("deviceInfo");
+// 월 키
+function getMonthKey(date) {
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
+}
 
-    if (!deviceData) {
-        return {};
+// 이전 월
+function getPreviousMonth(monthKey) {
+    const [year, month] = monthKey.split("-").map(Number);
+    return getMonthKey(new Date(year, month - 2, 1));
+}
+
+// 현재 월 데이터 가져오기
+function getInitialGoldHistory() {
+    const data = sessionStorage.getItem("goldHistory");
+
+    if (!data) {
+        return {
+            board: {},
+            shop: {},
+            reward: {}
+        };
     }
 
-    const deviceInfo = JSON.parse(deviceData);
-    const mobile = deviceInfo.mobile;
-
-    if (!mobile) {
-        return {};
+    try {
+        return JSON.parse(data);
+    } catch (error) {
+        return {
+            board: {},
+            shop: {},
+            reward: {}
+        };
     }
+}
 
-    const monthKeys = getRecentMonthKeys();
+// 월별 GOLD 기록 생성
+function createMonthRecords(monthKey, historyData) {
+    const records = [];
+    const boardData = historyData.board || {};
+    const shopData = historyData.shop || {};
+    const rewardData = historyData.reward || {};
 
-    const boardSnapshot = await get(
-        ref(db, `history/${mobile}/board`)
-    );
-
-    const shopSnapshot = await get(
-        ref(db, `history/${mobile}/shop`)
-    );
-
-    const rewardSnapshot = await get(
-        ref(db, `history/${mobile}/reward`)
-    );
-
-    const boardData = boardSnapshot.exists()
-        ? boardSnapshot.val()
-        : {};
-
-    const shopData = shopSnapshot.exists()
-        ? shopSnapshot.val()
-        : {};
-
-    const rewardData = rewardSnapshot.exists()
-        ? rewardSnapshot.val()
-        : {};
-
-    const records = {};
-
-    monthKeys.forEach(monthKey => {
-        records[monthKey] = [];
-    });
-
-    // 보드게임 GOLD
     Object.entries(boardData).forEach(([dateKey, timeData]) => {
-        const monthKey = dateKey.slice(0, 7);
-
-        if (!monthKeys.includes(monthKey)) {
+        if (dateKey.slice(0, 7) !== monthKey) {
             return;
         }
 
@@ -101,7 +81,7 @@ async function getGoldHistory() {
             const useG = getGold(data.useG);
 
             if (getG > 0) {
-                records[monthKey].push({
+                records.push({
                     date: dateKey,
                     time: timeKey,
                     type: "받음",
@@ -111,7 +91,7 @@ async function getGoldHistory() {
             }
 
             if (useG > 0) {
-                records[monthKey].push({
+                records.push({
                     date: dateKey,
                     time: timeKey,
                     type: "사용",
@@ -122,11 +102,8 @@ async function getGoldHistory() {
         });
     });
 
-    // 골드상점 GOLD
     Object.entries(shopData).forEach(([dateKey, timeData]) => {
-        const monthKey = dateKey.slice(0, 7);
-
-        if (!monthKeys.includes(monthKey)) {
+        if (dateKey.slice(0, 7) !== monthKey) {
             return;
         }
 
@@ -135,7 +112,7 @@ async function getGoldHistory() {
             const useG = getGold(data.useG);
 
             if (getG > 0) {
-                records[monthKey].push({
+                records.push({
                     date: dateKey,
                     time: timeKey,
                     type: "받음",
@@ -145,7 +122,7 @@ async function getGoldHistory() {
             }
 
             if (useG > 0) {
-                records[monthKey].push({
+                records.push({
                     date: dateKey,
                     time: timeKey,
                     type: "사용",
@@ -156,17 +133,16 @@ async function getGoldHistory() {
         });
     });
 
-    // 성실도 보상 GOLD
-    Object.entries(rewardData).forEach(([monthKey, data]) => {
-        if (!monthKeys.includes(monthKey)) {
+    Object.entries(rewardData).forEach(([rewardMonth, data]) => {
+        if (rewardMonth !== monthKey) {
             return;
         }
 
         const rewardG = getGold(data.rewardG);
 
         if (rewardG > 0) {
-            records[monthKey].push({
-                date: `${monthKey}-01`,
+            records.push({
+                date: `${rewardMonth}-01`,
                 time: "",
                 type: "받음",
                 detail: `${data.rewardMonth} 성실도`,
@@ -175,86 +151,221 @@ async function getGoldHistory() {
         }
     });
 
+    records.sort((a, b) => {
+        const dateA = `${a.date} ${a.time}`;
+        const dateB = `${b.date} ${b.time}`;
+        return dateB.localeCompare(dateA);
+    });
+
     return records;
 }
 
 // GOLD 내역 표시
-async function renderGoldHistory() {
-    goldContent.innerHTML = "";
+function renderRecords(records) {
+    records.forEach(record => {
+        const row = document.createElement("div");
+        row.className = "goldHistoryRow";
 
-    const records = await getGoldHistory();
-    const monthKeys = getRecentMonthKeys();
+        const date = document.createElement("span");
+        date.className = "goldHistoryDate";
+        date.textContent = record.date;
 
-    let hasRecord = false;
+        const detail = document.createElement("span");
+        detail.className = "goldHistoryDetail";
+        detail.textContent = record.detail;
 
-    monthKeys.forEach(monthKey => {
-        const monthRecords = records[monthKey] || [];
+        const sign = document.createElement("span");
+        sign.className =
+            record.type === "받음"
+                ? "goldHistorySign goldHistoryPlus"
+                : "goldHistorySign goldHistoryMinus";
+        sign.textContent = record.type === "받음" ? "+" : "-";
 
-        if (monthRecords.length === 0) {
+        const value = document.createElement("strong");
+        value.className =
+            record.type === "받음"
+                ? "goldHistoryValue goldHistoryPlus"
+                : "goldHistoryValue goldHistoryMinus";
+        value.textContent = record.gold.toLocaleString();
+
+        const unit = document.createElement("span");
+        unit.className =
+            record.type === "받음"
+                ? "goldHistoryUnit goldHistoryPlus"
+                : "goldHistoryUnit goldHistoryMinus";
+        unit.textContent = "G";
+
+        row.appendChild(date);
+        row.appendChild(detail);
+        row.appendChild(sign);
+        row.appendChild(value);
+        row.appendChild(unit);
+
+        goldContent.appendChild(row);
+    });
+}
+
+// 더보기 버튼
+function createMoreButton() {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.id = "goldMoreBtn";
+    button.className = "goldMoreBtn";
+    button.textContent = "더보기";
+    button.addEventListener("click", loadPreviousMonth);
+    return button;
+}
+
+// 현재 월 표시
+function renderInitialHistory() {
+    const historyData = getInitialGoldHistory();
+    const monthKey = getMonthKey(new Date());
+
+    loadedMonths = [monthKey];
+
+    const records = createMonthRecords(monthKey, historyData);
+
+    if (records.length > 0) {
+        renderRecords(records);
+        return true;
+    }
+
+    return false;
+}
+
+// 이전 1개월 조회
+async function loadPreviousMonth() {
+    if (loadingMore || loadedMonths.length >= MAX_MONTHS) {
+        return;
+    }
+
+    loadingMore = true;
+
+    const moreBtn = document.getElementById("goldMoreBtn");
+
+    if (moreBtn) {
+        moreBtn.disabled = true;
+        moreBtn.textContent = "불러오는 중...";
+    }
+
+    try {
+        const deviceData = sessionStorage.getItem("deviceInfo");
+
+        if (!deviceData) {
             return;
         }
 
-        hasRecord = true;
+        const deviceInfo = JSON.parse(deviceData);
+        const mobile = deviceInfo.mobile;
 
-        monthRecords.sort((a, b) => {
-            const dateA = `${a.date} ${a.time}`;
-            const dateB = `${b.date} ${b.time}`;
+        if (!mobile) {
+            return;
+        }
 
-            return dateB.localeCompare(dateA);
-        });
+        const lastMonth = loadedMonths[loadedMonths.length - 1];
+        const previousMonth = getPreviousMonth(lastMonth);
+        const monthStart = `${previousMonth}-01`;
 
-        monthRecords.forEach(record => {
-            const row = document.createElement("div");
-            row.className = "goldHistoryRow";
+        const [year, month] = previousMonth.split("-").map(Number);
+        const lastDate = new Date(year, month, 0).getDate();
+        const monthEnd =
+            `${previousMonth}-${String(lastDate).padStart(2, "0")}`;
 
-            const date = document.createElement("span");
-            date.className = "goldHistoryDate";
-            date.textContent = record.date;
+        const boardSnapshot = await get(
+            query(
+                ref(db, `history/${mobile}/board`),
+                orderByKey(),
+                startAt(monthStart),
+                endAt(monthEnd)
+            )
+        );
 
-            const detail = document.createElement("span");
-            detail.className = "goldHistoryDetail";
-            detail.textContent = record.detail;
+        const shopSnapshot = await get(
+            query(
+                ref(db, `history/${mobile}/shop`),
+                orderByKey(),
+                startAt(monthStart),
+                endAt(monthEnd)
+            )
+        );
 
-            const sign = document.createElement("span");
-            sign.className =
-                record.type === "받음"
-                    ? "goldHistorySign goldHistoryPlus"
-                    : "goldHistorySign goldHistoryMinus";
-            sign.textContent = record.type === "받음" ? "+" : "-";
+        const rewardSnapshot = await get(
+            query(
+                ref(db, `history/${mobile}/reward`),
+                orderByKey(),
+                startAt(previousMonth),
+                endAt(previousMonth)
+            )
+        );
 
-            const value = document.createElement("strong");
-            value.className =
-                record.type === "받음"
-                    ? "goldHistoryValue goldHistoryPlus"
-                    : "goldHistoryValue goldHistoryMinus";
-            value.textContent = record.gold.toLocaleString();
+        const historyData = {
+            board: boardSnapshot.exists()
+                ? boardSnapshot.val()
+                : {},
+            shop: shopSnapshot.exists()
+                ? shopSnapshot.val()
+                : {},
+            reward: rewardSnapshot.exists()
+                ? rewardSnapshot.val()
+                : {}
+        };
 
-            const unit = document.createElement("span");
-            unit.className =
-                record.type === "받음"
-                    ? "goldHistoryUnit goldHistoryPlus"
-                    : "goldHistoryUnit goldHistoryMinus";
-            unit.textContent = "G";
+        loadedMonths.push(previousMonth);
 
-            row.appendChild(date);
-            row.appendChild(detail);
-            row.appendChild(sign);
-            row.appendChild(value);
-            row.appendChild(unit);
+        const records = createMonthRecords(
+            previousMonth,
+            historyData
+        );
 
-            goldContent.appendChild(row);
-        });
-    });
+        if (records.length > 0) {
+            renderRecords(records);
+        }
+
+        if (loadedMonths.length >= MAX_MONTHS) {
+            removeMoreButton();
+        }
+    } catch (error) {
+        if (moreBtn) {
+            moreBtn.disabled = false;
+            moreBtn.textContent = "더보기";
+        }
+    } finally {
+        loadingMore = false;
+    }
+}
+
+// 더보기 버튼 제거
+function removeMoreButton() {
+    const moreBtn = document.getElementById("goldMoreBtn");
+
+    if (moreBtn) {
+        moreBtn.remove();
+    }
+}
+
+// 더보기 버튼 표시
+function showMoreButton() {
+    removeMoreButton();
+
+    if (loadedMonths.length >= MAX_MONTHS) {
+        return;
+    }
+
+    goldContent.appendChild(createMoreButton());
+}
+
+// GOLD 팝업 열기
+goldBtn.addEventListener("click", () => {
+    goldContent.innerHTML = "";
+
+    const hasRecord = renderInitialHistory();
 
     if (!hasRecord) {
         const empty = document.createElement("div");
         empty.className = "goldHistoryEmpty";
-        empty.textContent = "최근 3개월의 GOLD 내역이 없습니다.";
+        empty.textContent = "GOLD 내역이 없습니다.";
         goldContent.appendChild(empty);
     }
-}
 
-// GOLD 팝업 열 때 내역 갱신
-goldBtn.addEventListener("click", () => {
-    renderGoldHistory();
+    showMoreButton();
 });
