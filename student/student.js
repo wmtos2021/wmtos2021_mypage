@@ -5,6 +5,8 @@ import {
     renderDiligenceCalendar
 } from "./studentDiligence.js";
 
+import { checkSession } from "../session.js";
+
 // HTML 요소
 const studentName = document.getElementById("studentName");
 const studentPoint = document.getElementById("studentPoint");
@@ -150,7 +152,13 @@ goldShopBtn.addEventListener("click", (event) => {
 });
 
 // 초기 학생 정보
-function initializeStudent() {
+async function initializeStudent() {
+    const sessionValid = await checkSession();
+
+    if (!sessionValid) {
+        return;
+    }
+
     const loaded = loadStudentInfo();
 
     if (!loaded) {

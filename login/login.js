@@ -6,6 +6,8 @@ import {
     loginStudent
 } from "./loginFirebase.js";
 
+import { startSession } from "../session.js";
+
 // HTML 요소
 const phoneInput = document.getElementById("phoneInput");
 const loginBtn = document.getElementById("loginBtn");
@@ -289,6 +291,9 @@ pwOk.addEventListener(
                 return;
             }
 
+            // 로그인 세션 시작
+            startSession();
+
             joinModal.classList.add("hidden");
             resetPopupPosition(joinModal);
 
@@ -347,6 +352,9 @@ passwordOk.addEventListener(
                 );
                 return;
             }
+
+            // 로그인 세션 시작
+            startSession();
 
             loginModal.classList.add("hidden");
             resetPopupPosition(loginModal);
