@@ -1,0 +1,49 @@
+/* end.css */
+
+/* 기본 설정 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+}
+
+body {
+    width: 100%;
+    height: 100dvh;
+    background: #FFFFFF;
+    font-family: Arial, sans-serif;
+    color: #333333;
+    overflow: hidden;
+}
+
+/* 세션 종료 화면 */
+.endContainer {
+    width: 100%;
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    text-align: center;
+}
+
+.endContainer p {
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.4;
+}
+
+.endContainer span {
+    margin-top: 10px;
+    font-size: 16px;
+    font-weight: 400;
+    color: #666666;
+    line-height: 1.5;
+}
