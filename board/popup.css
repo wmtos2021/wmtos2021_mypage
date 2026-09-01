@@ -115,7 +115,12 @@
     );
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    -webkit-text-stroke: 1px #5f4007;
+
+    filter:
+        drop-shadow(1px 1px 0 #5f4007)
+        drop-shadow(-1px -1px 0 #5f4007)
+        drop-shadow(1px -1px 0 #5f4007)
+        drop-shadow(-1px 1px 0 #5f4007);
 }
 
 /* 선물 결과 GOLD 아래 장식선 */

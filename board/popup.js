@@ -105,11 +105,6 @@ export async function handleMoveResult(moveResult) {
         }
     );
 
-    // 최신 POINT / GOLD / 위치 조회
-    if (window.refreshGameStatus) {
-        await window.refreshGameStatus();
-    }
-
     // 도착 칸 팝업
     if (tileResult.popup) {
         await showPopup(
@@ -123,6 +118,11 @@ export async function handleMoveResult(moveResult) {
     // 선물 팝업
     if (tileResult.gift) {
         await showGiftPopup(tileResult.gift);
+    }
+
+    // 최신 POINT / GOLD / 위치 조회
+    if (window.refreshGameStatus) {
+        await window.refreshGameStatus();
     }
 
     return reward;

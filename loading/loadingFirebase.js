@@ -25,6 +25,9 @@ function preloadImages() {
         "../imageLogin/로고_투명.webp",
         "../imageBoard/보드판.webp",
         "../imageBoard/보드말.webp",
+        "../imageBoard/G.webp",
+        "../imageBoard/P.webp",
+        "../imageBoard/꽝.webp",
         "../imageStudent/골드.webp",
         "../imageStudent/성실도.webp",
         "../imageStudent/포인트.webp"
