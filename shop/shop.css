@@ -1,0 +1,27 @@
+/* shop.css */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    width: 100%;
+    min-height: 100vh;
+    background: #fff;
+}
+
+.comingSoon {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.comingSoon img {
+    width: min(80%, 600px);
+    height: auto;
+    display: block;
+}

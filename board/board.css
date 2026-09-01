@@ -25,23 +25,24 @@ body {
     max-width: 520px;
     min-height: 100dvh;
     margin: 0 auto;
-    padding: 48px 34px 100px;
+    padding: 24px 12px 100px;
 }
 
 /* 상단 영역 */
 .boardHeader {
     display: flex;
-    align-items: center;
     justify-content: space-between;
-    gap: 8px;
-    margin-bottom: 18px;
+    align-items: flex-start;
+    gap: 5px;
+    margin: 25px 8px 14px 10px;
 }
 
 .studentName {
     flex-shrink: 0;
-    font-size: 32px;
+    font-size: 22px;
     font-weight: 700;
     color: #333D43;
+    line-height: 1.1;
     white-space: nowrap;
 }
 
@@ -50,13 +51,13 @@ body {
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    gap: 6px;
+    gap: 4px;
     min-width: 0;
 }
 
 .gameStatusItem {
     position: relative;
-    width: 125px;
+    width: 108px;
     flex-shrink: 1;
 }
 
@@ -69,9 +70,9 @@ body {
 .gameStatusItem strong {
     position: absolute;
     top: 50%;
-    right: 12px;
+    right: 10px;
     transform: translateY(-50%);
-    font-size: 15px;
+    font-size: 13px;
     font-weight: 700;
     color: #333D43;
     white-space: nowrap;
@@ -85,7 +86,7 @@ body {
 .boardBox {
     position: relative;
     width: 100%;
-    margin: 0 auto 18px;
+    margin: 0 auto 14px;
 }
 
 .boardImage {
@@ -107,12 +108,12 @@ body {
 /* 주사위 버튼 */
 #diceBtn {
     width: 100%;
-    height: 56px;
+    height: 50px;
     border: none;
     border-radius: 12px;
     background: #0CA19B;
     color: #FFFFFF;
-    font-size: 20px;
+    font-size: 16px;
     font-weight: 700;
     cursor: pointer;
 }
@@ -159,41 +160,33 @@ body {
     z-index: 101;
 }
 
-/* 모바일 */
-@media (max-width: 430px) {
-
+/* PC */
+@media (min-width: 431px) {
     .boardContainer {
-        padding: 24px 12px 100px;
+        padding: 48px 34px 100px;
     }
-
     .boardHeader {
-        gap: 5px;
-        margin-bottom: 14px;
+        gap: 12px;
+        margin: 25px 8px 22px 10px;
     }
-
     .studentName {
-        font-size: 22px;
+        font-size: 32px;
     }
-
     .gameStatus {
-        gap: 4px;
+        gap: 6px;
     }
-
     .gameStatusItem {
-        width: 108px;
+        width: 125px;
     }
-
     .gameStatusItem strong {
-        right: 10px;
-        font-size: 13px;
+        right: 12px;
+        font-size: 15px;
     }
-
     .boardBox {
-        margin-bottom: 14px;
+        margin-bottom: 18px;
     }
-
     #diceBtn {
-        height: 50px;
-        font-size: 16px;
+        height: 56px;
+        font-size: 20px;
     }
 }
