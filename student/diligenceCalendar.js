@@ -89,8 +89,16 @@ export function renderCalendarDays(
             isCurrentMonth &&
             date === today.getDate();
 
+        const dateData =
+            monthRecords[dateString] || {};
+
+        const timeEntries =
+            Object.entries(dateData);
+
         const record =
-            monthRecords[dateString] || null;
+            timeEntries.length > 0
+                ? timeEntries[timeEntries.length - 1][1]
+                : null;
 
         const isBeforeEnrollment =
             enrollment &&
