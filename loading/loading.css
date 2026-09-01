@@ -34,7 +34,7 @@ body {
     align-items: center;
     justify-content: center;
     color: #0CA19B;
-    font-size: 29.9px;
+    font-size: 34px;
     font-weight: 600;
     letter-spacing: 1px;
     transform: translateY(-40px);
@@ -57,13 +57,13 @@ body {
     display: inline-flex;
     align-items: flex-end;
     width: auto;
-    height: 20px;
+    height: 24px;
 }
 
 .loadingDots i {
     display: none;
-    width: 6px;
-    height: 6px;
+    width: 7px;
+    height: 7px;
     border-radius: 1px;
 }
 
@@ -78,12 +78,12 @@ body {
 
 .loadingDots i:nth-child(2) {
     background: #E6B800;
-    margin-left: 7.4px;
+    margin-left: 8px;
 }
 
 .loadingDots i:nth-child(3) {
     background: #0CA19B;
-    margin-left: 7.4px;
+    margin-left: 8px;
 }
 
 /* 하단 왼쪽 정보 */

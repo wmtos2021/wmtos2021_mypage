@@ -1,8 +1,6 @@
 // studentGold.js
 
-import {
-    getGoldHistory
-} from "./studentGoldFirebase.js";
+import { getGoldHistory } from "./studentGoldFirebase.js";
 
 const goldBtn = document.getElementById("goldBtn");
 const goldContent = document.getElementById("goldContent");
@@ -194,7 +192,13 @@ function renderRecords(records) {
         row.appendChild(value);
         row.appendChild(unit);
 
-        goldContent.appendChild(row);
+        const moreBtn = document.getElementById("goldMoreBtn");
+
+        if (moreBtn) {
+            goldContent.insertBefore(row, moreBtn);
+        } else {
+            goldContent.appendChild(row);
+        }
     });
 }
 
@@ -215,25 +219,6 @@ async function renderInitialHistory() {
     const monthKey = getMonthKey(new Date());
 
     loadedMonths = [monthKey];
-
-    const deviceData = sessionStorage.getItem("deviceInfo");
-
-    if (deviceData) {
-        try {
-            const deviceInfo = JSON.parse(deviceData);
-            const mobile = deviceInfo.mobile;
-
-            if (mobile) {
-                const firebaseData =
-                    await getGoldHistory(mobile, monthKey);
-
-                historyData.board = firebaseData.board;
-                historyData.shop = firebaseData.shop;
-                historyData.reward = firebaseData.reward;
-            }
-        } catch (error) {
-        }
-    }
 
     const records = createMonthRecords(
         monthKey,
@@ -289,26 +274,59 @@ async function loadPreviousMonth() {
                 previousMonth
             );
 
-        loadedMonths.push(previousMonth);
+        const records =
+            createMonthRecords(
+                previousMonth,
+                historyData
+            );
 
-        const records = createMonthRecords(
-            previousMonth,
-            historyData
-        );
+        loadedMonths.push(previousMonth);
 
         if (records.length > 0) {
             renderRecords(records);
+        } else {
+            const currentMoreBtn =
+                document.getElementById("goldMoreBtn");
+
+            if (currentMoreBtn) {
+                currentMoreBtn.textContent =
+                    "더 이상 조회할 내용이 없습니다.";
+                currentMoreBtn.disabled = true;
+            }
+
+            return;
+        }
+
+        const currentMoreBtn =
+            document.getElementById("goldMoreBtn");
+
+        if (!currentMoreBtn) {
+            return;
         }
 
         if (loadedMonths.length >= MAX_MONTHS) {
-            removeMoreButton();
+            currentMoreBtn.textContent =
+                "과거 내역은 최대 2개월 조회 가능합니다.";
+            currentMoreBtn.disabled = true;
+        } else {
+            currentMoreBtn.textContent = "더보기";
+            currentMoreBtn.disabled = false;
         }
 
     } catch (error) {
-        if (moreBtn) {
-            moreBtn.disabled = false;
-            moreBtn.textContent = "더보기";
+        console.error(
+            "GOLD 이전 내역 조회 오류:",
+            error
+        );
+
+        const currentMoreBtn =
+            document.getElementById("goldMoreBtn");
+
+        if (currentMoreBtn) {
+            currentMoreBtn.textContent = "더보기";
+            currentMoreBtn.disabled = false;
         }
+
     } finally {
         loadingMore = false;
     }

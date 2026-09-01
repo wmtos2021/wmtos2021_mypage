@@ -89,45 +89,50 @@ export async function loadStudentData() {
     const monthEnd =
         `${monthKey}-${String(nextMonth.getDate()).padStart(2, "0")}`;
 
-    const historySnapshot = await get(
-        query(
-            ref(db, `history/${mobile}/attendance`),
-            orderByKey(),
-            startAt(monthStart),
-            endAt(monthEnd)
+    // 이번 달 데이터 동시 조회
+    const [
+        historySnapshot,
+        diligenceSnapshot,
+        boardSnapshot,
+        shopSnapshot,
+        rewardSnapshot
+    ] = await Promise.all([
+        get(
+            query(
+                ref(db, `history/${mobile}/attendance`),
+                orderByKey(),
+                startAt(monthStart),
+                endAt(monthEnd)
+            )
+        ),
+        get(
+            ref(db, `diligence/${mobile}/${monthKey}`)
+        ),
+        get(
+            query(
+                ref(db, `history/${mobile}/board`),
+                orderByKey(),
+                startAt(monthStart),
+                endAt(monthEnd)
+            )
+        ),
+        get(
+            query(
+                ref(db, `history/${mobile}/shop`),
+                orderByKey(),
+                startAt(monthStart),
+                endAt(monthEnd)
+            )
+        ),
+        get(
+            query(
+                ref(db, `history/${mobile}/reward`),
+                orderByKey(),
+                startAt(monthKey),
+                endAt(monthKey)
+            )
         )
-    );
-
-    const diligenceSnapshot = await get(
-        ref(db, `diligence/${mobile}/${monthKey}`)
-    );
-
-    const boardSnapshot = await get(
-        query(
-            ref(db, `history/${mobile}/board`),
-            orderByKey(),
-            startAt(monthStart),
-            endAt(monthEnd)
-        )
-    );
-
-    const shopSnapshot = await get(
-        query(
-            ref(db, `history/${mobile}/shop`),
-            orderByKey(),
-            startAt(monthStart),
-            endAt(monthEnd)
-        )
-    );
-
-    const rewardSnapshot = await get(
-        query(
-            ref(db, `history/${mobile}/reward`),
-            orderByKey(),
-            startAt(monthKey),
-            endAt(monthKey)
-        )
-    );
+    ]);
 
     const historyData = historySnapshot.exists()
         ? historySnapshot.val()
