@@ -1,5 +1,6 @@
 /* studentGold.css */
 
+
 /* GOLD 팝업 */
 #goldModal .studentModalBox h2 {
     color: #F15B18;
@@ -29,7 +30,7 @@
     border-radius: 7px;
     background: #F15B18;
     color: #FFFFFF;
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 700;
     line-height: 1;
 }
@@ -41,6 +42,7 @@
 .goldModalTitle button:active {
     transform: scale(0.95);
 }
+
 
 /* GOLD 내역 */
 #goldContent {
@@ -57,14 +59,13 @@
     width: 100%;
     min-height: 34px;
     padding: 7px 2px;
-    border-bottom: 1px solid #F0F0F0;
 }
 
 .goldHistoryDate {
     flex: 0 0 82px;
     margin-right: 4px;
     color: #999999;
-    font-size: 12px;
+    font-size: 12.8px;
     font-weight: 400;
     text-align: left;
 }
@@ -73,7 +74,7 @@
     flex: 1;
     margin-right: 20px;
     color: #333D43;
-    font-size: 14px;
+    font-size: 14.8px;
     font-weight: 600;
     text-align: left;
 }
@@ -88,7 +89,7 @@
 
 .goldHistoryValue {
     flex: 0 0 44px;
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 700;
     text-align: right;
 }
@@ -96,7 +97,7 @@
 .goldHistoryUnit {
     flex: 0 0 14px;
     margin-left: 1px;
-    font-size: 14px;
+    font-size: 14.8px;
     font-weight: 700;
     text-align: left;
 }
@@ -116,22 +117,36 @@
     text-align: center;
 }
 
-/* 더보기 버튼 */
+
+/* 더보기 */
 .goldMoreBtn {
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: 100%;
-    height: 36px;
-    margin: 10px 0 4px;
+    height: 34px;
+    margin: 4px 0 0;
     padding: 0;
     border: none;
-    border-radius: 7px;
-    background: #F5F5F5;
-    color: #666666;
-    font-size: 13px;
-    font-weight: 600;
+    background: transparent;
+    color: #999999;
+    font-size: 12px;
+    font-weight: 500;
+    flex-shrink: 0;
 }
 
-.goldMoreBtn:active {
-    transform: scale(0.98);
-    background: #EEEEEE;
+.goldMoreBtn::before,
+.goldMoreBtn::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: #E5E5E5;
+}
+
+.goldMoreBtn::before {
+    margin-right: 10px;
+}
+
+.goldMoreBtn::after {
+    margin-left: 10px;
 }
