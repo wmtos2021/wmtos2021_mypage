@@ -234,7 +234,7 @@ button {
 /* 보드게임 외부 버튼 */
 #boardGameMainBtn {
     position: absolute;
-    right: -12px;
+    right: -9px;
     top: 50%;
     height: 48px;
     padding: 0 14px;
@@ -277,7 +277,7 @@ button {
 /* 골드상점 외부 버튼 */
 #goldShopMainBtn {
     position: absolute;
-    right: -12px;
+    right: -9px;
     top: 50%;
     height: 48px;
     padding: 0 14px;
