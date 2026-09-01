@@ -1,90 +1,119 @@
-// boardData.js
+// boardFirebase.js
 
-export const boardData = [
-    null,
+import {
+    ref,
+    get,
+    update,
+    runTransaction
+} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
 
-    // 1 ~ 9 (왼쪽)
-    { type: "normal", point: 3, x: 7.2,  y: 79.8 }, //1
-    { type: "normal", point: 1, x: 7.2,  y: 73.0 }, //2
-    { type: "normal", point: 1, x: 7.2,  y: 66.0 }, //3
-    { type: "normal", point: 1, x: 7.2,  y: 59.0 }, //4
-    { type: "normal", point: 2, x: 7.2,  y: 51.8 }, //5
-    { type: "normal", point: 1, x: 7.2,  y: 45.0 }, //6
-    { type: "normal", point: 1, x: 7.2,  y: 38.0 }, //7
-    { type: "normal", point: 2, x: 7.2,  y: 31.0 }, //8
-    { type: "normal", point: 1, x: 7.2,  y: 23.8 }, //9
+import { db } from "../firebase.js";
 
-    // 10 무인도
-    {
-        type: "island",
-        message: "무인도에 갇혔습니다!",
-        point: -1,
-        image: "무인도.webp",
-        x: 7.2,
-        y: 10.8
-    },
+// 학생 정보 가져오기
+export async function getStudentInfo(mobile) {
+    const snapshot = await get(
+        ref(db, `student/${mobile}`)
+    );
 
-    // 11 ~ 19 (윗줄)
-    { type: "normal", point: 2, x: 19.2, y: 7.4 }, //11
-    { type: "normal", point: 3, x: 26.7, y: 7.4 }, //12
-    { type: "normal", point: 1, x: 34.2, y: 7.4 }, //13
-    { type: "normal", point: 1, x: 41.6, y: 7.4 }, //14
-    { type: "normal", point: 2, x: 49.2, y: 7.4 }, //15
-    { type: "normal", point: 1, x: 56.7, y: 7.4 }, //16
-    { type: "normal", point: 1, x: 64.5, y: 7.4 }, //17
-    { type: "normal", point: 2, x: 72.2, y: 7.4 }, //18
-    { type: "normal", point: 1, x: 79.7, y: 7.4 }, //19
-
-    // 20 호캉스
-    {
-        type: "hotel",
-        message: "호캉스를 즐겼습니다!",
-        point: 5,
-        image: "호캉스.webp",
-        x: 92.5,
-        y: 10.8
-    },
-
-        // 21 ~ 29 (오른쪽)
-    { type: "normal", point: 2, x: 92.5, y: 23.6 }, //21
-    { type: "normal", point: 2, x: 92.5, y: 31.0 }, //22
-    { type: "normal", point: 1, x: 92.5, y: 38.0 }, //23
-    { type: "normal", point: 2, x: 92.5, y: 45.0 }, //24
-    { type: "normal", point: 1, x: 92.5, y: 51.8 }, //25
-    { type: "normal", point: 2, x: 92.5, y: 59.0 }, //26
-    { type: "normal", point: 1, x: 92.5, y: 66.0 }, //27
-    { type: "normal", point: 3, x: 92.5, y: 73.0 }, //28
-    { type: "normal", point: 1, x: 92.5, y: 79.8 }, //29
-
-    // 30 선물
-    {
-        type: "present",
-        message: "선물상자를 열어보세요!",
-        point: 0,
-        image: "선물.webp",
-        x: 92.5,
-        y: 92.5
-    },
-
-    // 31 ~ 39 (아래)
-    { type: "normal", point: 3, x: 79.8, y: 90.0 }, //31
-    { type: "normal", point: 2, x: 72.2, y: 90.0 }, //32
-    { type: "normal", point: 2, x: 64.5, y: 90.0 }, //33
-    { type: "normal", point: 2, x: 56.9, y: 90.0 }, //34
-    { type: "normal", point: 3, x: 49.4, y: 90.0 }, //35
-    { type: "normal", point: 2, x: 41.9, y: 90.0 }, //36
-    { type: "normal", point: 3, x: 34.4, y: 90.0 }, //37
-    { type: "normal", point: 2, x: 26.8, y: 90.0 }, //38
-    { type: "normal", point: 3, x: 19.4, y: 90.0 }, //39
-
-    // 40 은행
-    {
-        type: "bank",
-        message: "은행에 도착했습니다!",
-        point: 2,
-        image: "은행.webp",
-        x: 7.2,
-        y: 92.5
+    if (!snapshot.exists()) {
+        return null;
     }
 
-];
+    return snapshot.val();
+}
+
+// 보드게임 기록 가져오기
+export async function getBoardRecords(mobile) {
+    const snapshot = await get(
+        ref(db, `history/${mobile}/board`)
+    );
+
+    if (!snapshot.exists()) {
+        return {};
+    }
+
+    return snapshot.val();
+}
+
+// 학생 마지막 위치 저장
+export async function savePosition(mobile, position) {
+    await update(
+        ref(db, `student/${mobile}`),
+        {
+            lastPosition: Number(position) || 0
+        }
+    );
+}
+
+// POINT 증감
+export async function updatePoint(mobile, point) {
+    const pointRef = ref(
+        db,
+        `student/${mobile}/totalP`
+    );
+
+    const result = await runTransaction(
+        pointRef,
+        currentValue => {
+            const currentPoint =
+                Number(currentValue) || 0;
+
+            return currentPoint + Number(point);
+        }
+    );
+
+    return Number(
+        result.snapshot.val()
+    ) || 0;
+}
+
+// GOLD 증감
+export async function updateGold(mobile, gold) {
+    const goldRef = ref(
+        db,
+        `student/${mobile}/totalG`
+    );
+
+    const result = await runTransaction(
+        goldRef,
+        currentValue => {
+            const currentGold =
+                Number(currentValue) || 0;
+
+            return Math.max(
+                0,
+                currentGold + Number(gold)
+            );
+        }
+    );
+
+    return Number(
+        result.snapshot.val()
+    ) || 0;
+}
+
+// 보드게임 기록 저장
+export async function saveBoardHistory(
+    mobile,
+    date,
+    time,
+    data
+) {
+    const historyRef = ref(
+        db,
+        `history/${mobile}/board/${date}/${time}`
+    );
+
+    await update(
+        historyRef,
+        {
+            start: Number(data.start) || 0,
+            dice: Number(data.dice) || 0,
+            end: Number(data.end) || 0,
+            type: data.type || "",
+            getP: data.getP ?? "",
+            getG: data.getG ?? "",
+            useP: data.useP ?? 0
+        }
+    );
+}

@@ -2,103 +2,83 @@
 
 import "../dice/dice.js";
 import { updateMarker } from "./move.js";
-import { getUser } from "./boardFirebase.js";
-import { checkSpecial } from "./special.js";
-import { joinUser } from "../login/loginFirebase.js";
+import { getDeviceId } from "../utils.js";
+import {
+    getDeviceInfo,
+    getStudentInfo
+} from "../attend/attendFirebase.js";
 
 // 요소 가져오기
-const nickname = document.getElementById("nickname");
-const joinDate = document.getElementById("joinDate");
-const totalPoint = document.getElementById("totalPoint");
+const studentName = document.getElementById("studentName");
+const studentPoint = document.getElementById("studentPoint");
+const studentGold = document.getElementById("studentGold");
 
 // 초기 실행
 init();
 
 async function init() {
-
-    const playerName = sessionStorage.getItem("nickname");
-
-    try {
-        // 접속 중인지 확인 및 접속 등록
-        await joinUser(playerName);
-
-        // 플레이어 정보 불러오기
-        await loadPlayer();
-
-    } catch (err) {
-
-        alert(err.message);
-
-        location.href = "../login/login.html";
-
-    }
-
+    await loadPlayer();
 }
 
-// 플레이어 정보 불러오기
+// 학생 정보 불러오기
 async function loadPlayer() {
+    const studentInfo = JSON.parse(
+        sessionStorage.getItem("studentInfo") || "{}"
+    );
 
-    const playerName = sessionStorage.getItem("nickname");
-    const playerJoinDate = sessionStorage.getItem("joinDate");
-
-    nickname.textContent = `${playerName || "닉네임"}님`;
-
-    if (playerJoinDate) {
-        const date = new Date(playerJoinDate);
-
-        joinDate.textContent =
-            `${date.getMonth() + 1}월 ${date.getDate()}일`;
-    } else {
-        joinDate.textContent = "";
+    if (!studentInfo.name) {
+        return;
     }
 
-    // Firebase에서 마지막 도착 위치 가져오기
-    const user = await getUser(playerName);
-    const playerPosition = user.last || 0;
+    studentName.textContent =
+        `${studentInfo.name.replace(/\d+$/g, "")}님`;
 
-    // 가져온 위치 저장
+    const playerPosition =
+        studentInfo.lastPosition !== undefined
+            ? Number(studentInfo.lastPosition)
+            : 40;
+
     sessionStorage.setItem(
         "position",
         playerPosition
     );
 
-    // 말 이동 표시
-    updateMarker(Number(playerPosition) || 0);
-    totalPoint.textContent = `${user.totalP || 0}P`;
+    updateMarker(playerPosition);
+
+    studentPoint.textContent =
+        Number(studentInfo.totalP || 0).toLocaleString();
+
+    studentGold.textContent =
+        Number(studentInfo.totalG || 0).toLocaleString();
 }
 
-// 누적포인트 새로고침
-window.refreshTotalPoint = async function () {
+// 최신 POINT / GOLD / 위치 조회
+window.refreshGameStatus = async function () {
+    const deviceId = getDeviceId();
+    const deviceInfo = await getDeviceInfo(deviceId);
+    const mobile = deviceInfo.mobile;
+    const studentInfo = await getStudentInfo(mobile);
 
-    const playerName = sessionStorage.getItem("nickname");
+    sessionStorage.setItem(
+        "studentInfo",
+        JSON.stringify(studentInfo)
+    );
 
-    const user = await getUser(playerName);
+    studentPoint.textContent =
+        Number(studentInfo.totalP || 0).toLocaleString();
 
-    totalPoint.textContent = `${user.totalP || 0}P`;
+    studentGold.textContent =
+        Number(studentInfo.totalG || 0).toLocaleString();
 
-};
-
-// 테스트용 강제 이동
-window.testMove = function(position){
-
-    const pos = Number(position);
-
-    if(pos < 1 || pos > 40){
-        alert("1~40 사이 숫자를 입력하세요.");
-        return;
-    }
+    const position =
+        studentInfo.lastPosition !== undefined
+            ? Number(studentInfo.lastPosition)
+            : 40;
 
     sessionStorage.setItem(
         "position",
-        pos
+        position
     );
 
-    updateMarker(pos);
-
-    checkSpecial(pos);
-
-    console.log(
-        `${pos}번 칸 이벤트 테스트`
-    );
-
+    updateMarker(position);
 };

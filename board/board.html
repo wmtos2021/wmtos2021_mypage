@@ -1,0 +1,215 @@
+<!-- board.html -->
+
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>위드엠투에스학원</title>
+    <link rel="stylesheet" href="board.css">
+    <link rel="stylesheet" href="../dice/dice.css">
+    <link rel="stylesheet" href="popup.css">
+</head>
+
+<body>
+
+    <main class="boardContainer">
+
+        <!-- 상단 영역 -->
+        <section class="boardHeader">
+
+            <div class="studentName" id="studentName">
+                학생님
+            </div>
+
+            <div class="gameStatus">
+
+                <div class="gameStatusItem">
+                    <img
+                        src="../imageStudent/포인트.webp"
+                        alt="">
+                    <strong id="studentPoint">
+                        0
+                    </strong>
+                </div>
+
+                <div class="gameStatusItem">
+                    <img
+                        src="../imageStudent/골드.webp"
+                        alt="">
+                    <strong id="studentGold">
+                        0
+                    </strong>
+                </div>
+            </div>
+        </section>
+
+        <!-- 보드 -->
+        <section class="boardArea">
+            <div class="boardBox">
+                <img
+                    src="../imageBoard/보드판.webp"
+                    id="boardImage"
+                    class="boardImage"
+                    alt="보드판">
+
+                <img
+                    src="../imageBoard/보드말.webp"
+                    id="playerPin"
+                    class="playerPin"
+                    alt="보드말">
+            </div>
+        </section>
+
+        <!-- 주사위 -->
+        <button
+            type="button"
+            id="diceBtn">
+            주사위 굴리기
+        </button>
+
+    </main>
+
+    <!-- 주사위 모달 -->
+    <div id="diceModal" class="modal hidden">
+
+        <div class="diceBox">
+
+            <div class="scene">
+
+                <div id="dice" class="cube">
+
+                    <div class="face front">
+                        <img src="../imageDice/dice1.png" alt="">
+                    </div>
+
+                    <div class="face back">
+                        <img src="../imageDice/dice6.png" alt="">
+                    </div>
+
+                    <div class="face right">
+                        <img src="../imageDice/dice3.png" alt="">
+                    </div>
+
+                    <div class="face left">
+                        <img src="../imageDice/dice4.png" alt="">
+                    </div>
+
+                    <div class="face top">
+                        <img src="../imageDice/dice5.png" alt="">
+                    </div>
+
+                    <div class="face bottom">
+                        <img src="../imageDice/dice2.png" alt="">
+                    </div>
+
+                </div>
+
+            </div>
+
+            <p id="diceResult">
+                주사위를 굴리는 중...
+            </p>
+
+        </div>
+
+    </div>
+
+    <!-- 이벤트 팝업 -->
+    <div
+        id="specialModal"
+        class="specialModal hidden">
+
+        <div class="specialBox">
+
+            <img
+                id="specialImage"
+                src=""
+                alt="이벤트">
+
+            <p id="specialMessage"></p>
+
+            <button
+                type="button"
+                id="specialCloseBtn">
+                확인
+            </button>
+
+        </div>
+
+    </div>
+
+    <!-- 복권 팝업 -->
+    <div
+        id="lotteryModal"
+        class="specialModal hidden">
+
+        <div class="specialBox">
+
+            <h2>
+                행운복권
+            </h2>
+
+            <div id="lotteryNumber">
+                ?
+            </div>
+
+            <p id="lotteryMessage">
+                복권을 긁어보세요!
+            </p>
+
+            <button
+                type="button"
+                id="lotteryBtn">
+                복권 긁기
+            </button>
+
+        </div>
+
+    </div>
+
+    <!-- 안내 팝업 -->
+    <div
+        id="alertModal"
+        class="alertModal hidden">
+
+        <div class="alertBox">
+
+            <p id="alertMessage"></p>
+
+            <button
+                type="button"
+                id="alertCloseBtn">
+                확인
+            </button>
+
+        </div>
+
+    </div>
+
+    <!-- 하단 구분선 -->
+    <div class="footerLine"></div>
+
+    <!-- 하단 왼쪽 정보 -->
+    <div class="footerLeft">
+        <div class="footerLine1">
+            위드엠투에스학원
+        </div>
+        <div class="footerLine2">
+            경남 김해시 활천로 168, 2층
+        </div>
+    </div>
+
+    <!-- 하단 오른쪽 정보 -->
+    <div class="footerRight">
+        Ver 1.0.0
+    </div>
+
+    <script
+        type="module"
+        src="board.js"></script>
+
+</body>
+
+</html>

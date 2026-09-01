@@ -1,0 +1,116 @@
+// boardData.js
+
+export const boardData = [
+    null,
+
+    // 1 ~ 9 (왼쪽)
+    { type: "normal", gold: 1000, x: 7.2, y: 79.8 }, //1
+    { type: "normal", point: 700, x: 7.2, y: 73.0 }, //2
+    { type: "normal", gold: 500, x: 7.2, y: 66.0 }, //3
+    { type: "normal", gold: 700, x: 7.2, y: 59.0 }, //4
+    { type: "normal", point: 500, x: 7.2, y: 51.8 }, //5
+    { type: "normal", empty: 0, x: 7.2, y: 45.0 }, //6
+    { type: "normal", gold: 500, x: 7.2, y: 38.0 }, //7
+    { type: "normal", point: 1000, x: 7.2, y: 31.0 }, //8
+    { type: "normal", gold: 500, x: 7.2, y: 23.8 }, //9
+
+    // 10 무인도
+    {
+        type: "island",
+        title: "무인도",
+        message: [
+            "무인도에 갇혔습니다!<br>1,000P 차감",
+            "오늘부터 친구는 코코넛뿐!<br>1,000P 차감",
+            "구조헬기 올 때까지 대기!<br>1,000P 차감",
+            "축! 자연인 체험권 당첨!<br>1,000P 차감",
+            "무인도 입국 심사 완료!<br>1,000P 차감"
+        ],
+        point: -1000,
+        image: "무인도.webp",
+        x: 7.2,
+        y: 10.8
+    },
+
+    // 11 ~ 19 (윗줄)
+    { type: "normal", gold: 800, x: 19.2, y: 7.4 }, //11
+    { type: "normal", gold: 1000, x: 26.7, y: 7.4 }, //12
+    { type: "normal", point: 1300, x: 34.2, y: 7.4 }, //13
+    { type: "normal", gold: 800, x: 41.6, y: 7.4 }, //14
+    { type: "normal", empty: 0, x: 49.2, y: 7.4 }, //15
+    { type: "normal", point: 1000, x: 56.7, y: 7.4 }, //16
+    { type: "normal", gold: 1300, x: 64.5, y: 7.4 }, //17
+    { type: "normal", gold: 800, x: 72.2, y: 7.4 }, //18
+    { type: "normal", point: 800, x: 79.7, y: 7.4 }, //19
+
+    // 20 캠핑
+    {
+        type: "camping",
+        title: "캠핑",
+        message: [
+            "자연 속에서 휴식을 즐기자!<br>5,000P 획득",
+            "텐트 완성, 근데 왜 집에 가고 싶을까!<br>5,000P 획득",
+            "캠핑이고 뭐고 귀찮긴한데...<br>5,000P 획득",
+            "캠핑의 꽃은 불멍이지!<br>5,000P 획득",
+            "벌레와의 전쟁에서 살아남으세요!<br>5,000P 획득"
+        ],
+        point: 5000,
+        image: "캠핑.webp",
+        x: 92.5,
+        y: 10.8
+    },
+
+    // 21 ~ 29 (오른쪽)
+    { type: "normal", point: 1300, x: 92.5, y: 23.6 }, //21
+    { type: "normal", gold: 1000, x: 92.5, y: 31.0 }, //22
+    { type: "normal", gold: 1000, x: 92.5, y: 38.0 }, //23
+    { type: "normal", point: 1000, x: 92.5, y: 45.0 }, //24
+    { type: "normal", gold: 1500, x: 92.5, y: 51.8 }, //25
+    { type: "normal", empty: 0, x: 92.5, y: 59.0 }, //26
+    { type: "normal", point: 1500, x: 92.5, y: 66.0 }, //27
+    { type: "normal", gold: 1300, x: 92.5, y: 73.0 }, //28
+    { type: "normal", gold: 1000, x: 92.5, y: 79.8 }, //29
+
+    // 30 선물
+    {
+        type: "gift",
+        title: "선물",
+        message: [
+            "선물을 풀어볼까요?",
+            "오늘의 선물을 확인해보세요!",
+            "두근두근! 선물상자를 열어보세요!",
+            "어떤 선물이 들어있을까요?",
+            "행운의 선물상자를 열어보세요!"
+        ],
+        image: "선물.webp",
+        x: 92.5,
+        y: 92.5
+    },
+
+    // 31 ~ 39 (아래)
+    { type: "normal", gold: 1300, x: 79.8, y: 90.0 }, //31
+    { type: "normal", point: 1700, x: 72.2, y: 90.0 }, //32
+    { type: "normal", gold: 1700, x: 64.5, y: 90.0 }, //33
+    { type: "normal", gold: 1300, x: 56.9, y: 90.0 }, //34
+    { type: "normal", point: 1300, x: 49.4, y: 90.0 }, //35
+    { type: "normal", gold: 1300, x: 41.9, y: 90.0 }, //36
+    { type: "normal", empty: 0, x: 34.4, y: 90.0 }, //37
+    { type: "normal", point: 2000, x: 26.8, y: 90.0 }, //38
+    { type: "normal", gold: 2000, x: 19.4, y: 86.5 }, //39
+
+    // 40 은행
+    {
+        type: "bank",
+        title: "은행",
+        message: [
+            "열심히 한 너에게 주는 선물!<br>1,000P 적립",
+            "끝까지 완주하다니 정말 대단해!<br>1,000P 적립",
+            "포기하지 않은 너에게 박수와 응원을 보낸다!<br>1,000P 적립",
+            "노력이 차곡차곡 쌓여가는 중!<br>1,000P 적립",
+            "오늘도 한 걸음 성장했네!<br>1,000P 적립"
+        ],
+        point: 1000,
+        image: "은행.webp",
+        x: 7.2,
+        y: 92.5
+    }
+];
