@@ -208,15 +208,44 @@ export async function renderDiligenceCalendar() {
     }
 }
 
-// 출석 완료 후 출석 버튼 제거
+// 출석 완료 후 출석 상태 변경
 document.addEventListener(
     "attendanceCompleted",
-    () => {
+    (event) => {
         const attendBtn =
             document.getElementById("todayAttendBtn");
 
         if (attendBtn) {
             attendBtn.remove();
         }
+
+        const {
+            date,
+            time,
+            attend,
+            attendSc
+        } = event.detail || {};
+
+        if (!date || !time || !attend) {
+            return;
+        }
+
+        const monthKey =
+            date.slice(0, 7);
+
+        if (!attendRecords[monthKey]) {
+            attendRecords[monthKey] = {};
+        }
+
+        if (!attendRecords[monthKey][date]) {
+            attendRecords[monthKey][date] = {};
+        }
+
+        attendRecords[monthKey][date][time] = {
+            attend,
+            attendSc
+        };
+
+        renderDiligenceCalendar();
     }
 );
