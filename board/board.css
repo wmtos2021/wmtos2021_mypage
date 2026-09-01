@@ -1,5 +1,6 @@
 /* board.css */
 
+
 /* 기본 설정 */
 * {
     margin: 0;
@@ -19,6 +20,19 @@ body {
     font-family: Arial, sans-serif;
 }
 
+button {
+    font-family: inherit;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
+}
+
+button:focus,
+button:focus-visible {
+    outline: none;
+}
+
+
 /* 전체 영역 */
 .boardContainer {
     width: 100%;
@@ -27,6 +41,7 @@ body {
     margin: 0 auto;
     padding: 40px 12px 100px;
 }
+
 
 /* 상단 영역 */
 .boardHeader {
@@ -79,6 +94,7 @@ body {
     color: #333D43;
     white-space: nowrap;
 }
+
 
 /* 보드판 */
 .boardArea {
