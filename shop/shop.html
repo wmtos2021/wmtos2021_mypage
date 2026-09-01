@@ -1,4 +1,4 @@
-<!--shop.html-->
+<!-- shop.html -->
 
 <!DOCTYPE html>
 <html lang="ko">
@@ -11,9 +11,23 @@
 </head>
 
 <body>
+
     <main class="comingSoon">
         <img src="./커밍순.webp" alt="Coming Soon">
     </main>
+
+    <button
+        type="button"
+        id="backBtn">
+        돌아가기
+    </button>
+
+    <script>
+        document.getElementById("backBtn").addEventListener("click", () => {
+            location.href = "../student/student.html";
+        });
+    </script>
+
 </body>
 
 </html>
