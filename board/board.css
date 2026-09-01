@@ -39,7 +39,7 @@ body {
 
 .studentName {
     position: relative;
-    top: 2px;
+    top: 6px;
     flex-shrink: 0;
     font-size: 32px;
     font-weight: 700;
@@ -74,7 +74,7 @@ body {
     top: 50%;
     right: 10px;
     transform: translateY(-50%);
-    font-size: 13px;
+    font-size: 18px;
     font-weight: 700;
     color: #333D43;
     white-space: nowrap;
