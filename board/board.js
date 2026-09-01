@@ -20,6 +20,12 @@ window.addEventListener("popstate", () => {
 const studentName = document.getElementById("studentName");
 const studentPoint = document.getElementById("studentPoint");
 const studentGold = document.getElementById("studentGold");
+const backBtn = document.getElementById("backBtn");
+
+// 돌아가기
+backBtn.addEventListener("click", () => {
+    location.href = "../student/student.html";
+});
 
 // 초기 실행
 init();
@@ -50,7 +56,7 @@ async function loadPlayer() {
     const playerPosition =
         studentInfo.lastPosition !== undefined
             ? Number(studentInfo.lastPosition)
-            : 40;
+            : 0;
 
     sessionStorage.setItem(
         "position",
@@ -87,7 +93,7 @@ window.refreshGameStatus = async function () {
     const position =
         studentInfo.lastPosition !== undefined
             ? Number(studentInfo.lastPosition)
-            : 40;
+            : 0;
 
     sessionStorage.setItem(
         "position",
@@ -98,11 +104,11 @@ window.refreshGameStatus = async function () {
 };
 
 // 테스트용 강제 이동
-window.testMove = function(position){
+window.testMove = function(position) {
 
     const pos = Number(position);
 
-    if(pos < 1 || pos > 40){
+    if (pos < 1 || pos > 40) {
         alert("1~40 사이 숫자를 입력하세요.");
         return;
     }

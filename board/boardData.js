@@ -2,7 +2,7 @@
 
 
 export const startPosition = {
-    type: "start", x: 8.5, y: 45.0
+    type: "start", x: 22.5, y: 78.8
 };
 
 export const boardData = [
@@ -92,15 +92,15 @@ export const boardData = [
     },
 
     // 31 ~ 39 (아래)
-    { type: "normal", gold: 1300, x: 79.8, y: 90.0 }, //31
-    { type: "normal", point: 1700, x: 72.2, y: 90.0 }, //32
-    { type: "normal", gold: 1700, x: 64.5, y: 90.0 }, //33
-    { type: "normal", gold: 1300, x: 56.9, y: 90.0 }, //34
-    { type: "normal", point: 1300, x: 49.4, y: 90.0 }, //35
-    { type: "normal", gold: 1300, x: 41.9, y: 90.0 }, //36
-    { type: "normal", empty: 0, x: 34.4, y: 90.0 }, //37
-    { type: "normal", point: 2000, x: 26.8, y: 90.0 }, //38
-    { type: "normal", gold: 2000, x: 19.4, y: 86.5 }, //39
+    { type: "normal", gold: 1300, x: 77.3, y: 92.0 }, //31
+    { type: "normal", point: 1700, x: 70.5, y: 92.0 }, //32
+    { type: "normal", gold: 1700, x: 63.6, y: 92.0 }, //33
+    { type: "normal", gold: 1300, x: 56.7, y: 92.0 }, //34
+    { type: "normal", point: 1300, x: 50.0, y: 92.0 }, //35
+    { type: "normal", gold: 1300, x: 43.0, y: 92.0 }, //36
+    { type: "normal", empty: 0, x: 36.0, y: 92.0 }, //37
+    { type: "normal", point: 2000, x: 29.2, y: 92.0 }, //38
+    { type: "normal", gold: 2000, x: 22.5, y: 92.0 }, //39
 
     // 40 은행
     {
@@ -115,7 +115,7 @@ export const boardData = [
         ],
         point: 1000,
         image: "은행.webp",
-        x: 7.2,
-        y: 92.5
+        x: 8.5,
+        y: 92.0
     }
 ];

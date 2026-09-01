@@ -1,6 +1,6 @@
 // move.js
 
-import { boardData } from "./boardData.js";
+import { boardData, startPosition } from "./boardData.js";
 
 const playerPin = document.getElementById("playerPin");
 
@@ -17,7 +17,7 @@ export async function movePlayer(step) {
             Number(sessionStorage.getItem("position")) || 0;
 
         const dice = Number(step);
-        const startPosition = position;
+        const start = position;
         let passedBank = false;
 
         // 말 이동
@@ -45,7 +45,7 @@ export async function movePlayer(step) {
                 : boardData[position].type;
 
         return {
-            start: startPosition,
+            start: start,
             dice: dice,
             end: position,
             type: type,
@@ -58,7 +58,10 @@ export async function movePlayer(step) {
 
 // 말 위치
 export function updateMarker(position) {
-    const tile = boardData[position];
+    const tile =
+        Number(position) === 0
+            ? startPosition
+            : boardData[position];
 
     if (!tile) return;
 
