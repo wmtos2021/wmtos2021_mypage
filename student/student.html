@@ -89,6 +89,27 @@
         </section>
     </main>
 
+
+    <script>
+        try {
+            const studentData = sessionStorage.getItem("studentInfo");
+
+            if (studentData) {
+                const studentInfo = JSON.parse(studentData);
+
+                document.getElementById("studentName").textContent =
+                    `${(studentInfo.name || "").replace(/\d+$/g, "")}님`;
+
+                document.getElementById("studentPoint").textContent =
+                    Number(studentInfo.totalP || 0).toLocaleString();
+
+                document.getElementById("studentGold").textContent =
+                    Number(studentInfo.totalG || 0).toLocaleString();
+            }
+        } catch (error) {
+        }
+    </script>
+
     <!-- 출석 팝업 -->
     <div id="attendModal" class="attendModal hidden">
         <div class="attendModalBox">

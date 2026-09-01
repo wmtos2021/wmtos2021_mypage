@@ -179,16 +179,16 @@ document.addEventListener("attendanceCompleted", (event) => {
 
 // 초기 학생 정보
 async function initializeStudent() {
-    const sessionValid = await checkSession();
-
-    if (!sessionValid) {
-        return;
-    }
-
     const loaded = loadStudentInfo();
 
     if (!loaded) {
         location.href = "../check/check.html";
+        return;
+    }
+
+    const sessionValid = await checkSession();
+
+    if (!sessionValid) {
         return;
     }
 }
