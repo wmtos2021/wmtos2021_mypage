@@ -1,18 +1,23 @@
 // boardData.js
 
+
+export const startPosition = {
+    type: "start", x: 8.5, y: 45.0
+};
+
 export const boardData = [
     null,
 
     // 1 ~ 9 (왼쪽)
-    { type: "normal", gold: 1000, x: 7.2, y: 79.8 }, //1
-    { type: "normal", point: 700, x: 7.2, y: 73.0 }, //2
-    { type: "normal", gold: 500, x: 7.2, y: 66.0 }, //3
-    { type: "normal", gold: 700, x: 7.2, y: 59.0 }, //4
-    { type: "normal", point: 500, x: 7.2, y: 51.8 }, //5
-    { type: "normal", empty: 0, x: 7.2, y: 45.0 }, //6
-    { type: "normal", gold: 500, x: 7.2, y: 38.0 }, //7
-    { type: "normal", point: 1000, x: 7.2, y: 31.0 }, //8
-    { type: "normal", gold: 500, x: 7.2, y: 23.8 }, //9
+    { type: "normal", gold: 1000, x: 8.5, y: 78.8 }, //1
+    { type: "normal", point: 700, x: 8.5, y: 71.8 }, //2
+    { type: "normal", gold: 500, x: 8.5, y: 64.8 }, //3
+    { type: "normal", gold: 700, x: 8.5, y: 57.8 }, //4
+    { type: "normal", point: 500, x: 8.5, y: 50.8 }, //5
+    { type: "normal", empty: 0, x: 8.5, y: 43.8 }, //6
+    { type: "normal", gold: 500, x: 8.5, y: 36.8 }, //7
+    { type: "normal", point: 1000, x: 8.5, y: 28.8 }, //8
+    { type: "normal", gold: 500, x: 8.5, y: 21.8 }, //9
 
     // 10 무인도
     {
@@ -27,20 +32,20 @@ export const boardData = [
         ],
         point: -1000,
         image: "무인도.webp",
-        x: 7.2,
-        y: 10.8
+        x: 8.5,
+        y: 10.0
     },
 
     // 11 ~ 19 (윗줄)
-    { type: "normal", gold: 800, x: 19.2, y: 7.4 }, //11
-    { type: "normal", gold: 1000, x: 26.7, y: 7.4 }, //12
-    { type: "normal", point: 1300, x: 34.2, y: 7.4 }, //13
-    { type: "normal", gold: 800, x: 41.6, y: 7.4 }, //14
-    { type: "normal", empty: 0, x: 49.2, y: 7.4 }, //15
-    { type: "normal", point: 1000, x: 56.7, y: 7.4 }, //16
-    { type: "normal", gold: 1300, x: 64.5, y: 7.4 }, //17
-    { type: "normal", gold: 800, x: 72.2, y: 7.4 }, //18
-    { type: "normal", point: 800, x: 79.7, y: 7.4 }, //19
+    { type: "normal", gold: 800, x: 22.5, y: 10.0 }, //11
+    { type: "normal", gold: 1000, x: 29.2, y: 10.0 }, //12
+    { type: "normal", point: 1300, x: 36.0, y: 10.0 }, //13
+    { type: "normal", gold: 800, x: 43.0, y: 10.0 }, //14
+    { type: "normal", empty: 0, x: 50.0, y: 10.0 }, //15
+    { type: "normal", point: 1000, x: 56.7, y: 10.0 }, //16
+    { type: "normal", gold: 1300, x: 63.6, y: 10.0 }, //17
+    { type: "normal", gold: 800, x: 70.5, y: 10.0 }, //18
+    { type: "normal", point: 800, x: 77.3, y: 10.0 }, //19
 
     // 20 캠핑
     {
@@ -55,20 +60,20 @@ export const boardData = [
         ],
         point: 5000,
         image: "캠핑.webp",
-        x: 92.5,
-        y: 10.8
+        x: 84.5,
+        y: 10.0
     },
 
     // 21 ~ 29 (오른쪽)
-    { type: "normal", point: 1300, x: 92.5, y: 23.6 }, //21
-    { type: "normal", gold: 1000, x: 92.5, y: 31.0 }, //22
-    { type: "normal", gold: 1000, x: 92.5, y: 38.0 }, //23
-    { type: "normal", point: 1000, x: 92.5, y: 45.0 }, //24
-    { type: "normal", gold: 1500, x: 92.5, y: 51.8 }, //25
-    { type: "normal", empty: 0, x: 92.5, y: 59.0 }, //26
-    { type: "normal", point: 1500, x: 92.5, y: 66.0 }, //27
-    { type: "normal", gold: 1300, x: 92.5, y: 73.0 }, //28
-    { type: "normal", gold: 1000, x: 92.5, y: 79.8 }, //29
+    { type: "normal", point: 1300, x: 84.2, y: 21.6 }, //21
+    { type: "normal", gold: 1000, x: 84.2, y: 28.6 }, //22
+    { type: "normal", gold: 1000, x: 84.2, y: 35.7 }, //23
+    { type: "normal", point: 1000, x: 84.2, y: 42.9 }, //24
+    { type: "normal", gold: 1500, x: 84.2, y: 50.0 }, //25
+    { type: "normal", empty: 0, x: 84.2, y: 57.2 }, //26
+    { type: "normal", point: 1500, x: 84.2, y: 64.2 }, //27
+    { type: "normal", gold: 1300, x: 84.2, y: 71.5 }, //28
+    { type: "normal", gold: 1000, x: 84.2, y: 78.6 }, //29
 
     // 30 선물
     {
@@ -82,7 +87,7 @@ export const boardData = [
             "행운의 선물상자를 열어보세요!"
         ],
         image: "선물.webp",
-        x: 92.5,
+        x: 84.2,
         y: 92.5
     },
 

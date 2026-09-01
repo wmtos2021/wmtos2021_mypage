@@ -7,6 +7,14 @@ import {
     getDeviceInfo,
     getStudentInfo
 } from "../attend/attendFirebase.js";
+import { checkSession } from "../end/session.js";
+
+// 뒤로가기 방지
+history.pushState(null, "", location.href);
+
+window.addEventListener("popstate", () => {
+    history.pushState(null, "", location.href);
+});
 
 // 요소 가져오기
 const studentName = document.getElementById("studentName");
@@ -17,6 +25,12 @@ const studentGold = document.getElementById("studentGold");
 init();
 
 async function init() {
+    const sessionValid = await checkSession();
+
+    if (!sessionValid) {
+        return;
+    }
+
     await loadPlayer();
 }
 
@@ -81,4 +95,27 @@ window.refreshGameStatus = async function () {
     );
 
     updateMarker(position);
+};
+
+// 테스트용 강제 이동
+window.testMove = function(position){
+
+    const pos = Number(position);
+
+    if(pos < 1 || pos > 40){
+        alert("1~40 사이 숫자를 입력하세요.");
+        return;
+    }
+
+    sessionStorage.setItem(
+        "position",
+        pos
+    );
+
+    updateMarker(pos);
+
+    console.log(
+        `${pos}번 칸 이벤트 테스트`
+    );
+
 };

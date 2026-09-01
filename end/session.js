@@ -1,7 +1,6 @@
 // session.js
 
 import {
-    signOut,
     onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
 
@@ -103,7 +102,7 @@ function clearSessionData() {
 }
 
 // 세션 만료
-async function expireSession() {
+function expireSession() {
     if (sessionExpired) {
         return;
     }
@@ -117,12 +116,6 @@ async function expireSession() {
     }
 
     clearSessionData();
-
-    try {
-        await signOut(auth);
-    } catch (error) {
-        // 로그아웃 실패와 관계없이 종료 페이지로 이동
-    }
 
     location.replace("../end/end.html");
 }
@@ -150,7 +143,7 @@ export async function checkSession() {
     }
 
     if (expiresAt <= Date.now()) {
-        await expireSession();
+        expireSession();
         return false;
     }
 
@@ -201,7 +194,7 @@ function setupPageShowDetection() {
             const expiresAt = getSessionExpiresAt();
 
             if (!expiresAt || expiresAt <= Date.now()) {
-                await expireSession();
+                expireSession();
                 return;
             }
 

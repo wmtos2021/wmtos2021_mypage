@@ -1,8 +1,6 @@
 // studentPoint.js
 
-import {
-    getPointHistory
-} from "./studentPointFirebase.js";
+import { getPointHistory } from "./studentPointFirebase.js";
 
 const pointBtn = document.getElementById("pointBtn");
 const pointContent = document.getElementById("pointContent");
@@ -15,11 +13,9 @@ let loadingMore = false;
 // 숫자 변환
 function getPoint(value) {
     const point = Number(value);
-
     if (!Number.isFinite(point) || point <= 0) {
         return 0;
     }
-
     return point;
 }
 
@@ -168,24 +164,21 @@ function renderRecords(records) {
         detail.textContent = record.detail;
 
         const sign = document.createElement("span");
-        sign.className =
-            record.type === "받음"
-                ? "pointHistorySign pointHistoryPlus"
-                : "pointHistorySign pointHistoryMinus";
+        sign.className = record.type === "받음"
+            ? "pointHistorySign pointHistoryPlus"
+            : "pointHistorySign pointHistoryMinus";
         sign.textContent = record.type === "받음" ? "+" : "-";
 
         const value = document.createElement("strong");
-        value.className =
-            record.type === "받음"
-                ? "pointHistoryValue pointHistoryPlus"
-                : "pointHistoryValue pointHistoryMinus";
+        value.className = record.type === "받음"
+            ? "pointHistoryValue pointHistoryPlus"
+            : "pointHistoryValue pointHistoryMinus";
         value.textContent = record.point.toLocaleString();
 
         const unit = document.createElement("span");
-        unit.className =
-            record.type === "받음"
-                ? "pointHistoryUnit pointHistoryPlus"
-                : "pointHistoryUnit pointHistoryMinus";
+        unit.className = record.type === "받음"
+            ? "pointHistoryUnit pointHistoryPlus"
+            : "pointHistoryUnit pointHistoryMinus";
         unit.textContent = "P";
 
         row.appendChild(date);
@@ -194,7 +187,13 @@ function renderRecords(records) {
         row.appendChild(value);
         row.appendChild(unit);
 
-        pointContent.appendChild(row);
+        const moreBtn = document.getElementById("pointMoreBtn");
+
+        if (moreBtn) {
+            pointContent.insertBefore(row, moreBtn);
+        } else {
+            pointContent.appendChild(row);
+        }
     });
 }
 
@@ -224,23 +223,14 @@ async function renderInitialHistory() {
             const mobile = deviceInfo.mobile;
 
             if (mobile) {
-                const firebaseData =
-                    await getPointHistory(
-                        mobile,
-                        monthKey
-                    );
-
-                historyData.attendance =
-                    firebaseData.attendance;
+                const firebaseData = await getPointHistory(mobile, monthKey);
+                historyData.attendance = firebaseData.attendance;
             }
         } catch (error) {
         }
     }
 
-    const records = createMonthRecords(
-        monthKey,
-        historyData
-    );
+    const records = createMonthRecords(monthKey, historyData);
 
     if (records.length > 0) {
         renderRecords(records);
@@ -258,8 +248,7 @@ async function loadPreviousMonth() {
 
     loadingMore = true;
 
-    const moreBtn =
-        document.getElementById("pointMoreBtn");
+    const moreBtn = document.getElementById("pointMoreBtn");
 
     if (moreBtn) {
         moreBtn.disabled = true;
@@ -267,62 +256,63 @@ async function loadPreviousMonth() {
     }
 
     try {
-        const deviceData =
-            sessionStorage.getItem("deviceInfo");
+        const deviceData = sessionStorage.getItem("deviceInfo");
 
         if (!deviceData) {
             return;
         }
 
-        const deviceInfo =
-            JSON.parse(deviceData);
-
+        const deviceInfo = JSON.parse(deviceData);
         const mobile = deviceInfo.mobile;
 
         if (!mobile) {
             return;
         }
 
-        const lastMonth =
-            loadedMonths[loadedMonths.length - 1];
-
-        const previousMonth =
-            getPreviousMonth(lastMonth);
-
-        const historyData =
-            await getPointHistory(
-                mobile,
-                previousMonth
-            );
+        const lastMonth = loadedMonths[loadedMonths.length - 1];
+        const previousMonth = getPreviousMonth(lastMonth);
+        const historyData = await getPointHistory(mobile, previousMonth);
+        const records = createMonthRecords(previousMonth, historyData);
 
         loadedMonths.push(previousMonth);
-
-        const records =
-            createMonthRecords(
-                previousMonth,
-                historyData
-            );
 
         if (records.length > 0) {
             renderRecords(records);
         } else {
-            moreBtn.textContent =
-                "더 이상 조회할 내용이 없습니다.";
-            moreBtn.disabled = true;
+            const currentMoreBtn = document.getElementById("pointMoreBtn");
+
+            if (currentMoreBtn) {
+                currentMoreBtn.textContent = "더 이상 조회할 내용이 없습니다.";
+                currentMoreBtn.disabled = true;
+            }
+
+            return;
+        }
+
+        const currentMoreBtn = document.getElementById("pointMoreBtn");
+
+        if (!currentMoreBtn) {
             return;
         }
 
         if (loadedMonths.length >= MAX_MONTHS) {
-            moreBtn.textContent =
-                "과거 내역은 최대 2개월 조회 가능합니다.";
-            moreBtn.disabled = true;
+            currentMoreBtn.textContent = "과거 내역은 최대 2개월 조회 가능합니다.";
+            currentMoreBtn.disabled = true;
+        } else {
+            currentMoreBtn.textContent = "더보기";
+            currentMoreBtn.disabled = false;
         }
 
     } catch (error) {
-        if (moreBtn) {
-            moreBtn.disabled = false;
-            moreBtn.textContent = "더보기";
+        console.error("POINT 이전 내역 조회 오류:", error);
+
+        const currentMoreBtn = document.getElementById("pointMoreBtn");
+
+        if (currentMoreBtn) {
+            currentMoreBtn.textContent = "더보기";
+            currentMoreBtn.disabled = false;
         }
+
     } finally {
         loadingMore = false;
     }
@@ -330,8 +320,7 @@ async function loadPreviousMonth() {
 
 // 더보기 버튼 제거
 function removeMoreButton() {
-    const moreBtn =
-        document.getElementById("pointMoreBtn");
+    const moreBtn = document.getElementById("pointMoreBtn");
 
     if (moreBtn) {
         moreBtn.remove();
@@ -346,28 +335,19 @@ function showMoreButton() {
         return;
     }
 
-    pointContent.appendChild(
-        createMoreButton()
-    );
+    pointContent.appendChild(createMoreButton());
 }
 
 // POINT 팝업 열기
 pointBtn.addEventListener("click", async () => {
     pointContent.innerHTML = "";
 
-    const hasRecord =
-        await renderInitialHistory();
+    const hasRecord = await renderInitialHistory();
 
     if (!hasRecord) {
-        const empty =
-            document.createElement("div");
-
-        empty.className =
-            "pointHistoryEmpty";
-
-        empty.textContent =
-            "POINT 내역이 없습니다.";
-
+        const empty = document.createElement("div");
+        empty.className = "pointHistoryEmpty";
+        empty.textContent = "POINT 내역이 없습니다.";
         pointContent.appendChild(empty);
     }
 

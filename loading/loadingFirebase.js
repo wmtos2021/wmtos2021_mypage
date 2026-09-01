@@ -167,8 +167,8 @@ export async function loadStudentData() {
     return true;
 }
 
-// 확인 횟수 증가
-export async function updateCheckCount() {
+// 로그인 횟수 증가
+export async function updateLoginCount() {
     const deviceId = getDeviceId();
 
     if (!deviceId) {
@@ -189,14 +189,14 @@ export async function updateCheckCount() {
         return false;
     }
 
-    const checkCountRef =
+    const loginCountRef =
         ref(
             db,
-            `student/${mobile}/checkCount`
+            `student/${mobile}/loginCount`
         );
 
     await runTransaction(
-        checkCountRef,
+        loginCountRef,
         currentValue => {
             const currentCount =
                 Number(currentValue) || 0;

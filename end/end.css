@@ -1,4 +1,4 @@
-/* end.css */
+ /* end.css */
 
 /* 기본 설정 */
 * {
@@ -33,17 +33,15 @@ body {
     padding: 20px;
     text-align: center;
 }
-
 .endContainer p {
-    font-size: 20px;
+    font-size: 21px;
     font-weight: 700;
     line-height: 1.4;
 }
-
 .endContainer span {
-    margin-top: 10px;
-    font-size: 16px;
-    font-weight: 400;
-    color: #666666;
+    margin-top: 12px;
+    font-size: 18px;
+    font-weight: 500;
+    color: #555555;
     line-height: 1.5;
 }
