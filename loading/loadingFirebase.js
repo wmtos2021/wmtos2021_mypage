@@ -13,8 +13,33 @@ import {
 import { db } from "../firebase.js";
 import { getDeviceId } from "../utils.js";
 
+// 이미지 미리 로딩
+function preloadImages() {
+    const imageList = [
+        "../imageAttend/attend_투명.webp",
+        "../imageAttend/attend1_투명.webp",
+        "../imageAttend/attend2_투명.webp",
+        "../imageAttend/attend3_투명.webp",
+        "../imageLogin/로그인화면.webp",
+        "../imageLogin/학원명1_투명.webp",
+        "../imageLogin/로고_투명.webp",
+        "../imageBoard/보드판.webp",
+        "../imageBoard/보드말.webp",
+        "../imageStudent/골드.webp",
+        "../imageStudent/성실도.webp",
+        "../imageStudent/포인트.webp"
+    ];
+
+    imageList.forEach(src => {
+        const image = new Image();
+        image.src = src;
+    });
+}
+
 // 학생 기본 정보 및 이번 달 데이터 가져오기
 export async function loadStudentData() {
+    preloadImages();
+
     const deviceId = getDeviceId();
 
     if (!deviceId) {

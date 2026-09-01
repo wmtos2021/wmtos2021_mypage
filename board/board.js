@@ -31,13 +31,15 @@ backBtn.addEventListener("click", () => {
 init();
 
 async function init() {
-    const sessionValid = await checkSession();
+    const sessionPromise = checkSession();
+
+    await loadPlayer();
+
+    const sessionValid = await sessionPromise;
 
     if (!sessionValid) {
         return;
     }
-
-    await loadPlayer();
 }
 
 // 학생 정보 불러오기
@@ -72,12 +74,21 @@ async function loadPlayer() {
         Number(studentInfo.totalG || 0).toLocaleString();
 }
 
-// 최신 POINT / GOLD / 위치 조회
+// 주사위 후 최신 POINT / GOLD / 위치 조회
 window.refreshGameStatus = async function () {
     const deviceId = getDeviceId();
     const deviceInfo = await getDeviceInfo(deviceId);
+
+    if (!deviceInfo?.mobile) {
+        return;
+    }
+
     const mobile = deviceInfo.mobile;
     const studentInfo = await getStudentInfo(mobile);
+
+    if (!studentInfo) {
+        return;
+    }
 
     sessionStorage.setItem(
         "studentInfo",
@@ -105,7 +116,6 @@ window.refreshGameStatus = async function () {
 
 // 테스트용 강제 이동
 window.testMove = function(position) {
-
     const pos = Number(position);
 
     if (pos < 1 || pos > 40) {
@@ -123,5 +133,4 @@ window.testMove = function(position) {
     console.log(
         `${pos}번 칸 이벤트 테스트`
     );
-
 };
