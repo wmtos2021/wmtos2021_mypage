@@ -1,7 +1,8 @@
 // loading.js
 
 import {
-    loadStudentData
+    loadStudentData,
+    updateCheckCount
 } from "./loadingFirebase.js";
 
 import { checkSession } from "../end/session.js";
@@ -53,6 +54,8 @@ async function startLoading() {
         if (!loaded) {
             return;
         }
+
+        await updateCheckCount();
 
         location.href = "../student/student.html";
     } catch (error) {

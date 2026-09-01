@@ -6,7 +6,8 @@ import {
     query,
     orderByKey,
     startAt,
-    endAt
+    endAt,
+    runTransaction
 } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
 
 import { db } from "../firebase.js";
@@ -161,6 +162,47 @@ export async function loadStudentData() {
             shop: shopData,
             reward: rewardData
         })
+    );
+
+    return true;
+}
+
+// 확인 횟수 증가
+export async function updateCheckCount() {
+    const deviceId = getDeviceId();
+
+    if (!deviceId) {
+        return false;
+    }
+
+    const deviceSnapshot = await get(
+        ref(db, `deviceId/${deviceId}`)
+    );
+
+    if (!deviceSnapshot.exists()) {
+        return false;
+    }
+
+    const mobile = deviceSnapshot.val().mobile;
+
+    if (!mobile) {
+        return false;
+    }
+
+    const checkCountRef =
+        ref(
+            db,
+            `student/${mobile}/checkCount`
+        );
+
+    await runTransaction(
+        checkCountRef,
+        currentValue => {
+            const currentCount =
+                Number(currentValue) || 0;
+
+            return currentCount + 1;
+        }
     );
 
     return true;
