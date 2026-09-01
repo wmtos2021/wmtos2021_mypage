@@ -12,3 +12,6 @@ window.addEventListener("pageshow", (event) => {
         location.replace(location.href);
     }
 });
+
+
+

@@ -38,27 +38,17 @@ function getGiftPrize() {
 // 선물 오픈
 export function showGiftPopup() {
     return new Promise(resolve => {
-        const modal = document.getElementById("lotteryModal");
-        const number = document.getElementById("lotteryNumber");
-        const message = document.getElementById("lotteryMessage");
-        const button = document.getElementById("lotteryBtn");
+        const modal = document.getElementById("giftModal");
+        const giftImage = document.getElementById("giftImage");
+        const message = document.getElementById("giftMessage");
+
+        const resultModal = document.getElementById("giftResultModal");
+        const resultReward = document.getElementById("giftResultReward");
 
         const prize = getGiftPrize();
 
-        number.innerHTML = `
-            <img
-                id="giftImage"
-                src="../imageBoard/선물.webp"
-                alt="선물상자">
-        `;
-
-        message.textContent =
-            "선물상자를 클릭해보세요!";
-
-        button.style.display = "none";
-
-        const giftImage =
-            document.getElementById("giftImage");
+        giftImage.src = "../imageBoard/선물.webp";
+        message.textContent = "선물상자를 클릭해보세요!";
 
         giftImage.onclick = function() {
             giftImage.classList.remove("giftFlash");
@@ -66,19 +56,17 @@ export function showGiftPopup() {
             giftImage.classList.add("giftFlash");
 
             setTimeout(() => {
-                giftImage.src =
-                    "../imageBoard/선물오픈.webp";
+                modal.classList.add("hidden");
 
-                message.innerHTML =
-                    `<strong>${prize.toLocaleString()}G</strong>를 획득했습니다!`;
+                resultReward.textContent =
+                    `+ ${prize.toLocaleString()}G`;
 
-                button.style.display = "inline-block";
-                button.textContent = "확인";
+                resultModal.classList.remove("hidden");
 
-                button.onclick = function() {
-                    modal.classList.add("hidden");
+                setTimeout(() => {
+                    resultModal.classList.add("hidden");
                     resolve(prize);
-                };
+                }, 2400);
             }, 500);
         };
 

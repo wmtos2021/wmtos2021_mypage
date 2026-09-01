@@ -1,6 +1,6 @@
 /* dice.css */
 
-/* 모달 */
+
 .modal {
     position: fixed;
     inset: 0;
@@ -10,16 +10,16 @@
     background: rgba(0, 0, 0, .45);
     z-index: 9999;
 }
-
 .modal.hidden {
     display: none;
 }
+
 
 /* 팝업 */
 .diceBox {
     width: 340px;
     padding: 30px;
-    background: #FFF7FA;
+    background: #FFFFFF;
     border-radius: 18px;
     text-align: center;
     box-shadow: 0 10px 30px rgba(0, 0, 0, .2);
@@ -27,13 +27,13 @@
     flex-direction: column;
     align-items: center;
 }
-
 #diceResult {
     margin-top: 20px;
-    font-size: 18px;
+    font-size: 22px;
     font-weight: bold;
-    color: #FF4F93;
+    color: #0CA19B;
 }
+
 
 /* 3D 공간 */
 .scene {
@@ -46,6 +46,7 @@
     perspective: 1000px;
 }
 
+
 /* 큐브 */
 #dice {
     position: relative;
@@ -56,6 +57,7 @@
     transform-origin: center center;
     transition: transform .9s cubic-bezier(.2, .8, .2, 1);
 }
+
 
 /* 면 */
 #dice .face {
@@ -68,6 +70,7 @@
     -webkit-backface-visibility: hidden;
 }
 
+
 /* 이미지 */
 #dice img {
     width: 100%;
@@ -78,27 +81,11 @@
     pointer-events: none;
 }
 
+
 /* 각 면 위치 */
-.front {
-    transform: rotateY(0deg) translateZ(50px);
-}
-
-.back {
-    transform: rotateY(180deg) translateZ(50px);
-}
-
-.right {
-    transform: rotateY(90deg) translateZ(50px);
-}
-
-.left {
-    transform: rotateY(-90deg) translateZ(50px);
-}
-
-.top {
-    transform: rotateX(90deg) translateZ(50px);
-}
-
-.bottom {
-    transform: rotateX(-90deg) translateZ(50px);
-}
+.front { transform: rotateY(0deg) translateZ(50px); }
+.back { transform: rotateY(180deg) translateZ(50px); }
+.right { transform: rotateY(90deg) translateZ(50px); }
+.left { transform: rotateY(-90deg) translateZ(50px); }
+.top { transform: rotateX(90deg) translateZ(50px); }
+.bottom { transform: rotateX(-90deg) translateZ(50px); }

@@ -134,7 +134,7 @@ button:focus-visible {
 #diceBtn,
 #backBtn {
     height: 50px;
-    border: none;
+    border: 1px solid;
     border-radius: 12px;
     font-weight: 700;
     cursor: pointer;
@@ -143,8 +143,9 @@ button:focus-visible {
 #backBtn {
     flex: 0 0 100px;
     background: #E5E7E7;
+    border-color: #C8CCCC;
     color: #555D60;
-    font-size: 16px;
+    font-size: 18px;
 }
 
 #backBtn:active {
@@ -154,13 +155,15 @@ button:focus-visible {
 #diceBtn {
     flex: 1;
     background: #0CA19B;
+    border-color: #087E78;
     color: #FFFFFF;
-    font-size: 18px;
+    font-size: 19px;
 }
 
 #diceBtn:active {
     background: #087E78;
 }
+
 
 /* 하단 학원 정보 */
 .footerLeft {

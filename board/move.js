@@ -13,12 +13,10 @@ export async function movePlayer(step) {
     moving = true;
 
     try {
-        let position =
-            Number(sessionStorage.getItem("position")) || 0;
-
+        let position = Number(sessionStorage.getItem("position")) || 0;
         const dice = Number(step);
         const start = position;
-        let passedBank = false;
+        let reachedBank = false;
 
         // 말 이동
         for (let i = 0; i < dice; i++) {
@@ -26,30 +24,28 @@ export async function movePlayer(step) {
 
             if (position > 40) {
                 position = 1;
-                passedBank = true;
             }
 
-            sessionStorage.setItem(
-                "position",
-                String(position)
-            );
+            if (position === 40) {
+                reachedBank = true;
+            }
 
+            sessionStorage.setItem("position", String(position));
             updateMarker(position);
 
             await wait(300);
         }
 
-        const type =
-            passedBank
-                ? "bank-normal"
-                : boardData[position].type;
+        const type = reachedBank
+            ? "bank-normal"
+            : boardData[position].type;
 
         return {
             start: start,
             dice: dice,
             end: position,
             type: type,
-            passedBank: passedBank
+            reachedBank: reachedBank
         };
     } finally {
         moving = false;
@@ -58,23 +54,17 @@ export async function movePlayer(step) {
 
 // 말 위치
 export function updateMarker(position) {
-    const tile =
-        Number(position) === 0
-            ? startPosition
-            : boardData[position];
+    const tile = Number(position) === 0
+        ? startPosition
+        : boardData[position];
 
     if (!tile) return;
 
-    playerPin.style.left =
-        tile.x + "%";
-
-    playerPin.style.top =
-        tile.y + "%";
+    playerPin.style.left = tile.x + "%";
+    playerPin.style.top = tile.y + "%";
 }
 
 // 대기
 function wait(ms) {
-    return new Promise(
-        resolve => setTimeout(resolve, ms)
-    );
+    return new Promise(resolve => setTimeout(resolve, ms));
 }

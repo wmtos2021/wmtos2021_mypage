@@ -43,8 +43,8 @@ async function rollDice() {
         diceResult.textContent = "주사위를 굴리는 중...";
 
         // 결과를 먼저 결정
-        const number =1
-            //Math.floor(Math.random() * 6) + 1;
+        const number = 2;
+        // Math.floor(Math.random() * 6) + 1;
 
         // 각 숫자의 최종 회전값
         const faceRotation = {
@@ -57,44 +57,33 @@ async function rollDice() {
         };
 
         // 여러 바퀴 회전 후 결과 면에서 정지
-        const spinX =
-            1800 + faceRotation[number].x;
-
-        const spinY =
-            1800 + faceRotation[number].y;
+        const spinX = 1800 + faceRotation[number].x;
+        const spinY = 1800 + faceRotation[number].y;
 
         dice.style.transition = "none";
-        dice.style.transform =
-            "rotateX(0deg) rotateY(0deg)";
+        dice.style.transform = "rotateX(0deg) rotateY(0deg)";
 
         await wait(50);
 
-        dice.style.transition =
+        dice.style.transition = 
             "transform 1.5s cubic-bezier(.12,.8,.18,1)";
-
-        dice.style.transform =
+        dice.style.transform = 
             `rotateX(${spinX}deg) rotateY(${spinY}deg)`;
 
-        await wait(1500);
+        await wait(2000);
 
-        diceResult.textContent =
-            `${number}이(가) 나왔습니다!`;
+        diceResult.textContent = `${number} 칸을 이동합니다.`;
 
-        await wait(1500);
+        await wait(1600);
 
         diceModal.classList.add("hidden");
 
-        const moveResult =
-            await movePlayer(number);
-
-        await handleMoveResult(
-            moveResult
-        );
+        const moveResult = await movePlayer(number);
+        await handleMoveResult(moveResult);
     } catch (error) {
         diceModal.classList.add("hidden");
         showAlert(
-            error.message ||
-            "주사위를 실행하는 중 오류가 발생했습니다."
+            error.message || "주사위를 실행하는 중 오류가 발생했습니다."
         );
     } finally {
         rolling = false;
@@ -104,7 +93,5 @@ async function rollDice() {
 
 // 대기
 function wait(ms) {
-    return new Promise(
-        resolve => setTimeout(resolve, ms)
-    );
+    return new Promise(resolve => setTimeout(resolve, ms));
 }

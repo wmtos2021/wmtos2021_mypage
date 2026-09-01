@@ -36,7 +36,7 @@ export async function payDicePoint() {
 
     if (currentPoint < DICE_COST) {
         throw new Error(
-            "게임에 참여하려면 2,000P가 필요합니다."
+            "주사위를 굴리려면 2,000P가 필요합니다."
         );
     }
 

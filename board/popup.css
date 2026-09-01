@@ -1,3 +1,7 @@
+/* popup.css */
+
+/* 팝업 공통 */
+.popupModal,
 .specialModal,
 .alertModal {
     position: fixed;
@@ -9,49 +13,158 @@
     z-index: 9999;
 }
 
+/* 숨김 */
 .hidden {
     display: none !important;
 }
 
+/* 팝업 박스 공통 */
+.popupBox,
 .specialBox,
 .alertBox {
     width: 340px;
     padding: 30px;
-    background: #FFF7FA;
+    background: #FFFFFF;
     border-radius: 18px;
     text-align: center;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
 }
 
-.specialBox img {
+/* 일반 팝업 이미지 */
+.popupBox img {
     display: none;
     width: 100%;
     max-height: 240px;
     object-fit: contain;
-    margin-bottom: 20px;
+    margin-bottom: 8px;
 }
 
-#specialMessage,
-#lotteryMessage,
+/* 일반 팝업 메시지 */
+#popupMessage {
+    margin-bottom: 12px;
+    font-size: 18px;
+    line-height: 1.5;
+}
+
+/* 일반 팝업 보상 */
+#popupReward {
+    margin-bottom: 28px;
+    font-size: 28px;
+    font-weight: 700;
+    color: #075F5C;
+}
+
+/* 선물 팝업 이미지 */
+#giftImage {
+    width: 100%;
+    max-height: 240px;
+    object-fit: contain;
+    cursor: pointer;
+}
+
+/* 선물 팝업 메시지 */
+#giftMessage {
+    margin-top: 16px;
+    font-size: 18px;
+    line-height: 1.5;
+}
+
+/* 선물상자 클릭 효과 */
+.giftFlash {
+    animation: giftFlash 0.5s ease;
+}
+
+/* 선물 결과 이미지 영역 */
+.giftResultImageBox {
+    position: relative;
+    width: 100%;
+}
+
+/* 선물 결과 이미지 */
+#giftResultImage {
+    display: block;
+    width: 100%;
+    max-height: 240px;
+    object-fit: contain;
+}
+
+
+/* 선물 결과 GOLD */
+#giftResultReward {
+    position: absolute;
+    top: 28%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: inline-block;
+    font-family: Arial, sans-serif;
+    font-style: normal;
+    font-size: 40px;
+    font-weight: 800;
+    line-height: 1;
+    white-space: nowrap;
+    pointer-events: none;
+
+    background: linear-gradient(
+        to bottom,
+        #FFFFC2 0%,
+        #FFF06A 25%,
+        #FFD92F 50%,
+        #FFF36B 62%,
+        #FFD01F 80%,
+        #FFF08A 100%
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    -webkit-text-stroke: 1px #5f4007;
+}
+
+/* 선물 결과 GOLD 아래 장식선 */
+#giftResultReward::after {
+    content: "";
+    position: absolute;
+    top: calc(100% + 19px);
+    left: 50%;
+    transform: translateX(-50%);
+    width: 70%;
+    height: 8px;
+    background: #333;
+    border-radius: 50%;
+    filter: blur(2px);
+    opacity: 0.5;
+    z-index: -1;
+}
+
+
+/* 선물 클릭 애니메이션 */
+@keyframes giftFlash {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.08);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* 안내 팝업 메시지 */
 #alertMessage {
     margin-bottom: 20px;
     font-size: 18px;
     line-height: 1.5;
 }
 
-#specialCloseBtn,
-#lotteryBtn,
+/* 안내 팝업 버튼 */
 #alertCloseBtn {
     width: 100%;
     padding: 12px 0;
     border: none;
     border-radius: 10px;
-    background: #17753F;
-    color: white;
+    background: #0CA19B;
+    color: #FFFFFF;
     font-size: 16px;
     cursor: pointer;
-}
-
-#lotteryNumber {
-    margin: 20px 0;
 }

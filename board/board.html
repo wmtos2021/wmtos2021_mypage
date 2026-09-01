@@ -42,6 +42,7 @@
         <!-- 보드 -->
         <section class="boardArea">
             <div class="boardBox">
+
                 <img
                     src="../imageBoard/보드판.webp"
                     id="boardImage"
@@ -53,6 +54,7 @@
                     id="playerPin"
                     class="playerPin"
                     alt="보드말">
+
             </div>
         </section>
 
@@ -85,27 +87,39 @@
                 <div id="dice" class="cube">
 
                     <div class="face front">
-                        <img src="../imageDice/dice1.png" alt="">
+                        <img
+                            src="../imageDice/dice1.png"
+                            alt="">
                     </div>
 
                     <div class="face back">
-                        <img src="../imageDice/dice6.png" alt="">
+                        <img
+                            src="../imageDice/dice6.png"
+                            alt="">
                     </div>
 
                     <div class="face right">
-                        <img src="../imageDice/dice3.png" alt="">
+                        <img
+                            src="../imageDice/dice3.png"
+                            alt="">
                     </div>
 
                     <div class="face left">
-                        <img src="../imageDice/dice4.png" alt="">
+                        <img
+                            src="../imageDice/dice4.png"
+                            alt="">
                     </div>
 
                     <div class="face top">
-                        <img src="../imageDice/dice5.png" alt="">
+                        <img
+                            src="../imageDice/dice5.png"
+                            alt="">
                     </div>
 
                     <div class="face bottom">
-                        <img src="../imageDice/dice2.png" alt="">
+                        <img
+                            src="../imageDice/dice2.png"
+                            alt="">
                     </div>
 
                 </div>
@@ -120,58 +134,62 @@
 
     </div>
 
-    <!-- 이벤트 팝업 -->
+    <!-- 팝업 -->
     <div
-        id="specialModal"
+        id="popupModal"
+        class="popupModal hidden">
+
+        <div class="popupBox">
+
+            <img
+                id="popupImage"
+                src=""
+                alt="">
+            <p id="popupMessage"></p>
+            <p id="popupReward"></p>
+        </div>
+    </div>
+
+    <!-- 선물 팝업 -->
+    <div
+        id="giftModal"
         class="specialModal hidden">
 
         <div class="specialBox">
 
             <img
-                id="specialImage"
-                src=""
-                alt="이벤트">
+                id="giftImage"
+                src="../imageBoard/선물.webp"
+                alt="선물">
 
-            <p id="specialMessage"></p>
-
-            <button
-                type="button"
-                id="specialCloseBtn">
-                확인
-            </button>
+            <p id="giftMessage">
+                선물상자를 클릭해보세요!
+            </p>
 
         </div>
-
     </div>
 
-    <!-- 복권 팝업 -->
+    <!-- 선물 결과 팝업 -->
     <div
-        id="lotteryModal"
+        id="giftResultModal"
         class="specialModal hidden">
 
         <div class="specialBox">
 
-            <h2>
-                행운복권
-            </h2>
+            <div class="giftResultImageBox">
 
-            <div id="lotteryNumber">
-                ?
+                <img
+                    id="giftResultImage"
+                    src="../imageBoard/선물오픈.webp"
+                    alt="선물">
+
+                <strong id="giftResultReward"></strong>
+
             </div>
 
-            <p id="lotteryMessage">
-                복권을 긁어보세요!
-            </p>
-
-            <button
-                type="button"
-                id="lotteryBtn">
-                복권 긁기
-            </button>
-
         </div>
-
     </div>
+
 
     <!-- 안내 팝업 -->
     <div
@@ -197,17 +215,20 @@
 
     <!-- 하단 왼쪽 정보 -->
     <div class="footerLeft">
+
         <div class="footerLine1">
             위드엠투에스학원
         </div>
+
         <div class="footerLine2">
             경남 김해시 활천로 168, 2층
         </div>
+
     </div>
 
     <!-- 하단 오른쪽 정보 -->
     <div class="footerRight">
-        Ver 2.2.2
+        Ver 2.2.3
     </div>
 
     <script

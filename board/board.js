@@ -16,6 +16,10 @@ window.addEventListener("popstate", () => {
     history.pushState(null, "", location.href);
 });
 
+window.addEventListener("pageshow", () => {
+    history.pushState(null, "", location.href);
+});
+
 // 요소 가져오기
 const studentName = document.getElementById("studentName");
 const studentPoint = document.getElementById("studentPoint");
