@@ -1,75 +1,81 @@
 // diligenceCalendar.js
 
-import {
-    isAttendAvailable,
-    isDiligenceStatusAvailable
-} from "../attend/attend.js";
+export function getDefaultSubject(studentInfo) {
+    const subjects = Object.keys(studentInfo?.subject || {});
+    if (!subjects.length) return null;
 
-// 달력 날짜 생성
-export function renderCalendarDays(
+    const data = sessionStorage.getItem("attendanceCheck");
+
+    if (data) {
+        try {
+            const subject = JSON.parse(data).subject;
+
+            if (subject && subjects.includes(subject)) {
+                return subject;
+            }
+        } catch (error) {
+            return subjects[0];
+        }
+    }
+
+    return subjects[0];
+}
+
+export function renderSubjectTabs(
+    studentInfo,
+    selectedSubject
+) {
+    const subjects = Object.keys(studentInfo?.subject || {});
+    if (!subjects.length) return "";
+
+    const subjectNames = {
+        korean: "국어",
+        english: "영어",
+        math: "수학",
+        social: "사회",
+        science: "과학",
+        history: "역사"
+    };
+
+    return subjects.map(subject => `
+        <button
+            type="button"
+            class="subjectTab ${subject === selectedSubject ? "active" : ""}"
+            data-subject="${subject}">
+            ${subjectNames[subject] || subject}
+        </button>
+    `).join("");
+}
+
+export function renderCalendarDays({
     year,
     month,
     lastDate,
-    isCurrentMonth,
-    today,
+    todayString,
     studentInfo,
-    attendRecords
-) {
+    attendRecords,
+    selectedSubject,
+    attendanceCheck
+}) {
     let html = "";
 
-    const monthKey =
-        `${year}-${String(month + 1).padStart(2, "0")}`;
+    const monthRecords = attendRecords || {};
+    const firstDay = new Date(year, month, 1).getDay();
+    const enrollment = studentInfo?.enrollment
+        ? String(studentInfo.enrollment).slice(0, 10)
+        : "";
 
-    const monthRecords =
-        attendRecords[monthKey] || {};
-
-    const firstDay =
-        new Date(
-            year,
-            month,
-            1
-        ).getDay();
-
-    if (
-        firstDay >= 1 &&
-        firstDay <= 5
-    ) {
-        for (
-            let i = 1;
-            i < firstDay;
-            i++
-        ) {
+    if (firstDay >= 1 && firstDay <= 5) {
+        for (let i = 1; i < firstDay; i++) {
             html += `
                 <div class="calendarDay empty"></div>
             `;
         }
     }
 
-    const todayString =
-        `${today.getFullYear()}-${String(
-            today.getMonth() + 1
-        ).padStart(2, "0")}-${String(
-            today.getDate()
-        ).padStart(2, "0")}`;
-
-    const enrollment =
-        studentInfo?.enrollment
-            ? String(
-                studentInfo.enrollment
-            ).slice(0, 10)
-            : "";
-
-    for (
-        let date = 1;
-        date <= lastDate;
-        date++
-    ) {
+    for (let date = 1; date <= lastDate; date++) {
         const dayOfWeek =
-            new Date(
-                year,
-                month,
-                date
-            ).getDay();
+            new Date(year, month, date).getDay();
 
         if (
             dayOfWeek === 0 ||
@@ -79,123 +85,71 @@ export function renderCalendarDays(
         }
 
         const dateString =
-            `${year}-${String(
-                month + 1
-            ).padStart(2, "0")}-${String(
-                date
-            ).padStart(2, "0")}`;
+            `${year}-${String(month + 1).padStart(2, "0")}-${String(date).padStart(2, "0")}`;
 
         const isToday =
-            isCurrentMonth &&
-            date === today.getDate();
+            dateString === todayString;
 
         const dateData =
             monthRecords[dateString] || {};
 
-        const timeEntries =
-            Object.entries(dateData);
-
         const record =
-            timeEntries.length > 0
-                ? timeEntries[timeEntries.length - 1][1]
-                : null;
+            dateData[selectedSubject] || null;
 
         const isBeforeEnrollment =
-            enrollment &&
-            dateString < enrollment;
+            Boolean(
+                enrollment &&
+                dateString < enrollment
+            );
 
         const isFuture =
             dateString > todayString;
 
-        const attended =
-            isToday &&
-            !!record;
-
-        const attendAvailable =
-            isToday &&
-            !isBeforeEnrollment &&
-            !attended &&
-            isAttendAvailable();
-
-        let attendStatus =
-            "absent";
-
-        let homeworkStatus =
-            "homeworkNotDone";
+        let content = "";
 
         if (
-            isBeforeEnrollment ||
-            isFuture
+            !isBeforeEnrollment &&
+            !isFuture &&
+            record
         ) {
-            attendStatus =
-                "notStarted";
+            content =
+                renderRecordStatus(record);
 
-            homeworkStatus =
-                "notStarted";
-        } else if (record) {
-            attendStatus =
-                getAttendStatus(
-                    record.attend
-                );
-
-            homeworkStatus =
-                getHomeworkStatus(
-                    record.homework,
-                    isToday
-                );
         } else if (
             isToday &&
-            !isDiligenceStatusAvailable()
+            !isBeforeEnrollment &&
+            selectedSubject &&
+            attendanceCheck?.subject === selectedSubject &&
+            !record
         ) {
-            attendStatus =
-                "notStarted";
+            content = `
+                <button
+                    type="button"
+                    id="todayAttendBtn"
+                    class="todayAttendBtn">
+                    <img
+                        src="../imageAttend/attend_투명.webp"
+                        alt="출석하기">
+                </button>
+            `;
 
-            homeworkStatus =
-                "notStarted";
         } else {
-            attendStatus =
-                "absent";
-
-            homeworkStatus =
-                "homeworkNotDone";
+            content =
+                renderRecordStatus(null);
         }
 
         html += `
             <div
-                class="calendarDay ${
-                    isToday ? "today" : ""
-                }">
+                class="calendarDay ${isToday ? "today" : ""}"
+                data-date="${dateString}">
 
                 <span class="dateNumber">
                     ${date}
                 </span>
 
-                ${
-                    attendAvailable
-                        ? `
-                            <button
-                                type="button"
-                                id="todayAttendBtn"
-                                class="todayAttendBtn">
-
-                                <img
-                                    src="../imageAttend/attend_투명.webp"
-                                    alt="출석하기">
-
-                            </button>
-                        `
-                        : `
-                            ${createStatus(
-                                "출석",
-                                attendStatus
-                            )}
-
-                            ${createStatus(
-                                "숙제",
-                                homeworkStatus
-                            )}
-                        `
-                }
+                <div class="calendarDayBody">
+                    ${content}
+                </div>
 
             </div>
         `;
@@ -204,7 +158,26 @@ export function renderCalendarDays(
     return html;
 }
 
-// 출석 상태 변환
+export function renderRecordStatus(record) {
+    const attendStatus =
+        getAttendStatus(record?.attend);
+
+    const homeworkStatus =
+        getHomeworkStatus(record?.homework);
+
+    return `
+        <div class="diligenceStatusRow">
+            <span>출석</span>
+            <i class="statusDot ${attendStatus}"></i>
+        </div>
+
+        <div class="diligenceStatusRow">
+            <span>숙제</span>
+            <i class="statusDot ${homeworkStatus}"></i>
+        </div>
+    `;
+}
+
 function getAttendStatus(status) {
     if (
         status === "ontime" ||
@@ -221,14 +194,14 @@ function getAttendStatus(status) {
         return "late";
     }
 
-    return "absent";
+    if (status === "absent") {
+        return "absent";
+    }
+
+    return "notStarted";
 }
 
-// 숙제 상태 변환
-function getHomeworkStatus(
-    status,
-    isToday
-) {
+function getHomeworkStatus(status) {
     if (status === "done") {
         return "homeworkDone";
     }
@@ -237,25 +210,5 @@ function getHomeworkStatus(
         return "homeworkNotDone";
     }
 
-    if (
-        isToday &&
-        status === ""
-    ) {
-        return "notStarted";
-    }
-
-    return "homeworkNotDone";
-}
-
-// 상태 표시
-function createStatus(
-    label,
-    status
-) {
-    return `
-        <div class="diligenceStatusRow">
-            <span>${label}</span>
-            <i class="statusDot ${status}"></i>
-        </div>
-    `;
+    return "notStarted";
 }
