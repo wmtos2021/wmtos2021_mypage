@@ -2,216 +2,474 @@
 
 import {
     getDeviceId,
-    getSeoulDay,
-    getSeoulTime
+    getTimestamp,
+    getDateFromTimestamp,
+    getDayFromTimestamp
 } from "../utils.js";
+
 import {
-    getDeviceInfo,
     getClassTime,
     checkTodayAttend,
-    saveWisdom,
-    updateWisdom,
-    saveAttendHistory,
-    updateTotalP
+    saveAttend,
+    updateWisdom
 } from "./attendFirebase.js";
+
 import {
     checkAcademyDistance,
     ALLOW_DISTANCE
 } from "./gps.js";
+
 import {
     showAttendPopup,
     showAttendMessage
 } from "./attendPopup.js";
-import { getWisdom } from "./wisdom.js";
+
+import {getWisdom} from "./wisdom.js";
 
 const deviceId = getDeviceId();
 
 let todayClassTime = null;
 let todayWisdom = null;
 let todayMobile = null;
-let todayName = "";
+let todayClass = null;
+let attendanceClass = null;
 let attendTimestamp = null;
 let todayLatitude = null;
 let todayLongitude = null;
+let attendProcessing = false;
 
-// 오늘 정보 가져오기
-async function loadTodayInfo() {
-    const deviceInfo = await getDeviceInfo(deviceId);
+// loading에서 준비한 학생 정보 가져오기
+function getStudentInfo() {
+    const data = sessionStorage.getItem("studentInfo");
 
-    if (!deviceInfo) {
-        showAttendMessage("등록된 학원생 정보가 없습니다.");
+    if (!data) {
+        return null;
+    }
+
+    try {
+        return JSON.parse(data);
+    } catch (error) {
+        return null;
+    }
+}
+
+// device 정보 가져오기
+function getDeviceInfo() {
+    const data = sessionStorage.getItem("deviceInfo");
+
+    if (!data) {
+        return null;
+    }
+
+    try {
+        return JSON.parse(data);
+    } catch (error) {
+        return null;
+    }
+}
+
+// QR 출석 정보 가져오기
+function getAttendanceCheck() {
+    const data = sessionStorage.getItem("attendanceCheck");
+
+    if (!data) {
+        return null;
+    }
+
+    try {
+        return JSON.parse(data);
+    } catch (error) {
+        return null;
+    }
+}
+
+// 오늘 정보 준비
+async function loadTodayInfo(showMessage = true) {
+    const studentInfo = getStudentInfo();
+    const deviceInfo = getDeviceInfo();
+    const attendanceCheck = getAttendanceCheck();
+
+    if (!studentInfo || !deviceInfo) {
+        if (showMessage) {
+            showAttendMessage("학생 정보를 확인할 수 없습니다.");
+        }
         return false;
     }
 
-    todayClassTime = await getClassTime(deviceInfo.class, getSeoulDay());
-    todayWisdom = deviceInfo.wisdom;
-
-    if (!todayWisdom) {
-        todayWisdom = Math.floor(Math.random() * 24) + 1;
-        await saveWisdom(deviceId, todayWisdom);
+    if (!attendanceCheck) {
+        if (showMessage) {
+            showAttendMessage("출석체크 QR을 새로 인식해주세요.");
+        }
+        return false;
     }
 
-    todayMobile = deviceInfo.mobile;
-    todayName = deviceInfo.name || "";
-    attendTimestamp = deviceInfo.attendTimestamp || null;
-    todayLatitude = deviceInfo.latitude;
-    todayLongitude = deviceInfo.longitude;
+    todayMobile = deviceInfo.mobile || null;
+    todayWisdom = studentInfo.wisdom || deviceInfo.wisdom || null;
+    todayClass = studentInfo.class || deviceInfo.class || {};
+
+    attendanceClass = attendanceCheck.class || null;
+    attendTimestamp = attendanceCheck.attendTimestamp || null;
+    todayLatitude = attendanceCheck.latitude;
+    todayLongitude = attendanceCheck.longitude;
+
+    if (!attendanceClass) {
+        if (showMessage) {
+            showAttendMessage("출석 수업을 확인할 수 없습니다.");
+        }
+        return false;
+    }
+
+    if (!todayMobile) {
+        if (showMessage) {
+            showAttendMessage("학생 정보를 확인할 수 없습니다.");
+        }
+        return false;
+    }
+
+    if (!todayClass[attendanceClass]) {
+        if (showMessage) {
+            showAttendMessage("수강하지 않는 수업입니다.");
+        }
+        return false;
+    }
 
     return true;
 }
 
-// 오늘 정보 로딩
-const todayInfoPromise = loadTodayInfo().catch(() => {
-    showAttendMessage("학원생이 아닙니다.\n선생님께 문의하세요.");
-    return false;
-});
-
-// 오늘 정보 로딩 완료 대기
-export async function waitTodayInfo() {
-    return await todayInfoPromise;
-}
-
-// 출석 버튼 가능 여부
-export function isAttendAvailable() {
-    if (!todayClassTime) {
+// 출석 가능 시간 확인
+export function isAttendTimeAvailable(
+    classTime,
+    timestamp
+) {
+    if (!classTime || !timestamp) {
         return false;
     }
 
-    const currentTime = getSeoulTime();
-    const classParts = todayClassTime.split(":");
-    const currentParts = currentTime.split(":");
-    const classMinutes = Number(classParts[0]) * 60 + Number(classParts[1]);
-    const currentMinutes = Number(currentParts[0]) * 60 + Number(currentParts[1]);
+    const date = new Date(timestamp);
 
-    return currentMinutes >= classMinutes - 49 && currentMinutes <= classMinutes + 60;
-}
-
-// 성실도 상태 표시 가능 여부
-export function isDiligenceStatusAvailable() {
-    if (!todayClassTime) {
+    if (Number.isNaN(date.getTime())) {
         return false;
     }
 
-    const currentTime = getSeoulTime();
-    const classParts = todayClassTime.split(":");
-    const currentParts = currentTime.split(":");
-    const classMinutes = Number(classParts[0]) * 60 + Number(classParts[1]);
-    const currentMinutes = Number(currentParts[0]) * 60 + Number(currentParts[1]);
+    const time = date.toLocaleTimeString(
+        "ko-KR",
+        {
+            timeZone: "Asia/Seoul",
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: false
+        }
+    );
 
-    return currentMinutes >= classMinutes + 90;
-}
+    const classParts = String(classTime).split(":");
+    const timeParts = time.split(":");
 
-// 오늘 이미 출석했는지 확인
-export async function isTodayAttended() {
-    if (!todayMobile) {
+    if (
+        classParts.length < 2 ||
+        timeParts.length < 2
+    ) {
         return false;
     }
 
-    const today = new Date().toLocaleDateString("sv-SE", {
-        timeZone: "Asia/Seoul"
-    });
+    const classHour = Number(classParts[0]);
+    const classMinute = Number(classParts[1]);
+    const timeHour = Number(timeParts[0]);
+    const timeMinute = Number(timeParts[1]);
 
-    return await checkTodayAttend(todayMobile, today);
+    if (
+        !Number.isFinite(classHour) ||
+        !Number.isFinite(classMinute) ||
+        !Number.isFinite(timeHour) ||
+        !Number.isFinite(timeMinute)
+    ) {
+        return false;
+    }
+
+    const classMinutes =
+        classHour * 60 +
+        classMinute;
+
+    const timeMinutes =
+        timeHour * 60 +
+        timeMinute;
+
+    return (
+        timeMinutes >= classMinutes - 49 &&
+        timeMinutes <= classMinutes + 60
+    );
+}
+
+// 성실도 달력용 출석 가능 여부
+export async function getAttendAvailability() {
+    const loaded = await loadTodayInfo(false);
+
+    if (!loaded) {
+        return false;
+    }
+
+    const className =
+        todayClass[attendanceClass];
+
+    if (!className) {
+        return false;
+    }
+
+    const day =
+        getDayFromTimestamp(
+            getTimestamp()
+        );
+
+    if (!day) {
+        return false;
+    }
+
+    const classTime =
+        await getClassTime(
+            attendanceClass,
+            className,
+            day
+        );
+
+    if (!classTime) {
+        return false;
+    }
+
+    return isAttendTimeAvailable(
+        classTime,
+        getTimestamp()
+    );
 }
 
 // 출석 처리
 export async function handleAttend() {
+    if (attendProcessing) {
+        return false;
+    }
+
+    attendProcessing = true;
+
     try {
-        const loaded = await todayInfoPromise;
+        const loaded =
+            await loadTodayInfo();
 
         if (!loaded) {
             return false;
         }
 
-        const attendTime = getSeoulTime();
-        const today = new Date().toLocaleDateString("sv-SE", {
-            timeZone: "Asia/Seoul"
-        });
+        const today =
+            getDateFromTimestamp(
+                getTimestamp()
+            );
+
+        if (!today) {
+            showAttendMessage(
+                "오늘 날짜를 확인할 수 없습니다."
+            );
+            return false;
+        }
+
+        if (!attendTimestamp) {
+            showAttendMessage(
+                "출석체크 QR을 새로 인식해주세요."
+            );
+            return false;
+        }
 
         // QR 유효시간 확인
-        if (!attendTimestamp || Date.now() - attendTimestamp > 5 * 60 * 1000) {
-            showAttendMessage("출석체크 QR을 새로 인식해주세요.");
+        const elapsed =
+            Date.now() -
+            new Date(attendTimestamp).getTime();
+
+        if (
+            Number.isNaN(elapsed) ||
+            elapsed < 0 ||
+            elapsed > 15 * 60 * 1000
+        ) {
+            showAttendMessage(
+                "출석체크 QR을 새로 인식해주세요."
+            );
             return false;
         }
 
         // 학원과의 거리 확인
-        const distance = checkAcademyDistance(todayLatitude, todayLongitude);
+        const distance =
+            checkAcademyDistance(
+                todayLatitude,
+                todayLongitude
+            );
 
         if (distance > ALLOW_DISTANCE) {
-            showAttendMessage("학원에 등원 후 출석해주세요.");
+            showAttendMessage(
+                "학원에 등원 후 출석해주세요."
+            );
             return false;
         }
 
-        // 오늘 이미 출석한 경우
-        if (await isTodayAttended()) {
-            showAttendMessage("이미 출석을 완료했어요!");
+        // 오늘 수업시간 가져오기
+        const className =
+            todayClass[attendanceClass];
+
+        if (!className) {
+            showAttendMessage(
+                "수강하지 않는 수업입니다."
+            );
             return false;
         }
+
+        const day =
+            getDayFromTimestamp(
+                getTimestamp()
+            );
+
+        if (!day) {
+            showAttendMessage(
+                "오늘 요일을 확인할 수 없습니다."
+            );
+            return false;
+        }
+
+        todayClassTime =
+            await getClassTime(
+                attendanceClass,
+                className,
+                day
+            );
 
         // 수업이 없는 날
         if (!todayClassTime) {
-            showAttendMessage("수업이 없는 날입니다.");
+            showAttendMessage(
+                "수업이 없는 날입니다."
+            );
             return false;
         }
 
-        const classParts = todayClassTime.split(":");
-        const attendParts = attendTime.split(":");
-        const classMinutes = Number(classParts[0]) * 60 + Number(classParts[1]);
-        const attendMinutes = Number(attendParts[0]) * 60 + Number(attendParts[1]);
+        // 오늘 해당 수업 이미 출석했는지 확인
+        const alreadyAttend =
+            await checkTodayAttend(
+                todayMobile,
+                today,
+                attendanceClass
+            );
+
+        if (alreadyAttend) {
+            showAttendMessage(
+                "이미 출석을 완료했어요!"
+            );
+            return false;
+        }
 
         // 출석 가능 시간 확인
-        if (attendMinutes < classMinutes - 49 || attendMinutes > classMinutes + 60) {
-            showAttendMessage("현재는 출석 가능 시간이 아닙니다.");
+        if (
+            !isAttendTimeAvailable(
+                todayClassTime,
+                attendTimestamp
+            )
+        ) {
+            showAttendMessage(
+                "현재는 출석 가능 시간이 아닙니다."
+            );
             return false;
         }
 
         // 출석 상태
+        const qrDate =
+            new Date(attendTimestamp);
+
+        if (Number.isNaN(qrDate.getTime())) {
+            showAttendMessage(
+                "출석체크 QR을 새로 인식해주세요."
+            );
+            return false;
+        }
+
+        const qrTime =
+            qrDate.toLocaleTimeString(
+                "ko-KR",
+                {
+                    timeZone: "Asia/Seoul",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    hour12: false
+                }
+            );
+
+        const classParts =
+            String(todayClassTime).split(":");
+
+        const qrParts =
+            qrTime.split(":");
+
+        const classMinutes =
+            Number(classParts[0]) * 60 +
+            Number(classParts[1]);
+
+        const qrMinutes =
+            Number(qrParts[0]) * 60 +
+            Number(qrParts[1]);
+
         let imageAttend = "";
         let point = "";
         let getP = 0;
         let attend = "";
         let attendSc = 0;
 
-        if (attendMinutes < classMinutes) {
-            imageAttend = "../imageAttend/attend1_투명.webp";
+        if (qrMinutes < classMinutes) {
+            imageAttend =
+                "../imageAttend/attend1_투명.webp";
             point = "+ 100P";
             getP = 100;
             attend = "ontime";
             attendSc = 0;
-        } else if (attendMinutes < classMinutes + 10) {
-            imageAttend = "../imageAttend/attend2_투명.webp";
+        } else if (
+            qrMinutes <
+            classMinutes + 10
+        ) {
+            imageAttend =
+                "../imageAttend/attend2_투명.webp";
             point = "+ 80P";
             getP = 80;
             attend = "late10";
-            attendSc = 1;
+            attendSc = 0.5;
         } else {
-            imageAttend = "../imageAttend/attend3_투명.webp";
+            imageAttend =
+                "../imageAttend/attend3_투명.webp";
             point = "+ 50P";
             getP = 50;
             attend = "late";
-            attendSc = 2;
+            attendSc = 1;
         }
 
-        // 출석 기록 저장
-        const saved = await saveAttendHistory(
-            todayMobile,
-            today,
-            attendTime,
-            attend,
-            attendSc,
-            getP
-        );
+        // 출석, 성실도, POINT 저장
+        const result =
+            await saveAttend(
+                todayMobile,
+                today,
+                attendanceClass,
+                attend,
+                attendSc,
+                getP
+            );
 
-        if (!saved) {
-            showAttendMessage("이미 출석을 완료했어요!");
+        if (!result.success) {
+            if (
+                result.reason ===
+                "alreadyAttend"
+            ) {
+                showAttendMessage(
+                    "이미 출석을 완료했어요!"
+                );
+            } else {
+                showAttendMessage(
+                    "출석 처리 중 오류가 발생했습니다."
+                );
+            }
+
             return false;
         }
 
-        // POINT 누적
-        await updateTotalP(todayMobile, getP);
-
         // 오늘의 명언
-        const wisdom = getWisdom(todayWisdom);
+        const wisdom =
+            getWisdom(todayWisdom);
 
         // 출석 결과 팝업
         showAttendPopup(
@@ -220,24 +478,35 @@ export async function handleAttend() {
             wisdom.title,
             wisdom.message,
             async () => {
-                todayWisdom = await updateWisdom(
-                    deviceId,
-                    todayWisdom
-                );
+                todayWisdom =
+                    await updateWisdom(
+                        deviceId,
+                        todayWisdom
+                    );
 
                 document.dispatchEvent(
-                    new CustomEvent("attendanceCompleted", {
-                        detail: {
-                            point: getP
+                    new CustomEvent(
+                        "attendanceCompleted",
+                        {
+                            detail: {
+                                point: getP,
+                                class: attendanceClass,
+                                attend,
+                                attendSc
+                            }
                         }
-                    })
+                    )
                 );
             }
         );
 
         return true;
     } catch (error) {
-        showAttendMessage("출석 처리 중 오류가 발생했습니다.");
+        showAttendMessage(
+            "출석 처리 중 오류가 발생했습니다."
+        );
         return false;
+    } finally {
+        attendProcessing = false;
     }
 }

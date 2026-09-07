@@ -1,0 +1,119 @@
+<!-- diligence.html -->
+
+<div class="studentModalBox">
+
+    <button
+        id="diligenceCloseBtn"
+        type="button"
+        class="studentCloseBtn"
+        aria-label="닫기">
+    </button>
+
+    <h2 class="diligenceModalTitle">
+
+        <button
+            type="button"
+            id="diligenceDetailBtn">
+            상세내역
+        </button>
+
+        <span>
+            나의 성실도
+        </span>
+
+    </h2>
+
+    <div
+        id="subjectTabs"
+        class="subjectTabs">
+    </div>
+
+    <div class="calendarHeader">
+
+        <button
+            id="prevMonthBtn"
+            type="button"
+            class="monthBtn">
+            ‹
+        </button>
+
+        <strong id="calendarMonth"></strong>
+
+        <button
+            id="nextMonthBtn"
+            type="button"
+            class="monthBtn">
+            ›
+        </button>
+
+    </div>
+
+    <div class="calendar">
+
+        <div class="dayName">월</div>
+        <div class="dayName">화</div>
+        <div class="dayName">수</div>
+        <div class="dayName">목</div>
+        <div class="dayName">금</div>
+        <div id="diligenceGradeWatermark"></div>
+        <div id="calendarDays"></div>
+
+    </div>
+
+    <template id="calendarEmptyTemplate">
+        <div class="calendarDay empty"></div>
+    </template>
+
+    <template id="calendarDayTemplate">
+        <div class="calendarDay">
+            <span class="dateNumber"></span>
+            <div class="calendarDayBody"></div>
+        </div>
+    </template>
+
+    <template id="todayAttendTemplate">
+        <button
+            id="todayAttendBtn"
+            type="button"
+            class="todayAttendBtn">
+            <img
+                src="../imageAttend/attend_투명.webp"
+                alt="출석하기">
+        </button>
+    </template>
+
+    <template id="statusRowTemplate">
+        <div class="diligenceStatusRow">
+            <span></span>
+            <i class="statusDot"></i>
+        </div>
+    </template>
+
+</div>
+
+
+<!-- diligenceDetail.html -->
+<div
+    id="diligenceDetailModal"
+    class="studentModal hidden">
+
+    <div class="studentModalBox">
+
+        <button
+            id="diligenceDetailCloseBtn"
+            type="button"
+            class="studentCloseBtn"
+            aria-label="닫기">
+        </button>
+
+        <h2 class="diligenceDetailModalTitle">
+            <span id="diligenceDetailModalTitleText">
+                성실도 상세내역
+            </span>
+        </h2>
+
+        <div id="diligenceDetailContent"></div>
+
+    </div>
+
+</div>

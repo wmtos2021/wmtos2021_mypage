@@ -1,24 +1,16 @@
 // gps.js
 
-
 // 학원 위치
-const ACADEMY_LAT = 35.2400204085612;
-const ACADEMY_LNG = 128.899841239051;
+const ACADEMY_LAT = 35.2462180185129;
+const ACADEMY_LNG = 128.624228723988;
 
 // 허용 반경
 const ALLOW_DISTANCE = 100;
 
-
 // 두 위치 사이 거리 계산
-function getDistance(
-    lat1,
-    lng1,
-    lat2,
-    lng2
-) {
-
+function getDistance(lat1, lng1, lat2, lng2) {
     const R = 6371000;
-    const toRad = (value) => value * Math.PI / 180;
+    const toRad = value => value * Math.PI / 180;
 
     const dLat = toRad(lat2 - lat1);
     const dLng = toRad(lng2 - lng1);
@@ -39,21 +31,22 @@ function getDistance(
     return R * c;
 }
 
-
 // 학원과의 거리 확인
-export function checkAcademyDistance(
-    latitude,
-    longitude
-) {
+export function checkAcademyDistance(latitude, longitude) {
+    const lat = Number(latitude);
+    const lng = Number(longitude);
+
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+        return Infinity;
+    }
 
     return getDistance(
-        latitude,
-        longitude,
+        lat,
+        lng,
         ACADEMY_LAT,
         ACADEMY_LNG
     );
 }
 
-
 // 허용 반경
-export {ALLOW_DISTANCE};
+export { ALLOW_DISTANCE };

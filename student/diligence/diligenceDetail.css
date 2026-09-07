@@ -1,0 +1,97 @@
+/* diligenceDetail.css */
+
+/* 성실도 상세내역 팝업 */
+#diligenceDetailModal .studentModalBox h2 {
+    color: #078887;
+}
+#diligenceDetailModal .studentModalBox {
+    overflow: hidden;
+}
+
+/* 성실도 상세내역 제목 */
+.diligenceDetailModalTitle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 30px;
+    border-bottom: 1px solid #E5E5E5;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* 성실도 상세내역 */
+#diligenceDetailContent {
+    width: calc(100% - 34px);
+    max-height: 60dvh;
+    margin: 1.8px auto 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.diligenceDetailRow {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    min-height: 28px;
+    padding: 2px 2px;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.diligenceDetailDate {
+    flex: 0 0 82px;
+    margin-right: 4px;
+    color: #999999;
+    font-size: 12.8px;
+    font-weight: 400;
+    text-align: left;
+    user-select: none;
+}
+
+.diligenceDetailDetail {
+    flex: 1;
+    margin-right: 20px;
+    color: #333D43;
+    font-size: 14.8px;
+    font-weight: 600;
+    text-align: left;
+    user-select: none;
+}
+
+.diligenceDetailSign {
+    flex: 0 0 14px;
+    margin-right: 2px;
+    color: #E05A5A;
+    font-size: 14px;
+    font-weight: 700;
+    text-align: left;
+    user-select: none;
+}
+
+.diligenceDetailScore {
+    flex: 0 0 44px;
+    color: #E05A5A;
+    font-size: 16px;
+    font-weight: 700;
+    text-align: right;
+    user-select: none;
+}
+
+.diligenceDetailEmpty {
+    padding: 30px 0;
+    color: #999999;
+    font-size: 14px;
+    text-align: center;
+    user-select: none;
+}
+
+#diligenceDetailModal button {
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+#diligenceDetailModal button:focus {
+    outline: none;
+}

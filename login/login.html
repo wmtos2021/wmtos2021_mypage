@@ -64,15 +64,15 @@
                 id="newPwCheck"
                 placeholder="새 비밀번호 확인">
 
-            <div id="pwError" class="pwError"></div>
+            <div id="joinPwMessage" class="pwError"></div>
 
             <div class="modalButton">
 
-                <button id="pwOk">
+                <button id="joinPwOk">
                     확인
                 </button>
 
-                <button id="pwCancel">
+                <button id="joinPwCancel">
                     취소
                 </button>
 
@@ -92,18 +92,18 @@
 
             <input
                 type="password"
-                id="passwordInput"
+                id="loginPwInput"
                 placeholder="비밀번호를 입력하세요.">
 
-            <div id="passwordError" class="pwError"></div>
+            <div id="loginPwMessage" class="pwError"></div>
 
             <div class="modalButton">
 
-                <button id="passwordOk">
+                <button id="loginPwOk">
                     확인
                 </button>
 
-                <button id="passwordCancel">
+                <button id="loginPwCancel">
                     취소
                 </button>
 
@@ -114,27 +114,13 @@
     </div>
 
 
-    <!-- 하단 구분선 -->
-    <div class="footerLine"></div>
-
-
     <!-- 하단 왼쪽 정보 -->
     <div class="footerLeft">
-
-        <div class="footerLine1">
-            위드엠투에스학원
-        </div>
-
-        <div class="footerLine2">
-            경남 김해시 활천로 168, 2층
-        </div>
-
+        <div class="footerLine1"></div>
+        <div class="footerLine2"></div>
     </div>
-
     <!-- 하단 오른쪽 정보 -->
-    <div class="footerRight">
-        Ver 2.2.3
-    </div>
+    <div class="footerRight" id="version"></div>
 
 
     <script type="module" src="login.js"></script>

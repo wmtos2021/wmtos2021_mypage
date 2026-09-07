@@ -1,10 +1,10 @@
-// studentReward.js
+// reward.js
 
 import {
     getPreviousDiligence,
     getRewardStatus,
     saveDiligenceReward
-} from "./studentFirebase.js";
+} from "../studentFirebase.js";
 
 const rewardModal = document.getElementById("rewardModal");
 const rewardMonth = document.getElementById("rewardMonth");
@@ -22,7 +22,7 @@ let rewardPointValue = 0;
 let rewardShown = false;
 
 // 성실도 보상 계산
-function getReward(score) {
+export function getReward(score) {
     if (score >= 95) {
         return { grade: "A+", gold: 1000, point: 0 };
     }

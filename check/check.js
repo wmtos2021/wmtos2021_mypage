@@ -2,23 +2,45 @@
 
 import {
     getDeviceInfo,
-    updateAttendTimestamp,
     getAuthUser
 } from "./checkFirebase.js";
 
 import { startSession } from "../end/session.js";
 
-const checkMessage = document.getElementById("checkMessage");
+import {
+    VERSION,
+    ACADEMY_NAME,
+    ACADEMY_ADDRESS,
+    getDeviceId,
+    getTimestamp
+} from "../utils.js";
+
+// HTML 요소
 const locationModal = document.getElementById("locationModal");
 const locationMessage = document.getElementById("locationMessage");
 const locationConfirmBtn = document.getElementById("locationConfirmBtn");
 
+const dot1 = document.querySelector(".dot1");
+const dot2 = document.querySelector(".dot2");
+const dot3 = document.querySelector(".dot3");
+
+const PAGE_DELAY = 2000;
+const deviceId = getDeviceId();
+
+const academyName = document.querySelector(".footerLine1");
+const academyAddress = document.querySelector(".footerLine2");
+const version = document.getElementById("version");
+
+academyName.textContent = ACADEMY_NAME;
+academyAddress.textContent = ACADEMY_ADDRESS;
+version.textContent = `Ver ${VERSION}`;
+
+// QR 수업 확인
+const className =
+    new URLSearchParams(location.search).get("class");
+
 // 애니메이션
 function dotAnimation() {
-    const dot1 = document.querySelector(".dot1");
-    const dot2 = document.querySelector(".dot2");
-    const dot3 = document.querySelector(".dot3");
-
     dot1.classList.remove("show");
     dot2.classList.remove("show");
     dot3.classList.remove("show");
@@ -31,39 +53,18 @@ function dotAnimation() {
 
             setTimeout(() => {
                 dot3.classList.add("show");
-
-                setTimeout(() => {
-                    dotAnimation();
-                }, 700);
-            }, 700);
-        }, 700);
+                setTimeout(dotAnimation, 700);
+            }, 500);
+        }, 500);
     }, 500);
-}
-
-dotAnimation();
-
-// Device ID 확인
-let deviceId = localStorage.getItem("deviceId");
-
-if (!deviceId) {
-    deviceId = crypto.randomUUID();
-
-    localStorage.setItem(
-        "deviceId",
-        deviceId
-    );
 }
 
 // 위치정보 확인
 function getLocation() {
     return new Promise((resolve, reject) => {
         navigator.geolocation.getCurrentPosition(
-            (position) => {
-                resolve(position);
-            },
-            (error) => {
-                reject(error);
-            },
+            resolve,
+            reject,
             {
                 enableHighAccuracy: true,
                 timeout: 5000,
@@ -73,9 +74,22 @@ function getLocation() {
     });
 }
 
+// 출석 확인 정보 임시 저장
+function saveAttendanceCheck(position) {
+    sessionStorage.setItem(
+        "attendanceCheck",
+        JSON.stringify({
+            class: className,
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+            attendTimestamp: getTimestamp()
+        })
+    );
+}
+
 // 위치정보 알림
 function showLocationMessage(message) {
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
         locationMessage.textContent = message;
         locationModal.classList.remove("hidden");
 
@@ -90,7 +104,6 @@ function showLocationMessage(message) {
 async function checkLocation() {
     try {
         return await getLocation();
-
     } catch (error) {
         await showLocationMessage(
             "위치 정보를 확인할 수 없습니다.\n휴대폰 상단 메뉴에서 위치를 켜주세요.\n위치를 켠 후 확인을 눌러주세요."
@@ -98,7 +111,6 @@ async function checkLocation() {
 
         try {
             return await getLocation();
-
         } catch (error) {
             await showLocationMessage(
                 "위치 정보를 확인할 수 없습니다.\n잠시 후 다시 실행해주세요."
@@ -111,9 +123,9 @@ async function checkLocation() {
 
 // 화면 전환
 async function movePage(url) {
-    await new Promise(resolve =>
-        setTimeout(resolve, 2000)
-    );
+    await new Promise(resolve => {
+        setTimeout(resolve, PAGE_DELAY);
+    });
 
     location.href = url;
 }
@@ -121,48 +133,39 @@ async function movePage(url) {
 // 로그인 확인
 async function checkLogin() {
     try {
+        // QR 수업 확인
+        if (!className) {
+            await movePage("../end/end.html?reason=invalidClass");
+            return;
+        }
+
         const position = await checkLocation();
 
         if (!position) {
             return;
         }
 
-        // 위치정보 및 QR 인식 시간 갱신
-        await updateAttendTimestamp(
-            deviceId,
-            position.coords.latitude,
-            position.coords.longitude
-        );
+        saveAttendanceCheck(position);
 
-        // Firebase에서 Device ID 확인
         const snapshot = await getDeviceInfo(deviceId);
-
-        // Firebase Authentication 확인
         const user = getAuthUser();
-        let isLogin = false;
 
-        // Auth 사용자가 있는 경우
-        if (
-            user
-            && snapshot.exists()
-            && snapshot.val().uid === user.uid
-        ) {
-            isLogin = true;
-        }
+        const isLogin =
+            user &&
+            snapshot.exists() &&
+            snapshot.val().uid === user.uid;
 
-        // 정상 로그인
         if (isLogin) {
             startSession();
             await movePage("../loading/loading.html");
             return;
         }
 
-        // 로그인 필요
         await movePage("../login/login.html");
-
     } catch (error) {
         await movePage("../login/login.html");
     }
 }
 
+dotAnimation();
 checkLogin();

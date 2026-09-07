@@ -11,7 +11,11 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
 
 import { db } from "../firebase.js";
-import { getDeviceId } from "../utils.js";
+
+import {
+    getDeviceId,
+    getMonthFromTimestamp
+} from "../utils.js";
 
 // 이미지 미리 로딩
 function preloadImages() {
@@ -20,14 +24,25 @@ function preloadImages() {
         "../imageAttend/attend1_투명.webp",
         "../imageAttend/attend2_투명.webp",
         "../imageAttend/attend3_투명.webp",
-        "../imageLogin/로그인화면.webp",
-        "../imageLogin/학원명1_투명.webp",
-        "../imageLogin/로고_투명.webp",
-        "../imageBoard/보드판.webp",
-        "../imageBoard/보드말.webp",
         "../imageBoard/G.webp",
         "../imageBoard/P.webp",
         "../imageBoard/꽝.webp",
+        "../imageBoard/무인표.webp",
+        "../imageBoard/보드말.webp",
+        "../imageBoard/보드판.webp",
+        "../imageBoard/선물.webp",
+        "../imageBoard/선물오픈.webp",
+        "../imageBoard/은행.webp",
+        "../imageBoard/캠핑.webp",
+        "../imageDice/dice1.png",
+        "../imageDice/dice2.png",
+        "../imageDice/dice3.png",
+        "../imageDice/dice4.png",
+        "../imageDice/dice5.png",
+        "../imageDice/dice6.png",
+        "../imageLogin/로그인화면.webp",
+        "../imageLogin/학원명1_투명.webp",
+        "../imageLogin/로고_투명.webp",
         "../imageStudent/골드.webp",
         "../imageStudent/성실도.webp",
         "../imageStudent/포인트.webp"
@@ -37,6 +52,21 @@ function preloadImages() {
         const image = new Image();
         image.src = src;
     });
+}
+
+// QR 확인 정보 가져오기
+function getAttendanceCheck() {
+    const data = sessionStorage.getItem("attendanceCheck");
+
+    if (!data) {
+        return null;
+    }
+
+    try {
+        return JSON.parse(data);
+    } catch (error) {
+        return null;
+    }
 }
 
 // 학생 기본 정보 및 이번 달 데이터 가져오기
@@ -49,48 +79,65 @@ export async function loadStudentData() {
         return false;
     }
 
-    const deviceSnapshot = await get(
-        ref(db, `deviceId/${deviceId}`)
-    );
+    const attendanceCheck =
+        getAttendanceCheck();
+
+    const monthKey =
+        getMonthFromTimestamp(
+            attendanceCheck?.attendTimestamp
+        );
+
+    if (!monthKey) {
+        return false;
+    }
+
+    const deviceSnapshot =
+        await get(
+            ref(db, `deviceId/${deviceId}`)
+        );
 
     if (!deviceSnapshot.exists()) {
         return false;
     }
 
-    const deviceInfo = deviceSnapshot.val();
-    const mobile = deviceInfo.mobile;
+    const deviceInfo =
+        deviceSnapshot.val();
+
+    const mobile =
+        deviceInfo.mobile;
 
     if (!mobile) {
         return false;
     }
 
-    const studentSnapshot = await get(
-        ref(db, `student/${mobile}`)
-    );
+    const studentSnapshot =
+        await get(
+            ref(db, `student/${mobile}`)
+        );
 
     if (!studentSnapshot.exists()) {
         return false;
     }
 
-    const studentInfo = studentSnapshot.val();
+    const studentInfo =
+        studentSnapshot.val();
 
-    const today = new Date().toLocaleDateString("sv-SE", {
-        timeZone: "Asia/Seoul"
-    });
+    const monthStart =
+        `${monthKey}-01`;
 
-    const monthKey = today.slice(0, 7);
-    const monthStart = `${monthKey}-01`;
-
-    const nextMonth = new Date(
-        Number(monthKey.slice(0, 4)),
-        Number(monthKey.slice(5, 7)),
-        1
-    );
+    const nextMonth =
+        new Date(
+            Number(monthKey.slice(0, 4)),
+            Number(monthKey.slice(5, 7)),
+            1
+        );
 
     nextMonth.setDate(0);
 
     const monthEnd =
-        `${monthKey}-${String(nextMonth.getDate()).padStart(2, "0")}`;
+        `${monthKey}-${String(
+            nextMonth.getDate()
+        ).padStart(2, "0")}`;
 
     // 이번 달 데이터 동시 조회
     const [
@@ -102,18 +149,27 @@ export async function loadStudentData() {
     ] = await Promise.all([
         get(
             query(
-                ref(db, `history/${mobile}/attendance`),
+                ref(
+                    db,
+                    `history/${mobile}/attendance`
+                ),
                 orderByKey(),
                 startAt(monthStart),
                 endAt(monthEnd)
             )
         ),
         get(
-            ref(db, `diligence/${mobile}/${monthKey}`)
+            ref(
+                db,
+                `diligence/${mobile}/${monthKey}`
+            )
         ),
         get(
             query(
-                ref(db, `history/${mobile}/board`),
+                ref(
+                    db,
+                    `history/${mobile}/board`
+                ),
                 orderByKey(),
                 startAt(monthStart),
                 endAt(monthEnd)
@@ -121,7 +177,10 @@ export async function loadStudentData() {
         ),
         get(
             query(
-                ref(db, `history/${mobile}/shop`),
+                ref(
+                    db,
+                    `history/${mobile}/shop`
+                ),
                 orderByKey(),
                 startAt(monthStart),
                 endAt(monthEnd)
@@ -129,7 +188,10 @@ export async function loadStudentData() {
         ),
         get(
             query(
-                ref(db, `history/${mobile}/reward`),
+                ref(
+                    db,
+                    `history/${mobile}/reward`
+                ),
                 orderByKey(),
                 startAt(monthKey),
                 endAt(monthKey)
@@ -137,25 +199,32 @@ export async function loadStudentData() {
         )
     ]);
 
-    const historyData = historySnapshot.exists()
-        ? historySnapshot.val()
-        : {};
+    const historyData =
+        historySnapshot.exists()
+            ? historySnapshot.val()
+            : {};
 
-    const boardData = boardSnapshot.exists()
-        ? boardSnapshot.val()
-        : {};
+    const boardData =
+        boardSnapshot.exists()
+            ? boardSnapshot.val()
+            : {};
 
-    const shopData = shopSnapshot.exists()
-        ? shopSnapshot.val()
-        : {};
+    const shopData =
+        shopSnapshot.exists()
+            ? shopSnapshot.val()
+            : {};
 
-    const rewardData = rewardSnapshot.exists()
-        ? rewardSnapshot.val()
-        : {};
+    const rewardData =
+        rewardSnapshot.exists()
+            ? rewardSnapshot.val()
+            : {};
 
-    const diligence = diligenceSnapshot.exists()
-        ? Number(diligenceSnapshot.val())
-        : 100;
+    const diligence =
+        diligenceSnapshot.exists()
+            ? Number(
+                diligenceSnapshot.val()
+            )
+            : 100;
 
     sessionStorage.setItem(
         "studentInfo",
@@ -202,41 +271,38 @@ export async function loadStudentData() {
 
 // 로그인 횟수 증가
 export async function updateLoginCount() {
-    const deviceId = getDeviceId();
+    const data = sessionStorage.getItem("deviceInfo");
 
-    if (!deviceId) {
+    if (!data) {
         return false;
     }
 
-    const deviceSnapshot = await get(
-        ref(db, `deviceId/${deviceId}`)
-    );
+    try {
+        const deviceInfo = JSON.parse(data);
+        const mobile = deviceInfo.mobile;
 
-    if (!deviceSnapshot.exists()) {
-        return false;
-    }
+        if (!mobile) {
+            return false;
+        }
 
-    const mobile = deviceSnapshot.val().mobile;
+        const loginCountRef =
+            ref(
+                db,
+                `student/${mobile}/loginCount`
+            );
 
-    if (!mobile) {
-        return false;
-    }
+        await runTransaction(
+            loginCountRef,
+            currentValue => {
+                const currentCount =
+                    Number(currentValue) || 0;
 
-    const loginCountRef =
-        ref(
-            db,
-            `student/${mobile}/loginCount`
+                return currentCount + 1;
+            }
         );
 
-    await runTransaction(
-        loginCountRef,
-        currentValue => {
-            const currentCount =
-                Number(currentValue) || 0;
-
-            return currentCount + 1;
-        }
-    );
-
-    return true;
+        return true;
+    } catch (error) {
+        return false;
+    }
 }

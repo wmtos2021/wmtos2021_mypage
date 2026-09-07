@@ -130,3 +130,8 @@ const wisdomList = [
 export function getWisdom(number) {
     return wisdomList[number - 1];
 }
+
+// 명언 개수 가져오기
+export function getWisdomCount() {
+    return wisdomList.length;
+}

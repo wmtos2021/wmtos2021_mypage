@@ -3,9 +3,18 @@
 import {
     setDiligenceData,
     renderDiligenceCalendar
-} from "./studentDiligence.js";
+} from "./diligence/diligence.js";
+
+import { getReward } from "./reward/reward.js";
 
 import { checkSession } from "../end/session.js";
+
+import {
+    VERSION,
+    ACADEMY_NAME,
+    ACADEMY_ADDRESS,
+    getMonthFromTimestamp
+} from "../utils.js";
 
 // 뒤로가기 방지
 history.pushState(null, "", location.href);
@@ -22,9 +31,11 @@ window.addEventListener("pageshow", () => {
 const studentName = document.getElementById("studentName");
 const studentPoint = document.getElementById("studentPoint");
 const studentGold = document.getElementById("studentGold");
+const academyName = document.querySelector(".footerLine1");
+const academyAddress = document.querySelector(".footerLine2");
+const version = document.getElementById("version");
 const diligenceBtn = document.getElementById("diligenceBtn");
 const diligenceModal = document.getElementById("diligenceModal");
-const diligenceCloseBtn = document.getElementById("diligenceCloseBtn");
 const diligenceCount = document.getElementById("diligenceCount");
 const diligenceTotal = document.getElementById("diligenceTotal");
 const diligenceGrade = document.getElementById("diligenceGrade");
@@ -39,10 +50,29 @@ const boardGameBtn = document.getElementById("boardGameBtn");
 const goldShopMainBtn = document.getElementById("goldShopMainBtn");
 const goldShopBtn = document.getElementById("goldShopBtn");
 
+academyName.textContent = ACADEMY_NAME;
+academyAddress.textContent = ACADEMY_ADDRESS;
+version.textContent = `Ver ${VERSION}`;
+
 // 학생 정보
 let studentInfo = null;
 let attendRecords = {};
 let diligenceRecords = {};
+
+// QR 확인 정보 가져오기
+function getAttendanceCheck() {
+    const data = sessionStorage.getItem("attendanceCheck");
+
+    if (!data) {
+        return null;
+    }
+
+    try {
+        return JSON.parse(data);
+    } catch (error) {
+        return null;
+    }
+}
 
 // 학생 정보 가져오기
 function loadStudentInfo() {
@@ -55,12 +85,18 @@ function loadStudentInfo() {
     }
 
     studentInfo = JSON.parse(studentData);
+
     attendRecords = attendData ? JSON.parse(attendData) : {};
 
-    const today = new Date().toLocaleDateString("sv-SE", {
-        timeZone: "Asia/Seoul"
-    });
-    const todayMonth = today.slice(0, 7);
+    const attendanceCheck = getAttendanceCheck();
+
+    const todayMonth = getMonthFromTimestamp(
+        attendanceCheck?.attendTimestamp
+    );
+
+    if (!todayMonth) {
+        return false;
+    }
 
     const todayDiligence = diligenceData !== null
         ? Number(diligenceData)
@@ -70,24 +106,20 @@ function loadStudentInfo() {
         [todayMonth]: todayDiligence
     };
 
-    studentName.textContent =
-        `${(studentInfo.name || "학생").replace(/\d+$/g, "")}님`;
+    studentName.textContent = `${(studentInfo.name || "학생").replace(/\d+$/g, "")}님`;
 
-    studentPoint.textContent =
-        `${(studentInfo.totalP || 0).toLocaleString()}`;
+    studentPoint.textContent = `${(Number(studentInfo.totalP) || 0).toLocaleString()}`;
 
-    studentGold.textContent =
-        `${(studentInfo.totalG || 0).toLocaleString()}`;
+    studentGold.textContent = `${(Number(studentInfo.totalG) || 0).toLocaleString()}`;
 
     diligenceCount.textContent = todayDiligence;
     diligenceTotal.textContent = 100;
 
-    const grade = getDiligenceGrade(todayDiligence);
+    const grade = getReward(todayDiligence).grade;
 
-    diligenceGrade.innerHTML =
-        grade === "A+"
-            ? "A<sup>+</sup>"
-            : grade;
+    diligenceGrade.innerHTML = grade === "A+"
+        ? "A<sup>+</sup>"
+        : grade;
 
     setDiligenceData(
         studentInfo,
@@ -98,28 +130,38 @@ function loadStudentInfo() {
     return true;
 }
 
-// 성실도 등급
-function getDiligenceGrade(score) {
-    if (score >= 95) {
-        return "A+";
-    }
-
-    if (score >= 90) {
-        return "A";
-    }
-
-    return "";
-}
+let diligenceHtml = null;
 
 // 성실도 팝업
-diligenceBtn.addEventListener("click", () => {
-    diligenceModal.classList.remove("hidden");
-    renderDiligenceCalendar();
-});
+diligenceBtn.addEventListener("click", async () => {
+    try {
+        if (!diligenceHtml) {
+            const response = await fetch(
+                "./diligence/diligence.html"
+            );
 
-// 성실도 팝업 닫기
-diligenceCloseBtn.addEventListener("click", () => {
-    diligenceModal.classList.add("hidden");
+            if (!response.ok) {
+                throw new Error(
+                    `diligence.html: ${response.status}`
+                );
+            }
+
+            diligenceHtml = await response.text();
+            diligenceModal.innerHTML = diligenceHtml;
+
+            const diligenceCloseBtn =
+                document.getElementById("diligenceCloseBtn");
+
+            diligenceCloseBtn.addEventListener("click", () => {
+                diligenceModal.classList.add("hidden");
+            });
+        }
+
+        diligenceModal.classList.remove("hidden");
+
+        await renderDiligenceCalendar();
+
+    } catch (error) {}
 });
 
 // POINT 팝업
@@ -141,29 +183,29 @@ goldCloseBtn.addEventListener("click", () => {
 });
 
 // 보드게임
-boardGameMainBtn.addEventListener("click", (event) => {
+boardGameMainBtn.addEventListener("click", event => {
     event.stopPropagation();
     location.href = "../board/board.html";
 });
 
-boardGameBtn.addEventListener("click", (event) => {
+boardGameBtn.addEventListener("click", event => {
     event.stopPropagation();
     location.href = "../board/board.html";
 });
 
 // 골드상점
-goldShopMainBtn.addEventListener("click", (event) => {
+goldShopMainBtn.addEventListener("click", event => {
     event.stopPropagation();
     location.href = "../shop/shop.html";
 });
 
-goldShopBtn.addEventListener("click", (event) => {
+goldShopBtn.addEventListener("click", event => {
     event.stopPropagation();
     location.href = "../shop/shop.html";
 });
 
 // 출석 완료
-document.addEventListener("attendanceCompleted", (event) => {
+document.addEventListener("attendanceCompleted", event => {
     const point = Number(event.detail?.point || 0);
 
     if (point <= 0) {

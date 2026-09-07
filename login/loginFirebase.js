@@ -3,14 +3,15 @@
 import {
     ref,
     get,
-    update,
-    remove
+    update
 } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
 
 import {
     createUserWithEmailAndPassword,
     signInWithEmailAndPassword,
-    updateProfile
+    updateProfile,
+    deleteUser,
+    signOut
 } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
 
 import {
@@ -18,55 +19,95 @@ import {
     auth
 } from "../firebase.js";
 
+import { getWisdomCount } from "../attend/wisdom.js";
 
 // Firebase Auth용 이메일 생성
 function getAuthEmail(phone) {
     return `${phone}@wmtos2026.firebaseapp.com`;
 }
 
+// Wisdom 번호 생성
+function createWisdomNumber() {
+    const count = getWisdomCount();
+
+    return Math.floor(Math.random() * count) + 1;
+}
 
 // 학생 정보 가져오기
 export async function getStudent(phone) {
-    const snapshot =
-        await get(
-            ref(
-                db,
-                `student/${phone}`
-            )
-        );
+    const snapshot = await get(
+        ref(db, `student/${phone}`)
+    );
 
-    if (!snapshot.exists()) {
-        return null;
-    }
-
-    return snapshot.val();
+    return snapshot.exists()
+        ? snapshot.val()
+        : null;
 }
 
+// 로그인 정보 저장
+async function saveLoginData(
+    phone,
+    student,
+    uid,
+    deviceId,
+    wisdom = null,
+    oldDeviceId = null
+) {
+    const updates = {
+        [`student/${phone}/uid`]: uid,
+        [`student/${phone}/deviceId`]: deviceId,
+
+        [`deviceId/${deviceId}/uid`]: uid,
+        [`deviceId/${deviceId}/mobile`]: phone,
+        [`deviceId/${deviceId}/name`]: student.name || "",
+        [`deviceId/${deviceId}/class`]: student.class || {},
+
+        [`authUser/${uid}/name`]: student.name || "",
+        [`authUser/${uid}/mobile`]: phone
+    };
+
+    if (wisdom !== null) {
+        updates[`deviceId/${deviceId}/wisdom`] = wisdom;
+    }
+
+    if (
+        oldDeviceId &&
+        oldDeviceId !== deviceId
+    ) {
+        updates[`deviceId/${oldDeviceId}`] = null;
+    }
+
+    await update(
+        ref(db),
+        updates
+    );
+}
 
 // 신규회원 계정 생성
 export async function createStudentAccount(
     phone,
     password
 ) {
+    let user = null;
+
     try {
-        // 학생 정보 확인
-        const student =
-            await getStudent(phone);
+        const student = await getStudent(phone);
 
         if (!student) {
-            return false;
+            return {
+                success: false
+            };
         }
 
-        // 현재 Device ID 가져오기
-        // ※ 여기서는 절대 새로 생성하지 않음
         const deviceId =
             localStorage.getItem("deviceId");
 
         if (!deviceId) {
-            return false;
+            return {
+                success: false
+            };
         }
 
-        // Firebase Auth 계정 생성
         const email = getAuthEmail(phone);
 
         const userCredential =
@@ -76,63 +117,39 @@ export async function createStudentAccount(
                 password
             );
 
-        const user = userCredential.user;
+        user = userCredential.user;
 
-        // Auth 프로필 이름 설정
-        await updateProfile(
-            user,
-            {
-                displayName:
-                    student.name || ""
-            }
+        await updateProfile(user, {
+            displayName: student.name || ""
+        });
+
+        const wisdom = createWisdomNumber();
+
+        await saveLoginData(
+            phone,
+            student,
+            user.uid,
+            deviceId,
+            wisdom
         );
 
-        // 학생 정보 저장
-        await update(
-            ref(
-                db,
-                `student/${phone}`
-            ),
-            {
-                uid: user.uid,
-                deviceId: deviceId
-            }
-        );
-
-        // Device ID에 회원정보 연결
-        await update(
-            ref(
-                db,
-                `deviceId/${deviceId}`
-            ),
-            {
-                uid: user.uid,
-                mobile: phone,
-                name: student.name || "",
-                class: student.class || ""
-            }
-        );
-
-        // UID별 회원 정보
-        await update(
-            ref(
-                db,
-                `authUser/${user.uid}`
-            ),
-            {
-                name: student.name || "",
-                mobile: phone
-            }
-        );
-
-        return true;
-
+        return {
+            success: true
+        };
     } catch (error) {
+        if (user) {
+            try {
+                await deleteUser(user);
+            } catch (deleteError) {
+                // Auth 계정 삭제 실패
+            }
+        }
 
-        return false;
+        return {
+            success: false
+        };
     }
 }
-
 
 // 기존회원 로그인
 export async function loginStudent(
@@ -140,105 +157,94 @@ export async function loginStudent(
     password
 ) {
     try {
-        // 학생 정보 확인
-        const student =
-            await getStudent(phone);
+        const student = await getStudent(phone);
 
         if (!student) {
-            return false;
+            return {
+                success: false,
+                reason: "student"
+            };
         }
 
-        // 기존 UID 확인
-        if (!student.uid) {
-            return false;
-        }
-
-        // 현재 Device ID 가져오기
-        // ※ 여기서도 절대 새로 생성하지 않음
         const deviceId =
             localStorage.getItem("deviceId");
 
         if (!deviceId) {
-            return false;
+            return {
+                success: false,
+                reason: "device"
+            };
         }
 
-        // Firebase Auth 로그인
         const email = getAuthEmail(phone);
 
-        const userCredential =
-            await signInWithEmailAndPassword(
-                auth,
-                email,
-                password
-            );
+        let userCredential;
+
+        try {
+            userCredential =
+                await signInWithEmailAndPassword(
+                    auth,
+                    email,
+                    password
+                );
+        } catch (error) {
+            return {
+                success: false,
+                reason: "password"
+            };
+        }
 
         const user = userCredential.user;
 
-        // Auth UID 확인
+        // 기존 uid가 있는 회원은 uid 일치 여부 확인
         if (
+            student.uid &&
             user.uid !== student.uid
         ) {
-            return false;
+            await signOut(auth).catch(() => {});
+
+            return {
+                success: false,
+                reason: "uid"
+            };
         }
 
-        // 기존 Device ID
-        const oldDeviceId =
-            student.deviceId;
+        const oldDeviceId = student.deviceId;
 
-        // 기존 Device ID와 현재 Device ID가
-        // 다른 경우 기존 Device ID 삭제
-        if (
-            oldDeviceId &&
-            oldDeviceId !== deviceId
-        ) {
-            await remove(
-                ref(
-                    db,
-                    `deviceId/${oldDeviceId}`
-                )
+        // 현재 deviceId와 다르면 새 디바이스
+        const isNewDevice =
+            oldDeviceId !== deviceId;
+
+        // 새 디바이스일 때만 Wisdom 신규 배정
+        const wisdom = isNewDevice
+            ? createWisdomNumber()
+            : null;
+
+        // DB 저장
+        try {
+            await saveLoginData(
+                phone,
+                student,
+                user.uid,
+                deviceId,
+                wisdom,
+                oldDeviceId
             );
+        } catch (error) {
+            // Auth 인증은 성공했으므로
+            // 이번 세션은 로그인 성공으로 처리
+            return {
+                success: true
+            };
         }
 
-        // 학생 정보에 현재 Device ID 저장
-        await update(
-            ref(
-                db,
-                `student/${phone}`
-            ),
-            {
-                deviceId: deviceId
-            }
-        );
-
-        // 현재 Device ID에 회원정보 연결
-        await update(
-            ref(
-                db,
-                `deviceId/${deviceId}`
-            ),
-            {
-                uid: user.uid,
-                mobile: phone,
-                name: student.name || "",
-                class: student.class || ""
-            }
-        );
-
-        // UID별 회원 정보
-        await update(
-            ref(
-                db,
-                `authUser/${user.uid}`
-            ),
-            {
-                name: student.name || "",
-                mobile: phone
-            }
-        );
-
-        return true;
-
+        return {
+            success: true
+        };
     } catch (error) {
-        return false;
+        return {
+            success: false,
+            reason: "error"
+        };
     }
 }

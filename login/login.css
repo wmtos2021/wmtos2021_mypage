@@ -178,7 +178,7 @@ body {
 /* 비밀번호 입력 */
 #newPw,
 #newPwCheck,
-#passwordInput {
+#loginPwInput {
     width: 100%;
     height: 48px;
     margin-bottom: 8px;
@@ -194,7 +194,7 @@ body {
 
 #newPw::placeholder,
 #newPwCheck::placeholder,
-#passwordInput::placeholder {
+#loginPwInput::placeholder {
     font-size: 16px;
     text-align: center;
     color: #999999;
@@ -202,7 +202,7 @@ body {
 
 #newPw:focus,
 #newPwCheck:focus,
-#passwordInput:focus {
+#loginPwInput:focus {
     border-color: #0CA19B;
     background: #FFFFFF;
 }
@@ -232,45 +232,28 @@ body {
 }
 
 /* 확인 */
-#pwOk,
-#passwordOk {
+#joinPwOk,
+#loginPwOk {
     background: #0CA19B;
     color: #FFFFFF;
 }
 
-#pwOk:active,
-#passwordOk:active {
+#joinPwOk:active,
+#loginPwOk:active {
     background: #087E78;
 }
 
 /* 취소 */
-#pwCancel,
-#passwordCancel {
+#joinPwCancel,
+#loginPwCancel {
     background: #E5F5F3;
     color: #0CA19B;
 }
 
-#pwCancel:active,
-#passwordCancel:active {
+#joinPwCancel:active,
+#loginPwCancel:active {
     background: #D4EFEC;
 }
-
-/* 자동 로그인 */
-.autoLoginMessage {
-    position: fixed;
-    inset: 0;
-    width: 100%;
-    height: 100dvh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #F8F5EF url("../image/로그인화면.webp") center center / cover no-repeat;
-    color: #0CA19B;
-    font-size: 20px;
-    font-weight: 600;
-    z-index: 10000;
-}
-
 
 /* 하단 왼쪽 정보 */
 .footerLeft {

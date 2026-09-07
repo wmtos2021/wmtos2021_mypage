@@ -1,25 +1,23 @@
-/* studentGold.css */
+/* point.css */
 
-
-/* GOLD 팝업 */
-#goldModal .studentModalBox h2 {
-    color: #F15B18;
+/* POINT 팝업 */
+#pointModal .studentModalBox h2 {
+    color: #EBB000;
 }
-
-#goldModal .studentModalBox {
+#pointModal .studentModalBox {
     overflow: hidden;
 }
-
-.goldModalTitle {
+.pointModalTitle {
     position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
     padding-bottom: 30px;
     border-bottom: 1px solid #E5E5E5;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
 }
-
-.goldModalTitle button {
+.pointModalTitle button {
     position: absolute;
     left: 18px;
     margin-top: 6px;
@@ -28,98 +26,97 @@
     padding: 0 10px;
     border: none;
     border-radius: 7px;
-    background: #F15B18;
+    background: #EBB000;
     color: #FFFFFF;
     font-size: 14px;
     font-weight: 700;
     line-height: 1;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
 }
-
-.goldModalTitle span {
+.pointModalTitle span {
     margin: 0 auto;
+    user-select: none;
 }
-
-.goldModalTitle button:active {
+.pointModalTitle button:active {
     transform: scale(0.95);
 }
 
-
-/* GOLD 내역 */
-#goldContent {
+/* POINT 내역 */
+#pointContent {
     width: calc(100% - 34px);
     max-height: 60dvh;
     margin: 1.8px auto 0;
     overflow-y: auto;
     overflow-x: hidden;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
 }
-
-.goldHistoryRow {
+.pointHistoryRow {
     display: flex;
     align-items: center;
     width: 100%;
-    min-height: 34px;
-    padding: 7px 2px;
+    min-height: 28px;
+    padding: 2px 2px;
+    user-select: none;
 }
-
-.goldHistoryDate {
+.pointHistoryDate {
     flex: 0 0 82px;
     margin-right: 4px;
     color: #999999;
     font-size: 12.8px;
     font-weight: 400;
     text-align: left;
+    user-select: none;
 }
-
-.goldHistoryDetail {
+.pointHistoryDetail {
     flex: 1;
     margin-right: 20px;
     color: #333D43;
     font-size: 14.8px;
     font-weight: 600;
     text-align: left;
+    user-select: none;
 }
-
-.goldHistorySign {
+.pointHistorySign {
     flex: 0 0 14px;
     margin-right: 2px;
     font-size: 14px;
     font-weight: 700;
     text-align: left;
+    user-select: none;
 }
-
-.goldHistoryValue {
+.pointHistoryValue {
     flex: 0 0 44px;
     font-size: 16px;
     font-weight: 700;
     text-align: right;
+    user-select: none;
 }
-
-.goldHistoryUnit {
+.pointHistoryUnit {
     flex: 0 0 14px;
     margin-left: 1px;
     font-size: 14.8px;
     font-weight: 700;
     text-align: left;
+    user-select: none;
 }
-
-.goldHistoryPlus {
-    color: #1976D2;
+.pointHistoryPlus {
+    color: #0B7ECA;
 }
-
-.goldHistoryMinus {
-    color: #E53935;
+.pointHistoryMinus {
+    color: #E05A5A;
 }
-
-.goldHistoryEmpty {
+.pointHistoryEmpty {
     padding: 30px 0;
     color: #999999;
     font-size: 14px;
     text-align: center;
+    user-select: none;
 }
 
-
 /* 더보기 */
-.goldMoreBtn {
+.pointMoreBtn {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -133,20 +130,22 @@
     font-size: 12px;
     font-weight: 500;
     flex-shrink: 0;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
 }
-
-.goldMoreBtn::before,
-.goldMoreBtn::after {
+.pointMoreBtn::before,
+.pointMoreBtn::after {
     content: "";
     flex: 1;
     height: 1px;
     background: #E5E5E5;
 }
-
-.goldMoreBtn::before {
+.pointMoreBtn::before {
     margin-right: 10px;
 }
-
-.goldMoreBtn::after {
+.pointMoreBtn::after {
     margin-left: 10px;
+}
+.pointMoreBtn:focus {
+    outline: none;
 }

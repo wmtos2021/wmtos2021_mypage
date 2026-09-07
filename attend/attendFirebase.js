@@ -8,144 +8,98 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
 
 import { db } from "../firebase.js";
+import { getWisdomCount } from "./wisdom.js";
 
-// Device ID로 학생 정보 가져오기
-export async function getDeviceInfo(deviceId) {
-    const snapshot = await get(ref(db, `deviceId/${deviceId}`));
-
-    if (!snapshot.exists()) {
-        return null;
-    }
-
-    return snapshot.val();
-}
-
-// 학생 정보 가져오기
-export async function getStudentInfo(mobile) {
-    const snapshot = await get(ref(db, `student/${mobile}`));
-
-    if (!snapshot.exists()) {
-        return null;
-    }
-
-    return snapshot.val();
-}
-
-// 학생 출석 기록 가져오기
-export async function getAttendRecords(mobile) {
-    const snapshot = await get(
-        ref(db, `history/${mobile}/attendance`)
+// 수업시간 가져오기
+export async function getClassTime(subject, className, day) {
+    const classTimeRef = ref(
+        db,
+        `class/${subject}/${className}/time/${day}`
     );
 
-    if (!snapshot.exists()) {
-        return {};
-    }
+    const snapshot = await get(classTimeRef);
 
-    return snapshot.val();
+    return snapshot.exists()
+        ? snapshot.val()
+        : null;
 }
 
-// 학생 성실도 전체 기록 가져오기
-export async function getDiligenceRecords(mobile) {
+// 오늘 과목 출석 여부 확인
+export async function checkTodayAttend(
+    mobile,
+    date,
+    subject
+) {
     const snapshot = await get(
-        ref(db, `diligence/${mobile}`)
-    );
-
-    if (!snapshot.exists()) {
-        return {};
-    }
-
-    return snapshot.val();
-}
-
-// 오늘 출석 여부 확인
-export async function checkTodayAttend(mobile, date) {
-    const snapshot = await get(
-        ref(db, `history/${mobile}/attendance/${date}`)
+        ref(
+            db,
+            `history/${mobile}/attendance/${date}/${subject}`
+        )
     );
 
     return snapshot.exists();
 }
 
-// 반의 오늘 수업시간 가져오기
-export async function getClassTime(className, day) {
-    const snapshot = await get(
-        ref(db, `class/${className}/${day}`)
-    );
-
-    if (!snapshot.exists()) {
-        return null;
-    }
-
-    return snapshot.val();
-}
-
-// Wisdom 번호 저장
-export async function saveWisdom(deviceId, wisdom) {
-    await update(
-        ref(db, `deviceId/${deviceId}`),
-        {
-            wisdom: wisdom
-        }
-    );
-}
-
-// 다음 Wisdom 번호 저장
-export async function updateWisdom(deviceId, wisdom) {
-    let nextWisdom = Number(wisdom) + 1;
-
-    if (nextWisdom > 24) {
-        nextWisdom = 1;
-    }
-
-    await update(
-        ref(db, `deviceId/${deviceId}`),
-        {
-            wisdom: nextWisdom
-        }
-    );
-
-    return nextWisdom;
-}
-
 // 출석 기록 저장
-export async function saveAttendHistory(
+export async function saveAttend(
     mobile,
     date,
-    time,
+    subject,
     attend,
     attendSc,
     getP
 ) {
     const historyRef = ref(
         db,
-        `history/${mobile}/attendance/${date}/${time}`
+        `history/${mobile}/attendance/${date}/${subject}`
     );
 
-    const snapshot = await get(historyRef);
-
-    if (snapshot.exists()) {
-        return false;
-    }
-
-    await update(
+    const result = await runTransaction(
         historyRef,
-        {
-            attend: attend,
-            attendP: getP,
-            attendSc: attendSc,
-            homework: "",
-            homeworkP: "",
-            homeworkSc: 0
+        currentValue => {
+            if (currentValue !== null) {
+                return;
+            }
+
+            return {
+                attend,
+                attendP: getP,
+                attendSc,
+                homework: "",
+                homeworkP: "",
+                homeworkSc: ""
+            };
         }
     );
 
-    await updateDiligence(
-        mobile,
-        date,
-        attendSc
-    );
+    if (!result.committed) {
+        return {
+            success: false,
+            reason: "alreadyAttend"
+        };
+    }
 
-    return true;
+    try {
+        await updateDiligence(
+            mobile,
+            date,
+            attendSc
+        );
+
+        await updateTotalP(
+            mobile,
+            getP
+        );
+
+        return {
+            success: true
+        };
+    } catch (error) {
+        return {
+            success: false,
+            reason: "update"
+        };
+    }
 }
 
 // 성실도 저장 및 차감
@@ -184,29 +138,6 @@ export async function updateDiligence(
     ) || 0;
 }
 
-// 성실도 가져오기
-export async function getDiligence(
-    mobile,
-    date
-) {
-    const month = String(date).slice(0, 7);
-
-    const diligenceRef = ref(
-        db,
-        `diligence/${mobile}/${month}`
-    );
-
-    const snapshot = await get(diligenceRef);
-
-    if (!snapshot.exists()) {
-        return 100;
-    }
-
-    return Number(
-        snapshot.val()
-    ) || 0;
-}
-
 // 학생 Total Point 누적
 export async function updateTotalP(
     mobile,
@@ -217,13 +148,41 @@ export async function updateTotalP(
         `student/${mobile}/totalP`
     );
 
-    await runTransaction(
+    const result = await runTransaction(
         totalPRef,
         currentValue => {
             const currentP =
                 Number(currentValue) || 0;
 
-            return currentP + Number(point);
+            return currentP + (Number(point) || 0);
         }
     );
+
+    return Number(
+        result.snapshot.val()
+    ) || 0;
+}
+
+// 다음 Wisdom 번호 저장
+export async function updateWisdom(
+    deviceId,
+    wisdom
+) {
+    const count = getWisdomCount();
+
+    let nextWisdom =
+        Number(wisdom) + 1;
+
+    if (nextWisdom > count) {
+        nextWisdom = 1;
+    }
+
+    await update(
+        ref(db, `deviceId/${deviceId}`),
+        {
+            wisdom: nextWisdom
+        }
+    );
+
+    return nextWisdom;
 }

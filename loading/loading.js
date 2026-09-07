@@ -1,13 +1,19 @@
+// loading.js
+
 import {
     loadStudentData,
     updateLoginCount
 } from "./loadingFirebase.js";
 
 import { checkSession } from "../end/session.js";
+import { VERSION } from "../utils.js";
 
 const dot1 = document.querySelector(".loadingDots i:nth-child(1)");
 const dot2 = document.querySelector(".loadingDots i:nth-child(2)");
 const dot3 = document.querySelector(".loadingDots i:nth-child(3)");
+const version = document.getElementById("version");
+
+version.textContent = `Ver ${VERSION}`;
 
 // 애니메이션
 function dotAnimation() {

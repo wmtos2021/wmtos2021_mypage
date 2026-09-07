@@ -1,6 +1,9 @@
-// studentPoint.js
+// point.js
 
-import { getPointHistory } from "./studentPointFirebase.js";
+import {
+    getPointHistory,
+    getTodayPointHistory
+} from "./pointFirebase.js";
 
 const pointBtn = document.getElementById("pointBtn");
 const pointContent = document.getElementById("pointContent");
@@ -13,10 +16,7 @@ let loadingMore = false;
 // 숫자 변환
 function getPoint(value) {
     const point = Number(value);
-    if (!Number.isFinite(point) || point <= 0) {
-        return 0;
-    }
-    return point;
+    return Number.isFinite(point) && point > 0 ? point : 0;
 }
 
 // 월 키
@@ -24,13 +24,20 @@ function getMonthKey(date) {
     return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
 }
 
+// 날짜 키
+function getDateKey(date) {
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+}
+
 // 이전 월
 function getPreviousMonth(monthKey) {
     const [year, month] = monthKey.split("-").map(Number);
-    return getMonthKey(new Date(year, month - 2, 1));
+    const date = new Date(year, month - 2, 1);
+
+    return getMonthKey(date);
 }
 
-// 현재 월 데이터 가져오기
+// 현재 POINT 데이터 가져오기
 function getInitialPointHistory() {
     const data = sessionStorage.getItem("pointHistory");
 
@@ -43,7 +50,13 @@ function getInitialPointHistory() {
     }
 
     try {
-        return JSON.parse(data);
+        const historyData = JSON.parse(data);
+
+        return {
+            attendance: historyData.attendance || {},
+            board: historyData.board || {},
+            reward: historyData.reward || {}
+        };
     } catch (error) {
         return {
             attendance: {},
@@ -60,45 +73,45 @@ function createMonthRecords(monthKey, historyData) {
     const boardData = historyData.board || {};
     const rewardData = historyData.reward || {};
 
-    Object.entries(attendanceData).forEach(([dateKey, timeData]) => {
+    // 출석
+    Object.entries(attendanceData).forEach(([dateKey, data]) => {
         if (dateKey.slice(0, 7) !== monthKey) {
             return;
         }
 
-        Object.entries(timeData || {}).forEach(([timeKey, data]) => {
-            const attendP = getPoint(data.attendP);
-            const homeworkP = getPoint(data.homeworkP);
+        const attendP = getPoint(data?.attendP);
+        const homeworkP = getPoint(data?.homeworkP);
 
-            if (attendP > 0) {
-                records.push({
-                    date: dateKey,
-                    time: timeKey,
-                    type: "받음",
-                    detail: "출석",
-                    point: attendP
-                });
-            }
+        if (attendP > 0) {
+            records.push({
+                date: dateKey,
+                time: "",
+                type: "받음",
+                detail: "출석",
+                point: attendP
+            });
+        }
 
-            if (homeworkP > 0) {
-                records.push({
-                    date: dateKey,
-                    time: timeKey,
-                    type: "받음",
-                    detail: "숙제",
-                    point: homeworkP
-                });
-            }
-        });
+        if (homeworkP > 0) {
+            records.push({
+                date: dateKey,
+                time: "",
+                type: "받음",
+                detail: "숙제",
+                point: homeworkP
+            });
+        }
     });
 
+    // 보드게임
     Object.entries(boardData).forEach(([dateKey, timeData]) => {
         if (dateKey.slice(0, 7) !== monthKey) {
             return;
         }
 
         Object.entries(timeData || {}).forEach(([timeKey, data]) => {
-            const getP = getPoint(data.getP);
-            const useP = getPoint(data.useP);
+            const getP = getPoint(data?.getP);
+            const useP = getPoint(data?.useP);
 
             if (getP > 0) {
                 records.push({
@@ -122,19 +135,20 @@ function createMonthRecords(monthKey, historyData) {
         });
     });
 
+    // 성실도 리워드
     Object.entries(rewardData).forEach(([rewardMonth, data]) => {
         if (rewardMonth !== monthKey) {
             return;
         }
 
-        const rewardP = getPoint(data.rewardP);
+        const rewardP = getPoint(data?.rewardP);
 
         if (rewardP > 0) {
             records.push({
                 date: `${rewardMonth}-01`,
                 time: "",
                 type: "받음",
-                detail: `${data.rewardMonth} 성실도`,
+                detail: `${data.rewardMonth || ""} 성실도`,
                 point: rewardP
             });
         }
@@ -149,45 +163,45 @@ function createMonthRecords(monthKey, historyData) {
     return records;
 }
 
+// POINT 기록 한 줄 생성
+function createRecordRow(record) {
+    const row = document.createElement("div");
+    row.className = "pointHistoryRow";
+
+    const date = document.createElement("span");
+    date.className = "pointHistoryDate";
+    date.textContent = record.date;
+
+    const detail = document.createElement("span");
+    detail.className = "pointHistoryDetail";
+    detail.textContent = record.detail;
+
+    const isGet = record.type === "받음";
+    const colorClass = isGet ? "pointHistoryPlus" : "pointHistoryMinus";
+
+    const sign = document.createElement("span");
+    sign.className = `pointHistorySign ${colorClass}`;
+    sign.textContent = isGet ? "+" : "-";
+
+    const value = document.createElement("strong");
+    value.className = `pointHistoryValue ${colorClass}`;
+    value.textContent = record.point.toLocaleString();
+
+    const unit = document.createElement("span");
+    unit.className = `pointHistoryUnit ${colorClass}`;
+    unit.textContent = "P";
+
+    row.append(date, detail, sign, value, unit);
+
+    return row;
+}
+
 // POINT 내역 표시
 function renderRecords(records) {
+    const moreBtn = document.getElementById("pointMoreBtn");
+
     records.forEach(record => {
-        const row = document.createElement("div");
-        row.className = "pointHistoryRow";
-
-        const date = document.createElement("span");
-        date.className = "pointHistoryDate";
-        date.textContent = record.date;
-
-        const detail = document.createElement("span");
-        detail.className = "pointHistoryDetail";
-        detail.textContent = record.detail;
-
-        const sign = document.createElement("span");
-        sign.className = record.type === "받음"
-            ? "pointHistorySign pointHistoryPlus"
-            : "pointHistorySign pointHistoryMinus";
-        sign.textContent = record.type === "받음" ? "+" : "-";
-
-        const value = document.createElement("strong");
-        value.className = record.type === "받음"
-            ? "pointHistoryValue pointHistoryPlus"
-            : "pointHistoryValue pointHistoryMinus";
-        value.textContent = record.point.toLocaleString();
-
-        const unit = document.createElement("span");
-        unit.className = record.type === "받음"
-            ? "pointHistoryUnit pointHistoryPlus"
-            : "pointHistoryUnit pointHistoryMinus";
-        unit.textContent = "P";
-
-        row.appendChild(date);
-        row.appendChild(detail);
-        row.appendChild(sign);
-        row.appendChild(value);
-        row.appendChild(unit);
-
-        const moreBtn = document.getElementById("pointMoreBtn");
+        const row = createRecordRow(record);
 
         if (moreBtn) {
             pointContent.insertBefore(row, moreBtn);
@@ -205,13 +219,36 @@ function createMoreButton() {
     button.className = "pointMoreBtn";
     button.textContent = "더보기";
     button.addEventListener("click", loadPreviousMonth);
+
     return button;
+}
+
+// 더보기 버튼 제거
+function removeMoreButton() {
+    const moreBtn = document.getElementById("pointMoreBtn");
+
+    if (moreBtn) {
+        moreBtn.remove();
+    }
+}
+
+// 더보기 버튼 표시
+function showMoreButton() {
+    removeMoreButton();
+
+    if (loadedMonths.length >= MAX_MONTHS) {
+        return;
+    }
+
+    pointContent.appendChild(createMoreButton());
 }
 
 // 현재 월 표시
 async function renderInitialHistory() {
     const historyData = getInitialPointHistory();
-    const monthKey = getMonthKey(new Date());
+    const today = new Date();
+    const monthKey = getMonthKey(today);
+    const dateKey = getDateKey(today);
 
     loadedMonths = [monthKey];
 
@@ -223,11 +260,25 @@ async function renderInitialHistory() {
             const mobile = deviceInfo.mobile;
 
             if (mobile) {
-                const firebaseData = await getPointHistory(mobile, monthKey);
-                historyData.attendance = firebaseData.attendance;
+                const todayData = await getTodayPointHistory(
+                    mobile,
+                    dateKey,
+                    monthKey
+                );
+
+                historyData.attendance[dateKey] = todayData.attendance || {};
+                historyData.board[dateKey] = todayData.board || {};
+
+                if (
+                    todayData.reward &&
+                    Object.keys(todayData.reward).length > 0
+                ) {
+                    historyData.reward[monthKey] = todayData.reward;
+                } else {
+                    delete historyData.reward[monthKey];
+                }
             }
-        } catch (error) {
-        }
+        } catch (error) {}
     }
 
     const records = createMonthRecords(monthKey, historyData);
@@ -240,9 +291,12 @@ async function renderInitialHistory() {
     return false;
 }
 
-// 이전 1개월 조회
+// 이전 월 조회
 async function loadPreviousMonth() {
-    if (loadingMore || loadedMonths.length >= MAX_MONTHS) {
+    if (
+        loadingMore ||
+        loadedMonths.length >= MAX_MONTHS
+    ) {
         return;
     }
 
@@ -271,8 +325,16 @@ async function loadPreviousMonth() {
 
         const lastMonth = loadedMonths[loadedMonths.length - 1];
         const previousMonth = getPreviousMonth(lastMonth);
-        const historyData = await getPointHistory(mobile, previousMonth);
-        const records = createMonthRecords(previousMonth, historyData);
+
+        const historyData = await getPointHistory(
+            mobile,
+            previousMonth
+        );
+
+        const records = createMonthRecords(
+            previousMonth,
+            historyData
+        );
 
         loadedMonths.push(previousMonth);
 
@@ -302,40 +364,16 @@ async function loadPreviousMonth() {
             currentMoreBtn.textContent = "더보기";
             currentMoreBtn.disabled = false;
         }
-
     } catch (error) {
-        console.error("POINT 이전 내역 조회 오류:", error);
-
         const currentMoreBtn = document.getElementById("pointMoreBtn");
 
         if (currentMoreBtn) {
             currentMoreBtn.textContent = "더보기";
             currentMoreBtn.disabled = false;
         }
-
     } finally {
         loadingMore = false;
     }
-}
-
-// 더보기 버튼 제거
-function removeMoreButton() {
-    const moreBtn = document.getElementById("pointMoreBtn");
-
-    if (moreBtn) {
-        moreBtn.remove();
-    }
-}
-
-// 더보기 버튼 표시
-function showMoreButton() {
-    removeMoreButton();
-
-    if (loadedMonths.length >= MAX_MONTHS) {
-        return;
-    }
-
-    pointContent.appendChild(createMoreButton());
 }
 
 // POINT 팝업 열기

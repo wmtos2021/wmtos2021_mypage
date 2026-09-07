@@ -8,11 +8,19 @@
     <title>위드엠투에스학원</title>
 </head>
 
-    <body>
+<body>
 
-        <script>
+    <script>
+        const className =
+            new URLSearchParams(location.search).get("class") || "math";
+
+        if (className) {
+            location.href =
+                `./check/check.html?class=${encodeURIComponent(className)}`;
+        } else {
             location.href = "./check/check.html";
-        </script>
+        }
+    </script>
 
-    </body>
+</body>
 </html>

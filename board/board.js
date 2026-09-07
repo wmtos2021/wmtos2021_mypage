@@ -1,13 +1,10 @@
 // board.js
 
 import "../dice/dice.js";
-import { updateMarker } from "./move.js";
-import { getDeviceId } from "../utils.js";
-import {
-    getDeviceInfo,
-    getStudentInfo
-} from "../attend/attendFirebase.js";
-import { checkSession } from "../end/session.js";
+import {updateMarker} from "./move.js";
+import {VERSION} from "../utils.js";
+import {getStudentInfo} from "./boardFirebase.js";
+import {checkSession} from "../end/session.js";
 
 // 뒤로가기 방지
 history.pushState(null, "", location.href);
@@ -24,7 +21,10 @@ window.addEventListener("pageshow", () => {
 const studentName = document.getElementById("studentName");
 const studentPoint = document.getElementById("studentPoint");
 const studentGold = document.getElementById("studentGold");
+const version = document.getElementById("version");
 const backBtn = document.getElementById("backBtn");
+
+version.textContent = `Ver ${VERSION}`;
 
 // 돌아가기
 backBtn.addEventListener("click", () => {
@@ -41,9 +41,7 @@ async function init() {
 
     const sessionValid = await sessionPromise;
 
-    if (!sessionValid) {
-        return;
-    }
+    if (!sessionValid) return;
 }
 
 // 학생 정보 불러오기
@@ -52,69 +50,56 @@ async function loadPlayer() {
         sessionStorage.getItem("studentInfo") || "{}"
     );
 
-    if (!studentInfo.name) {
-        return;
-    }
+    if (!studentInfo.name) return;
 
-    studentName.textContent =
-        `${studentInfo.name.replace(/\d+$/g, "")}님`;
+    studentName.textContent = `${studentInfo.name.replace(/\d+$/g, "")}님`;
 
-    const playerPosition =
-        studentInfo.lastPosition !== undefined
-            ? Number(studentInfo.lastPosition)
-            : 0;
+    const playerPosition = studentInfo.lastPosition !== undefined
+        ? Number(studentInfo.lastPosition)
+        : 0;
 
-    sessionStorage.setItem(
-        "position",
-        playerPosition
-    );
-
+    sessionStorage.setItem("position", String(playerPosition));
     updateMarker(playerPosition);
 
-    studentPoint.textContent =
-        Number(studentInfo.totalP || 0).toLocaleString();
-
-    studentGold.textContent =
-        Number(studentInfo.totalG || 0).toLocaleString();
+    studentPoint.textContent = Number(studentInfo.totalP || 0).toLocaleString();
+    studentGold.textContent = Number(studentInfo.totalG || 0).toLocaleString();
 }
 
 // 주사위 후 최신 POINT / GOLD / 위치 조회
-window.refreshGameStatus = async function () {
-    const deviceId = getDeviceId();
-    const deviceInfo = await getDeviceInfo(deviceId);
+window.refreshGameStatus = async function() {
+    const deviceData = sessionStorage.getItem("deviceInfo");
 
-    if (!deviceInfo?.mobile) {
+    if (!deviceData) return;
+
+    let deviceInfo;
+
+    try {
+        deviceInfo = JSON.parse(deviceData);
+    } catch (error) {
         return;
     }
 
-    const mobile = deviceInfo.mobile;
+    const mobile = deviceInfo?.mobile;
+
+    if (!mobile) return;
+
     const studentInfo = await getStudentInfo(mobile);
 
-    if (!studentInfo) {
-        return;
-    }
+    if (!studentInfo) return;
 
     sessionStorage.setItem(
         "studentInfo",
         JSON.stringify(studentInfo)
     );
 
-    studentPoint.textContent =
-        Number(studentInfo.totalP || 0).toLocaleString();
+    studentPoint.textContent = Number(studentInfo.totalP || 0).toLocaleString();
+    studentGold.textContent = Number(studentInfo.totalG || 0).toLocaleString();
 
-    studentGold.textContent =
-        Number(studentInfo.totalG || 0).toLocaleString();
+    const position = studentInfo.lastPosition !== undefined
+        ? Number(studentInfo.lastPosition)
+        : 0;
 
-    const position =
-        studentInfo.lastPosition !== undefined
-            ? Number(studentInfo.lastPosition)
-            : 0;
-
-    sessionStorage.setItem(
-        "position",
-        position
-    );
-
+    sessionStorage.setItem("position", String(position));
     updateMarker(position);
 };
 
@@ -127,14 +112,8 @@ window.testMove = function(position) {
         return;
     }
 
-    sessionStorage.setItem(
-        "position",
-        pos
-    );
-
+    sessionStorage.setItem("position", String(pos));
     updateMarker(pos);
 
-    console.log(
-        `${pos}번 칸 이벤트 테스트`
-    );
+    console.log(`${pos}번 칸 이벤트 테스트`);
 };

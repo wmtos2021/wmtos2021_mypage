@@ -1,34 +1,55 @@
 // popup.js
 
-import { boardData } from "./boardData.js";
-import { getSeoulDate, getSeoulTime } from "../utils.js";
+import {boardData} from "./boardData.js";
+import {
+    getTimestamp,
+    getTimestampParts
+} from "../utils.js";
+
 import {
     savePosition,
     updatePoint,
     updateGold,
     saveBoardHistory
 } from "./boardFirebase.js";
-import { showGiftPopup } from "./gift.js";
+
+import {showGiftPopup} from "./gift.js";
 
 // 일반 팝업
-export function showPopup(message, image, type = "", reward = "") {
+export function showPopup(
+    message,
+    image,
+    type = "",
+    reward = ""
+) {
     return new Promise(resolve => {
-        const modal = document.getElementById("popupModal");
-        const messageElement = document.getElementById("popupMessage");
-        const rewardElement = document.getElementById("popupReward");
-        const imageElement = document.getElementById("popupImage");
+        const modal =
+            document.getElementById("popupModal");
+
+        const messageElement =
+            document.getElementById("popupMessage");
+
+        const rewardElement =
+            document.getElementById("popupReward");
+
+        const imageElement =
+            document.getElementById("popupImage");
 
         // 팝업 문구
         messageElement.innerHTML = message;
-        messageElement.style.display = message ? "block" : "none";
+        messageElement.style.display =
+            message ? "block" : "none";
 
         // 보상 문구
         rewardElement.innerHTML = reward;
-        rewardElement.style.display = reward ? "block" : "none";
+        rewardElement.style.display =
+            reward ? "block" : "none";
 
         // 팝업 이미지
         if (image) {
-            imageElement.src = `../imageBoard/${image}`;
+            imageElement.src =
+                `../imageBoard/${image}`;
+
             imageElement.style.display = "block";
         } else {
             imageElement.style.display = "none";
@@ -36,8 +57,12 @@ export function showPopup(message, image, type = "", reward = "") {
 
         modal.classList.remove("hidden");
 
-        // 일반 팝업은 1.8초, 은행/무인도/캠핑은 2.4초
-        const duration = ["bank", "island", "camping"].includes(type) ? 2400 : 1800;
+        // 일반 팝업은 1.8초,
+        // 은행/무인도/캠핑은 2.4초
+        const duration =
+            ["bank", "island", "camping"].includes(type)
+                ? 2400
+                : 1800;
 
         setTimeout(() => {
             modal.classList.add("hidden");
@@ -47,8 +72,13 @@ export function showPopup(message, image, type = "", reward = "") {
 }
 
 // 이동 후 처리
-export async function handleMoveResult(moveResult) {
-    const deviceInfo = JSON.parse(sessionStorage.getItem("deviceInfo"));
+export async function handleMoveResult(
+    moveResult
+) {
+    const deviceInfo = JSON.parse(
+        sessionStorage.getItem("deviceInfo")
+    );
+
     const mobile = deviceInfo.mobile;
 
     const reward = {
@@ -58,7 +88,11 @@ export async function handleMoveResult(moveResult) {
 
     // 은행 도착
     if (moveResult.reachedBank) {
-        const bankResult = await processBoardTile(40, mobile);
+        const bankResult =
+            await processBoardTile(
+                40,
+                mobile
+            );
 
         reward.getP += bankResult.getP;
         reward.getG += bankResult.getG;
@@ -74,20 +108,41 @@ export async function handleMoveResult(moveResult) {
     }
 
     // 도착 칸 처리
-    const tileResult = moveResult.end === 40
-        ? { getP: 0, getG: 0, popup: null, gift: null }
-        : await processBoardTile(moveResult.end, mobile);
+    const tileResult =
+        moveResult.end === 40
+            ? {
+                getP: 0,
+                getG: 0,
+                popup: null,
+                gift: null
+            }
+            : await processBoardTile(
+                moveResult.end,
+                mobile
+            );
 
     reward.getP += tileResult.getP;
     reward.getG += tileResult.getG;
 
     // 현재 위치 저장
-    await savePosition(mobile, moveResult.end);
+    await savePosition(
+        mobile,
+        moveResult.end
+    );
 
     // 기록 날짜와 시간
-    const rawDate = getSeoulDate();
-    const date = `${rawDate.slice(0, 4)}-${rawDate.slice(4, 6)}-${rawDate.slice(6, 8)}`;
-    const time = getSeoulTime();
+    const timestamp = getTimestamp();
+    const parts = getTimestampParts(timestamp);
+
+    if (!parts) {
+        return reward;
+    }
+
+    const date = parts.date;
+
+    const time =
+        timestamp
+            .slice(11, 19);
 
     // 보드 기록 저장
     await saveBoardHistory(
@@ -117,7 +172,9 @@ export async function handleMoveResult(moveResult) {
 
     // 선물 팝업
     if (tileResult.gift) {
-        await showGiftPopup(tileResult.gift);
+        await showGiftPopup(
+            tileResult.gift
+        );
     }
 
     // 최신 POINT / GOLD / 위치 조회
@@ -129,7 +186,10 @@ export async function handleMoveResult(moveResult) {
 }
 
 // 보드 칸 처리
-async function processBoardTile(position, mobile) {
+async function processBoardTile(
+    position,
+    mobile
+) {
     const tile = boardData[position];
 
     const result = {
@@ -144,39 +204,60 @@ async function processBoardTile(position, mobile) {
     }
 
     // 일반 칸 - POINT
-    if (tile.type === "normal" && tile.point !== undefined) {
-        const point = Number(tile.point);
+    if (
+        tile.type === "normal" &&
+        tile.point !== undefined
+    ) {
+        const point =
+            Number(tile.point);
 
-        await updatePoint(mobile, point);
+        await updatePoint(
+            mobile,
+            point
+        );
 
         result.getP = point;
+
         result.popup = {
             message: "",
             image: tile.image,
-            reward: `+ ${point.toLocaleString()}P`
+            reward:
+                `+ ${point.toLocaleString()}P`
         };
 
         return result;
     }
 
     // 일반 칸 - GOLD
-    if (tile.type === "normal" && tile.gold !== undefined) {
-        const gold = Number(tile.gold);
+    if (
+        tile.type === "normal" &&
+        tile.gold !== undefined
+    ) {
+        const gold =
+            Number(tile.gold);
 
-        await updateGold(mobile, gold);
+        await updateGold(
+            mobile,
+            gold
+        );
 
         result.getG = gold;
+
         result.popup = {
             message: "",
             image: tile.image,
-            reward: `+ ${gold.toLocaleString()}G`
+            reward:
+                `+ ${gold.toLocaleString()}G`
         };
 
         return result;
     }
 
     // 일반 칸 - 꽝
-    if (tile.type === "normal" && tile.empty !== undefined) {
+    if (
+        tile.type === "normal" &&
+        tile.empty !== undefined
+    ) {
         result.popup = {
             message: "",
             image: tile.image,
@@ -188,20 +269,29 @@ async function processBoardTile(position, mobile) {
 
     // 무인도
     if (tile.type === "island") {
-        const point = Number(tile.point);
+        const point =
+            Number(tile.point);
 
-        await updatePoint(mobile, point);
+        await updatePoint(
+            mobile,
+            point
+        );
 
         result.getP = point;
 
-        const message = tile.message[
-            Math.floor(Math.random() * tile.message.length)
-        ];
+        const message =
+            tile.message[
+                Math.floor(
+                    Math.random() *
+                    tile.message.length
+                )
+            ];
 
         result.popup = {
             message,
             image: tile.image,
-            reward: `- ${Math.abs(point).toLocaleString()}P`,
+            reward:
+                `- ${Math.abs(point).toLocaleString()}P`,
             type: "island"
         };
 
@@ -210,20 +300,29 @@ async function processBoardTile(position, mobile) {
 
     // 캠핑
     if (tile.type === "camping") {
-        const point = Number(tile.point);
+        const point =
+            Number(tile.point);
 
-        await updatePoint(mobile, point);
+        await updatePoint(
+            mobile,
+            point
+        );
 
         result.getP = point;
 
-        const message = tile.message[
-            Math.floor(Math.random() * tile.message.length)
-        ];
+        const message =
+            tile.message[
+                Math.floor(
+                    Math.random() *
+                    tile.message.length
+                )
+            ];
 
         result.popup = {
             message,
             image: tile.image,
-            reward: `+ ${point.toLocaleString()}P`,
+            reward:
+                `+ ${point.toLocaleString()}P`,
             type: "camping"
         };
 
@@ -233,11 +332,15 @@ async function processBoardTile(position, mobile) {
     // 선물
     if (tile.type === "gift") {
         result.gift = {
-            message: Array.isArray(tile.message)
-                ? tile.message[
-                    Math.floor(Math.random() * tile.message.length)
-                ]
-                : tile.message
+            message:
+                Array.isArray(tile.message)
+                    ? tile.message[
+                        Math.floor(
+                            Math.random() *
+                            tile.message.length
+                        )
+                    ]
+                    : tile.message
         };
 
         return result;
@@ -245,20 +348,29 @@ async function processBoardTile(position, mobile) {
 
     // 은행
     if (tile.type === "bank") {
-        const point = Number(tile.point);
+        const point =
+            Number(tile.point);
 
-        await updatePoint(mobile, point);
+        await updatePoint(
+            mobile,
+            point
+        );
 
         result.getP = point;
 
-        const message = tile.message[
-            Math.floor(Math.random() * tile.message.length)
-        ];
+        const message =
+            tile.message[
+                Math.floor(
+                    Math.random() *
+                    tile.message.length
+                )
+            ];
 
         result.popup = {
             message,
             image: tile.image,
-            reward: `+ ${point.toLocaleString()}P`,
+            reward:
+                `+ ${point.toLocaleString()}P`,
             type: "bank"
         };
 

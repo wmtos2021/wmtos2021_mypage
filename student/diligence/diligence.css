@@ -1,27 +1,4 @@
-/* studentDiligence.css */
-
-/* 성실도 팝업 제목 */
-#diligenceModal .studentModalBox h2 {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #078887;
-}
-
-#diligenceModal .studentModalBox h2 strong {
-    position: absolute;
-    margin-top: 6px;
-    left: 18px;
-    color: #000000;
-    font-size: 16px;
-    font-weight: 300;
-}
-
-#diligenceModal .studentModalBox h2 span {
-    margin: 0 auto;
-}
-
+/* diligence.css */
 
 /* 팝업 달력 상단 */
 .calendarHeader {
@@ -31,13 +8,96 @@
     margin-top: 18px;
     padding: 0 2px;
 }
-
 .calendarHeader strong {
     font-size: 19px;
     font-weight: 700;
     color: #333333;
 }
 
+/* 성실도 팝업 제목 */
+#diligenceModal .studentModalBox h2 {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #078887;
+}
+.diligenceModalTitle {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.diligenceModalTitle button {
+    position: absolute;
+    left: -0.8px;
+    margin-top: 6px;
+    min-width: 64px;
+    height: 28px;
+    padding: 0 10px;
+    border: none;
+    border-radius: 7px;
+    background: #08736F;
+    color: #FFFFFF;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+.diligenceModalTitle span {
+    margin: 0 auto;
+    user-select: none;
+}
+.diligenceModalTitle button:active {
+    transform: scale(0.95);
+}
+.diligenceModalTitle button:focus {
+    outline: none;
+}
+
+/* 수강 과목 탭 */
+.subjectTabs {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-end;
+    width: 100%;
+    gap: 2.4px;
+    margin-top: 18px;
+    border-bottom: 1px solid #CBE8E5;
+}
+.subjectTab {
+    flex: none;
+    width: auto;
+    min-width: 58px;
+    height: 30px;
+    padding: 0 14px;
+    border: 1px solid #CBE8E5;
+    border-bottom: none;
+    border-radius: 9px 9px 0 0;
+    background: transparent;
+    color: #888888;
+    font-size: 14px;
+    font-weight: 400;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+.subjectTab.active {
+    position: relative;
+    height: 34px;
+    margin-bottom: -1px;
+    padding: 0 18px;
+    background: #FFFFFF;
+    color: #08736F;
+    border-bottom: 1px solid #FFFFFF;
+    font-weight: 700;
+    z-index: 1;
+}
+.subjectTab:focus {
+    outline: none;
+}
+
+/* 월 버튼 */
 .monthBtn {
     width: 32px;
     height: 32px;
@@ -47,23 +107,58 @@
     color: #08736F;
     font-size: 25px;
     line-height: 1;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
 }
-
 .monthBtn:active {
     transform: scale(0.9);
 }
-
+.monthBtn:focus {
+    outline: none;
+}
 
 /* 팝업 달력 */
 .calendar {
+    position: relative;
     width: 100%;
     margin-top: 18px;
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     gap: 2px;
 }
+#diligenceGradeWatermark {
+    position: absolute;
+    left: 50%;
+    top: 48%;
+    transform: translate(-50%, -50%);
+    color: #A52A2A;
+    font-size: 224px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -5px;
+    opacity: 0.10;
+    pointer-events: none;
+    z-index: 0;
+    white-space: nowrap;
+}
 
+#diligenceGradeWatermark .gradeBase {
+    display: inline-block;
+    width: 1em;
+    text-align: center;
+}
+
+#diligenceGradeWatermark sup {
+    position: absolute;
+    top: 0.02em;
+    margin-left: -0.3em;
+    font-size: 0.48em;
+    font-weight: 700;
+    line-height: 1;
+}
 .dayName {
+    position: relative;
+    z-index: 1;
     height: 24px;
     margin-bottom: 4px;
     display: flex;
@@ -72,10 +167,16 @@
     font-size: 15px;
     font-weight: 600;
     color: #08736F;
+    user-select: none;
+}
+#calendarDays {
+    display: contents;
 }
 
 /* 팝업 달력 날짜 */
 .calendarDay {
+    position: relative;
+    z-index: 1;
     min-width: 0;
     min-height: 62px;
     padding: 5px 0;
@@ -85,18 +186,24 @@
     align-items: center;
     justify-content: flex-start;
     gap: 5px;
+    user-select: none;
 }
-
 .calendarDay.empty {
     visibility: hidden;
 }
-
 .dateNumber {
     font-size: 14px;
     line-height: 1;
     color: #444444;
+    user-select: none;
 }
-
+.calendarDayBody {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    user-select: none;
+}
 
 /* 출석 및 숙제 상태 */
 .diligenceStatusRow {
@@ -108,8 +215,8 @@
     font-size: 12px;
     letter-spacing: 0.8px;
     color: #666666;
+    user-select: none;
 }
-
 .statusDot {
     width: 7px;
     height: 7px;
@@ -117,31 +224,24 @@
     display: inline-block;
 }
 
+/* 상태 색상 */
 .statusDot.onTime,
 .statusDot.homeworkDone {
     background: #06A439;
 }
-
 .statusDot.late10 {
-    background: #E5A93D;
+    background: #F2B01E;
 }
-
 .statusDot.late {
-    background: #F58116;
+    background: #F06A16;
 }
-
-.statusDot.absent {
+.statusDot.absent,
+.statusDot.homeworkNotDone {
     background: #CE0707;
 }
-
-.statusDot.homeworkNotDone {
-    background: #BDBDBD;
-}
-
 .statusDot.notStarted {
     background: #BDBDBD;
 }
-
 
 /* 오늘 날짜 표시 */
 .calendarDay.today {
@@ -149,7 +249,6 @@
     padding-top: 3px;
     border: 1px solid #CBE8E5;
 }
-
 
 /* 오늘 출석 버튼 */
 .todayAttendBtn {
@@ -165,11 +264,9 @@
     justify-content: center;
     align-items: flex-start;
     cursor: pointer;
-    -webkit-user-select: none;
-    -webkit-user-drag: none;
+    user-select: none;
     -webkit-tap-highlight-color: transparent;
 }
-
 .todayAttendBtn::before {
     content: "";
     position: absolute;
@@ -185,7 +282,6 @@
         0 3px 0 #075F5C,
         0 5px 8px rgba(12, 161, 155, 0.20);
 }
-
 .todayAttendBtn img {
     position: relative;
     width: 42px;
@@ -194,20 +290,19 @@
     object-fit: contain;
     z-index: 1;
     user-select: none;
-    -webkit-user-select: none;
     -webkit-user-drag: none;
-    -webkit-tap-highlight-color: transparent;
     border: none;
     outline: none;
     transition: transform 0.22s ease;
 }
-
 .todayAttendBtn:active img {
     transform: translateY(0.9px);
 }
-
 .todayAttendBtn:active::before {
     box-shadow:
         0 1px 0 #075F5C,
         0 2px 5px rgba(12, 161, 155, 0.16);
+}
+.todayAttendBtn:focus {
+    outline: none;
 }
