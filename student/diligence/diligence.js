@@ -172,13 +172,13 @@ export function setDiligenceData(
     );
 
     const attendanceCheck = getAttendanceCheck();
-    const checkSubject = attendanceCheck?.subject;
+    const checkClass = attendanceCheck?.class;
 
     if (
-        checkSubject &&
-        subjects.includes(checkSubject)
+        checkClass &&
+        subjects.includes(checkClass)
     ) {
-        selectedSubject = checkSubject;
+        selectedSubject = checkClass;
     } else if (
         !selectedSubject ||
         !subjects.includes(selectedSubject)
@@ -459,11 +459,14 @@ export async function renderDiligenceCalendar() {
 
 // 출석 완료 후 갱신
 document.addEventListener("attendanceCompleted", async event => {
-    const subject = event.detail?.subject;
-    if (!subject || currentMonth !== todayMonth) return;
+    const className = event.detail?.class;
+
+    if (!className || currentMonth !== todayMonth) {
+        return;
+    }
 
     sessionStorage.setItem(
-        `attendanceCompleted_${todayDate}_${subject}`,
+        `attendanceCompleted_${todayDate}_${className}`,
         "true"
     );
 

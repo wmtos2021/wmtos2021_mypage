@@ -82,7 +82,7 @@ function createMonthRecords(monthKey, historyData) {
     const shopData = historyData.shop || {};
     const rewardData = historyData.reward || {};
 
-    // 보드게임
+    // 보드게임 - GOLD 받음
     Object.entries(boardData).forEach(([dateKey, timeData]) => {
         if (dateKey.slice(0, 7) !== monthKey) {
             return;
@@ -90,49 +90,27 @@ function createMonthRecords(monthKey, historyData) {
 
         Object.entries(timeData || {}).forEach(([timeKey, data]) => {
             const getG = getGold(data?.getG);
-            const useG = getGold(data?.useG);
 
             if (getG > 0) {
                 records.push({
                     date: dateKey,
                     time: timeKey,
                     type: "받음",
-                    detail: "게임보상",
+                    detail: "보드게임보상",
                     gold: getG
-                });
-            }
-
-            if (useG > 0) {
-                records.push({
-                    date: dateKey,
-                    time: timeKey,
-                    type: "사용",
-                    detail: "게임 참여",
-                    gold: useG
                 });
             }
         });
     });
 
-    // 상점
+    // 상점 - GOLD 사용
     Object.entries(shopData).forEach(([dateKey, timeData]) => {
         if (dateKey.slice(0, 7) !== monthKey) {
             return;
         }
 
         Object.entries(timeData || {}).forEach(([timeKey, data]) => {
-            const getG = getGold(data?.getG);
             const useG = getGold(data?.useG);
-
-            if (getG > 0) {
-                records.push({
-                    date: dateKey,
-                    time: timeKey,
-                    type: "받음",
-                    detail: data?.type || "",
-                    gold: getG
-                });
-            }
 
             if (useG > 0) {
                 records.push({
@@ -146,27 +124,23 @@ function createMonthRecords(monthKey, historyData) {
         });
     });
 
-    // 성실도 리워드
-    const reward = rewardData[monthKey];
+    // 성실도 보상 - GOLD 받음
+    Object.entries(rewardData).forEach(([dateKey, data]) => {
+        if (dateKey.slice(0, 7) !== monthKey) {
+            return;
+        }
 
-    if (reward) {
-        const rewardG = getGold(reward.rewardG);
+        const rewardG = getGold(data?.rewardG);
 
         if (rewardG > 0) {
             records.push({
-                date: `${monthKey}-01`,
+                date: dateKey,
                 time: "",
                 type: "받음",
-                detail: `${reward.rewardMonth || ""} 성실도`,
+                detail: "성실도보상",
                 gold: rewardG
             });
         }
-    }
-
-    records.sort((a, b) => {
-        const dateA = `${a.date} ${a.time}`;
-        const dateB = `${b.date} ${b.time}`;
-        return dateB.localeCompare(dateA);
     });
 
     return records;
