@@ -14,7 +14,8 @@ import { db } from "../firebase.js";
 
 import {
     getDeviceId,
-    getMonthFromTimestamp
+    getMonthFromTimestamp,
+    getDayFromTimestamp
 } from "../utils.js";
 
 // 이미지 미리 로딩
@@ -67,6 +68,59 @@ function getAttendanceCheck() {
     } catch (error) {
         return null;
     }
+}
+
+// 오늘 수업시간 가져오기
+async function loadTodayClassTimes(
+    deviceInfo,
+    attendanceCheck
+) {
+    const classData = deviceInfo?.class || {};
+    const day = getDayFromTimestamp(
+        attendanceCheck?.attendTimestamp
+    );
+
+    if (!day) {
+        return {};
+    }
+
+    const subjects = Object.keys(classData);
+
+    const results = await Promise.all(
+        subjects.map(async subject => {
+            const className = classData[subject];
+
+            if (!className) {
+                return [
+                    subject,
+                    null
+                ];
+            }
+
+            try {
+                const snapshot = await get(
+                    ref(
+                        db,
+                        `class/${subject}/${className}/time/${day}`
+                    )
+                );
+
+                return [
+                    subject,
+                    snapshot.exists()
+                        ? snapshot.val()
+                        : null
+                ];
+            } catch (error) {
+                return [
+                    subject,
+                    null
+                ];
+            }
+        })
+    );
+
+    return Object.fromEntries(results);
 }
 
 // 학생 기본 정보 및 이번 달 데이터 가져오기
@@ -139,13 +193,13 @@ export async function loadStudentData() {
             nextMonth.getDate()
         ).padStart(2, "0")}`;
 
-    // 이번 달 데이터 동시 조회
     const [
         historySnapshot,
         diligenceSnapshot,
         boardSnapshot,
         shopSnapshot,
-        rewardSnapshot
+        rewardSnapshot,
+        todayClassTimes
     ] = await Promise.all([
         get(
             query(
@@ -196,6 +250,10 @@ export async function loadStudentData() {
                 startAt(monthKey),
                 endAt(monthKey)
             )
+        ),
+        loadTodayClassTimes(
+            deviceInfo,
+            attendanceCheck
         )
     ]);
 
@@ -266,6 +324,11 @@ export async function loadStudentData() {
         })
     );
 
+    sessionStorage.setItem(
+        "todayClassTimes",
+        JSON.stringify(todayClassTimes)
+    );
+
     return true;
 }
 
@@ -278,8 +341,11 @@ export async function updateLoginCount() {
     }
 
     try {
-        const deviceInfo = JSON.parse(data);
-        const mobile = deviceInfo.mobile;
+        const deviceInfo =
+            JSON.parse(data);
+
+        const mobile =
+            deviceInfo.mobile;
 
         if (!mobile) {
             return false;

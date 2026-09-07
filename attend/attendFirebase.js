@@ -80,7 +80,7 @@ export async function saveAttend(
     }
 
     try {
-        await updateDiligence(
+        const diligence = await updateDiligence(
             mobile,
             date,
             attendSc
@@ -92,7 +92,8 @@ export async function saveAttend(
         );
 
         return {
-            success: true
+            success: true,
+            diligence
         };
     } catch (error) {
         return {

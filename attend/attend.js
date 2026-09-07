@@ -492,7 +492,8 @@ export async function handleAttend() {
                                 point: getP,
                                 class: attendanceClass,
                                 attend,
-                                attendSc
+                                attendSc,
+                                diligence: result.diligence
                             }
                         }
                     )

@@ -13,24 +13,40 @@ export function renderCalendarHeader(
     currentMonth,
     todayMonth
 ) {
-    const calendarMonth = document.getElementById("calendarMonth");
-    const prevMonthBtn = document.getElementById("prevMonthBtn");
-    const nextMonthBtn = document.getElementById("nextMonthBtn");
+    const calendarMonth =
+        document.getElementById("calendarMonth");
 
-    if (!calendarMonth || !prevMonthBtn || !nextMonthBtn) {
+    const prevMonthBtn =
+        document.getElementById("prevMonthBtn");
+
+    const nextMonthBtn =
+        document.getElementById("nextMonthBtn");
+
+    if (
+        !calendarMonth ||
+        !prevMonthBtn ||
+        !nextMonthBtn
+    ) {
         return;
     }
 
-    const [year, month] = currentMonth.split("-").map(Number);
+    const [year, month] =
+        currentMonth.split("-").map(Number);
 
-    calendarMonth.textContent = `${year}년 ${month}월`;
-    prevMonthBtn.disabled = currentMonth === getMinMonth(todayMonth);
-    nextMonthBtn.disabled = currentMonth === todayMonth;
+    calendarMonth.textContent =
+        `${year}년 ${month}월`;
+
+    prevMonthBtn.disabled =
+        currentMonth === getMinMonth(todayMonth);
+
+    nextMonthBtn.disabled =
+        currentMonth === todayMonth;
 }
 
 // 최소 월
 function getMinMonth(todayMonth) {
-    const [year, month] = todayMonth.split("-").map(Number);
+    const [year, month] =
+        todayMonth.split("-").map(Number);
 
     let minYear = year;
     let minMonth = month - 2;
@@ -50,27 +66,51 @@ export function renderSubjectTabs(
     subjectNames,
     subjectOrder
 ) {
-    const subjectTabs = document.getElementById("subjectTabs");
+    const subjectTabs =
+        document.getElementById("subjectTabs");
 
     if (!subjectTabs) {
         return;
     }
 
-    const subjects = Object.keys(studentInfo?.class || {});
+    const subjects =
+        Object.keys(
+            studentInfo?.class || {}
+        );
 
-    subjectTabs.innerHTML = subjectOrder
-        .filter(subject => subjects.includes(subject))
-        .map(
-            subject => `
-                <button
-                    type="button"
-                    class="subjectTab ${subject === selectedSubject ? "active" : ""}"
-                    data-subject="${subject}">
-                    ${subjectNames[subject] || subject}
-                </button>
-            `
-        )
-        .join("");
+    subjectTabs.innerHTML =
+        subjectOrder
+            .filter(subject =>
+                subjects.includes(subject)
+            )
+            .map(
+                subject => `
+                    <button
+                        type="button"
+                        class="subjectTab ${subject === selectedSubject ? "active" : ""}"
+                        data-subject="${subject}">
+                        ${subjectNames[subject] || subject}
+                    </button>
+                `
+            )
+            .join("");
+}
+
+// 출석 완료 여부
+function isAttendanceCompleted(
+    dateString,
+    selectedSubject
+) {
+    if (
+        !dateString ||
+        !selectedSubject
+    ) {
+        return false;
+    }
+
+    return sessionStorage.getItem(
+        `attendanceCompleted_${dateString}_${selectedSubject}`
+    ) === "true";
 }
 
 // 달력 표시
@@ -83,72 +123,134 @@ export function renderCalendarDays(
     attendanceCheck,
     classTime
 ) {
-    const calendarDays = document.getElementById("calendarDays");
+    const calendarDays =
+        document.getElementById("calendarDays");
 
     if (!calendarDays) {
         return;
     }
 
-    const [year, month] = currentMonth.split("-").map(Number);
+    const [year, month] =
+        currentMonth.split("-").map(Number);
 
-    const emptyTemplate = document.getElementById("calendarEmptyTemplate");
-    const dayTemplate = document.getElementById("calendarDayTemplate");
-    const attendTemplate = document.getElementById("todayAttendTemplate");
+    const emptyTemplate =
+        document.getElementById(
+            "calendarEmptyTemplate"
+        );
 
-    if (!emptyTemplate || !dayTemplate || !attendTemplate) {
+    const dayTemplate =
+        document.getElementById(
+            "calendarDayTemplate"
+        );
+
+    const attendTemplate =
+        document.getElementById(
+            "todayAttendTemplate"
+        );
+
+    if (
+        !emptyTemplate ||
+        !dayTemplate ||
+        !attendTemplate
+    ) {
         return;
     }
 
     let html = "";
 
-    const firstDay = new Date(year, month - 1, 1).getDay();
-    const lastDate = new Date(year, month, 0).getDate();
+    const firstDay =
+        new Date(
+            year,
+            month - 1,
+            1
+        ).getDay();
 
-    if (firstDay >= 1 && firstDay <= 5) {
-        for (let i = 1; i < firstDay; i++) {
-            const empty = emptyTemplate.content.firstElementChild.cloneNode(true);
+    const lastDate =
+        new Date(
+            year,
+            month,
+            0
+        ).getDate();
+
+    if (
+        firstDay >= 1 &&
+        firstDay <= 5
+    ) {
+        for (
+            let i = 1;
+            i < firstDay;
+            i++
+        ) {
+            const empty =
+                emptyTemplate
+                    .content
+                    .firstElementChild
+                    .cloneNode(true);
+
             html += empty.outerHTML;
         }
     }
 
-    for (let date = 1; date <= lastDate; date++) {
-        const dayData = getCalendarDayData(
-            year,
-            month - 1,
-            date,
-            todayString,
-            studentInfo,
-            attendRecords,
-            selectedSubject
-        );
+    for (
+        let date = 1;
+        date <= lastDate;
+        date++
+    ) {
+        const dayData =
+            getCalendarDayData(
+                year,
+                month - 1,
+                date,
+                todayString,
+                studentInfo,
+                attendRecords,
+                selectedSubject
+            );
 
         if (dayData.isWeekend) {
             continue;
         }
 
-        const day = dayTemplate.content.firstElementChild.cloneNode(true);
+        const day =
+            dayTemplate
+                .content
+                .firstElementChild
+                .cloneNode(true);
 
         if (dayData.isToday) {
             day.classList.add("today");
         }
 
-        day.dataset.date = dayData.dateString;
+        day.dataset.date =
+            dayData.dateString;
 
-        const dateNumber = day.querySelector(".dateNumber");
-        const body = day.querySelector(".calendarDayBody");
+        const dateNumber =
+            day.querySelector(".dateNumber");
+
+        const body =
+            day.querySelector(
+                ".calendarDayBody"
+            );
 
         dateNumber.textContent = date;
+
+        const attendanceCompleted =
+            isAttendanceCompleted(
+                dayData.dateString,
+                selectedSubject
+            );
 
         if (
             !dayData.isBeforeEnrollment &&
             !dayData.isFuture &&
             dayData.record
         ) {
-            body.innerHTML = renderRecordStatus(dayData.record);
+            body.innerHTML =
+                renderRecordStatus(
+                    dayData.record
+                );
         } else if (
-            !sessionStorage.getItem(
-                `attendanceCompleted_${dayData.dateString}_${selectedSubject}`
-            ) &&
+            !attendanceCompleted &&
             shouldShowAttendButton(
                 dayData.isToday,
                 dayData.isBeforeEnrollment,
@@ -160,10 +262,14 @@ export function renderCalendarDays(
             )
         ) {
             body.appendChild(
-                attendTemplate.content.firstElementChild.cloneNode(true)
+                attendTemplate
+                    .content
+                    .firstElementChild
+                    .cloneNode(true)
             );
         } else {
-            body.innerHTML = renderRecordStatus(null);
+            body.innerHTML =
+                renderRecordStatus(null);
         }
 
         html += day.outerHTML;
@@ -174,30 +280,67 @@ export function renderCalendarDays(
 
 // 출석 및 숙제 상태 표시
 export function renderRecordStatus(record) {
-    const template = document.getElementById("statusRowTemplate");
+    const template =
+        document.getElementById(
+            "statusRowTemplate"
+        );
 
     if (!template) {
         return "";
     }
 
-    const attendStatus = getAttendStatus(record?.attend);
-    const homeworkStatus = getHomeworkStatus(record?.homework);
+    const attendStatus =
+        getAttendStatus(
+            record?.attend
+        );
 
-    const attendRow = template.content.firstElementChild.cloneNode(true);
-    const homeworkRow = template.content.firstElementChild.cloneNode(true);
+    const homeworkStatus =
+        getHomeworkStatus(
+            record?.homework
+        );
 
-    attendRow.querySelector("span").textContent = "출석";
-    attendRow.querySelector("i").classList.add(attendStatus);
+    const attendRow =
+        template
+            .content
+            .firstElementChild
+            .cloneNode(true);
 
-    homeworkRow.querySelector("span").textContent = "숙제";
-    homeworkRow.querySelector("i").classList.add(homeworkStatus);
+    const homeworkRow =
+        template
+            .content
+            .firstElementChild
+            .cloneNode(true);
 
-    return attendRow.outerHTML + homeworkRow.outerHTML;
+    attendRow
+        .querySelector("span")
+        .textContent = "출석";
+
+    attendRow
+        .querySelector("i")
+        .classList
+        .add(attendStatus);
+
+    homeworkRow
+        .querySelector("span")
+        .textContent = "숙제";
+
+    homeworkRow
+        .querySelector("i")
+        .classList
+        .add(homeworkStatus);
+
+    return (
+        attendRow.outerHTML +
+        homeworkRow.outerHTML
+    );
 }
 
 // 출석 상태
 function getAttendStatus(status) {
-    if (status === "ontime" || status === "onTime") {
+    if (
+        status === "ontime" ||
+        status === "onTime"
+    ) {
         return "onTime";
     }
 

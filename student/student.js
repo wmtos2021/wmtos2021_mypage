@@ -5,9 +5,9 @@ import {
     renderDiligenceCalendar
 } from "./diligence/diligence.js";
 
-import { getReward } from "./reward/reward.js";
+import {getReward} from "./reward/reward.js";
 
-import { checkSession } from "../end/session.js";
+import {checkSession} from "../end/session.js";
 
 import {
     VERSION,
@@ -57,7 +57,6 @@ version.textContent = `Ver ${VERSION}`;
 // 학생 정보
 let studentInfo = null;
 let attendRecords = {};
-let diligenceRecords = {};
 
 // QR 확인 정보 가져오기
 function getAttendanceCheck() {
@@ -76,55 +75,69 @@ function getAttendanceCheck() {
 
 // 학생 정보 가져오기
 function loadStudentInfo() {
-    const studentData = sessionStorage.getItem("studentInfo");
-    const attendData = sessionStorage.getItem("attendRecords");
-    const diligenceData = sessionStorage.getItem("diligence");
+    const studentData =
+        sessionStorage.getItem("studentInfo");
+
+    const attendData =
+        sessionStorage.getItem("attendRecords");
+
+    const diligenceData =
+        sessionStorage.getItem("diligence");
 
     if (!studentData) {
         return false;
     }
 
     studentInfo = JSON.parse(studentData);
+    attendRecords =
+        attendData
+            ? JSON.parse(attendData)
+            : {};
 
-    attendRecords = attendData ? JSON.parse(attendData) : {};
+    const attendanceCheck =
+        getAttendanceCheck();
 
-    const attendanceCheck = getAttendanceCheck();
-
-    const todayMonth = getMonthFromTimestamp(
-        attendanceCheck?.attendTimestamp
-    );
+    const todayMonth =
+        getMonthFromTimestamp(
+            attendanceCheck?.attendTimestamp
+        );
 
     if (!todayMonth) {
         return false;
     }
 
-    const todayDiligence = diligenceData !== null
-        ? Number(diligenceData)
-        : 100;
+    const todayDiligence =
+        diligenceData !== null
+            ? Number(diligenceData)
+            : 100;
 
-    diligenceRecords = {
-        [todayMonth]: todayDiligence
-    };
+    studentName.textContent =
+        `${(studentInfo.name || "학생").replace(/\d+$/g, "")}님`;
 
-    studentName.textContent = `${(studentInfo.name || "학생").replace(/\d+$/g, "")}님`;
+    studentPoint.textContent =
+        `${(Number(studentInfo.totalP) || 0).toLocaleString()}`;
 
-    studentPoint.textContent = `${(Number(studentInfo.totalP) || 0).toLocaleString()}`;
+    studentGold.textContent =
+        `${(Number(studentInfo.totalG) || 0).toLocaleString()}`;
 
-    studentGold.textContent = `${(Number(studentInfo.totalG) || 0).toLocaleString()}`;
+    diligenceCount.textContent =
+        todayDiligence;
 
-    diligenceCount.textContent = todayDiligence;
-    diligenceTotal.textContent = 100;
+    diligenceTotal.textContent =
+        100;
 
-    const grade = getReward(todayDiligence).grade;
+    const grade =
+        getReward(todayDiligence).grade;
 
-    diligenceGrade.innerHTML = grade === "A+"
-        ? "A<sup>+</sup>"
-        : grade;
+    diligenceGrade.innerHTML =
+        grade === "A+"
+            ? "A<sup>+</sup>"
+            : grade;
 
     setDiligenceData(
         studentInfo,
         attendRecords,
-        diligenceRecords
+        todayDiligence
     );
 
     return true;
@@ -133,102 +146,228 @@ function loadStudentInfo() {
 let diligenceHtml = null;
 
 // 성실도 팝업
-diligenceBtn.addEventListener("click", async () => {
-    try {
-        if (!diligenceHtml) {
-            const response = await fetch(
-                "./diligence/diligence.html"
-            );
+diligenceBtn.addEventListener(
+    "click",
+    async () => {
+        try {
+            if (!diligenceHtml) {
+                const response =
+                    await fetch(
+                        "./diligence/diligence.html"
+                    );
 
-            if (!response.ok) {
-                throw new Error(
-                    `diligence.html: ${response.status}`
+                if (!response.ok) {
+                    throw new Error(
+                        `diligence.html: ${response.status}`
+                    );
+                }
+
+                diligenceHtml =
+                    await response.text();
+
+                diligenceModal.innerHTML =
+                    diligenceHtml;
+
+                const diligenceCloseBtn =
+                    document.getElementById(
+                        "diligenceCloseBtn"
+                    );
+
+                diligenceCloseBtn.addEventListener(
+                    "click",
+                    () => {
+                        diligenceModal.classList.add(
+                            "hidden"
+                        );
+                    }
                 );
             }
 
-            diligenceHtml = await response.text();
-            diligenceModal.innerHTML = diligenceHtml;
+            diligenceModal.classList.remove(
+                "hidden"
+            );
 
-            const diligenceCloseBtn =
-                document.getElementById("diligenceCloseBtn");
-
-            diligenceCloseBtn.addEventListener("click", () => {
-                diligenceModal.classList.add("hidden");
-            });
-        }
-
-        diligenceModal.classList.remove("hidden");
-
-        await renderDiligenceCalendar();
-
-    } catch (error) {}
-});
+            await renderDiligenceCalendar();
+        } catch (error) {}
+    }
+);
 
 // POINT 팝업
-pointBtn.addEventListener("click", () => {
-    pointModal.classList.remove("hidden");
-});
+pointBtn.addEventListener(
+    "click",
+    () => {
+        pointModal.classList.remove(
+            "hidden"
+        );
+    }
+);
 
-pointCloseBtn.addEventListener("click", () => {
-    pointModal.classList.add("hidden");
-});
+pointCloseBtn.addEventListener(
+    "click",
+    () => {
+        pointModal.classList.add(
+            "hidden"
+        );
+    }
+);
 
 // GOLD 팝업
-goldBtn.addEventListener("click", () => {
-    goldModal.classList.remove("hidden");
-});
+goldBtn.addEventListener(
+    "click",
+    () => {
+        goldModal.classList.remove(
+            "hidden"
+        );
+    }
+);
 
-goldCloseBtn.addEventListener("click", () => {
-    goldModal.classList.add("hidden");
-});
+goldCloseBtn.addEventListener(
+    "click",
+    () => {
+        goldModal.classList.add(
+            "hidden"
+        );
+    }
+);
 
 // 보드게임
-boardGameMainBtn.addEventListener("click", event => {
-    event.stopPropagation();
-    location.href = "../board/board.html";
-});
+boardGameMainBtn.addEventListener(
+    "click",
+    event => {
+        event.stopPropagation();
+        location.href = "../board/board.html";
+    }
+);
 
-boardGameBtn.addEventListener("click", event => {
-    event.stopPropagation();
-    location.href = "../board/board.html";
-});
+boardGameBtn.addEventListener(
+    "click",
+    event => {
+        event.stopPropagation();
+        location.href = "../board/board.html";
+    }
+);
 
 // 골드상점
-goldShopMainBtn.addEventListener("click", event => {
-    event.stopPropagation();
-    location.href = "../shop/shop.html";
-});
+goldShopMainBtn.addEventListener(
+    "click",
+    event => {
+        event.stopPropagation();
+        location.href = "../shop/shop.html";
+    }
+);
 
-goldShopBtn.addEventListener("click", event => {
-    event.stopPropagation();
-    location.href = "../shop/shop.html";
-});
+goldShopBtn.addEventListener(
+    "click",
+    event => {
+        event.stopPropagation();
+        location.href = "../shop/shop.html";
+    }
+);
 
 // 출석 완료
-document.addEventListener("attendanceCompleted", event => {
-    const point = Number(event.detail?.point || 0);
+document.addEventListener(
+    "attendanceCompleted",
+    async event => {
+        const point =
+            Number(event.detail?.point || 0);
 
-    if (point <= 0) {
-        return;
+        const diligence =
+            event.detail?.diligence;
+
+        const attendanceClass =
+            event.detail?.class;
+
+        const attendanceCheck =
+            getAttendanceCheck();
+
+        const attendanceDate =
+            attendanceCheck?.attendTimestamp
+                ? attendanceCheck.attendTimestamp.slice(0, 10)
+                : null;
+
+        if (
+            attendanceDate &&
+            attendanceClass
+        ) {
+            sessionStorage.setItem(
+                `attendanceCompleted_${attendanceDate}_${attendanceClass}`,
+                "true"
+            );
+        }
+
+        if (point > 0) {
+            const currentPoint =
+                Number(
+                    studentPoint.textContent
+                        .replace(/,/g, "")
+                ) || 0;
+
+            const newPoint =
+                currentPoint + point;
+
+            studentPoint.textContent =
+                newPoint.toLocaleString();
+
+            if (studentInfo) {
+                studentInfo.totalP =
+                    newPoint;
+
+                sessionStorage.setItem(
+                    "studentInfo",
+                    JSON.stringify(studentInfo)
+                );
+            }
+        }
+
+        if (
+            diligence !== null &&
+            diligence !== undefined &&
+            diligence !== ""
+        ) {
+            const newDiligence =
+                Number(diligence);
+
+            diligenceCount.textContent =
+                newDiligence;
+
+            const grade =
+                getReward(newDiligence).grade;
+
+            diligenceGrade.innerHTML =
+                grade === "A+"
+                    ? "A<sup>+</sup>"
+                    : grade;
+
+            sessionStorage.setItem(
+                "diligence",
+                String(newDiligence)
+            );
+        }
+
+        if (
+            diligenceModal &&
+            !diligenceModal.classList.contains(
+                "hidden"
+            )
+        ) {
+            await renderDiligenceCalendar();
+        }
     }
-
-    const currentPoint =
-        Number(studentPoint.textContent.replace(/,/g, "")) || 0;
-
-    studentPoint.textContent =
-        `${(currentPoint + point).toLocaleString()}`;
-});
+);
 
 // 초기 학생 정보
 async function initializeStudent() {
-    const loaded = loadStudentInfo();
+    const loaded =
+        loadStudentInfo();
 
     if (!loaded) {
-        location.href = "../check/check.html";
+        location.href =
+            "../check/check.html";
         return;
     }
 
-    const sessionValid = await checkSession();
+    const sessionValid =
+        await checkSession();
 
     if (!sessionValid) {
         return;

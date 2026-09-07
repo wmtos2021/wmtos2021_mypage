@@ -17,11 +17,9 @@ import {bindAttendButton} from "./diligenceAttend.js";
 import {setDiligenceDetailData} from "./diligenceDetail.js";
 import {getMonthRecords} from "./diligenceFirebase.js";
 import {getReward} from "../reward/reward.js";
-import {getClassTime} from "../../attend/attendFirebase.js";
 
 import {
-    getTimestampParts,
-    getDayFromTimestamp
+    getTimestampParts
 } from "../../utils.js";
 
 // 이번 달 오늘
@@ -113,6 +111,7 @@ function renderDiligenceGrade(grade) {
     if (!grade) {
         return "";
     }
+
     if (grade.endsWith("+")) {
         return `<span class="gradeBase">${grade.slice(0, -1)}</span><sup>+</sup>`;
     }
@@ -198,43 +197,25 @@ export function setDiligenceData(
     }
 }
 
-// 오늘 수업시간 가져오기
-async function loadTodayClassTime() {
+// 로딩에서 미리 가져온 오늘 수업시간
+function loadTodayClassTime() {
     classTime = null;
 
     if (!selectedSubject) {
         return;
     }
 
-    const deviceData = sessionStorage.getItem("deviceInfo");
+    const data =
+        sessionStorage.getItem("todayClassTimes");
 
-    if (!deviceData) {
+    if (!data) {
         return;
     }
 
     try {
-        const deviceInfo = JSON.parse(deviceData);
-        const className = deviceInfo?.class?.[selectedSubject];
-
-        if (!className) {
-            return;
-        }
-
-        const attendanceCheck = getAttendanceCheck();
-
-        const day = getDayFromTimestamp(
-            attendanceCheck?.attendTimestamp
-        );
-
-        if (!day) {
-            return;
-        }
-
-        classTime = await getClassTime(
-            selectedSubject,
-            className,
-            day
-        );
+        const todayClassTimes = JSON.parse(data);
+        classTime =
+            todayClassTimes?.[selectedSubject] || null;
     } catch (error) {
         classTime = null;
     }
@@ -274,16 +255,17 @@ async function loadMonth(
     monthKey,
     force = false
 ) {
-    const deviceData = sessionStorage.getItem(
-        "deviceInfo"
-    );
+    const deviceData =
+        sessionStorage.getItem("deviceInfo");
 
     if (!deviceData) {
         return false;
     }
 
     try {
-        const deviceInfo = JSON.parse(deviceData);
+        const deviceInfo =
+            JSON.parse(deviceData);
+
         const mobile = deviceInfo.mobile;
 
         if (!mobile) {
@@ -373,9 +355,7 @@ function bindEvents() {
             selectedSubject = subject;
             currentMonth = todayMonth;
 
-            await loadMonth(currentMonth);
-            await loadTodayClassTime();
-
+            loadTodayClassTime();
             updateDiligenceView();
         }
     );
@@ -450,39 +430,48 @@ export async function renderDiligenceCalendar() {
         return;
     }
 
-    await loadMonth(currentMonth);
-    await loadTodayClassTime();
-
+    loadTodayClassTime();
     updateDiligenceView();
     bindEvents();
 }
 
 // 출석 완료 후 갱신
-document.addEventListener("attendanceCompleted", async event => {
-    const className = event.detail?.class;
+document.addEventListener(
+    "attendanceCompleted",
+    async event => {
+        const subject =
+            event.detail?.class;
 
-    if (!className || currentMonth !== todayMonth) {
-        return;
+        if (
+            !subject ||
+            currentMonth !== todayMonth
+        ) {
+            return;
+        }
+
+        sessionStorage.setItem(
+            `attendanceCompleted_${todayDate}_${subject}`,
+            "true"
+        );
+
+        await loadMonth(
+            currentMonth,
+            true
+        );
+
+        loadTodayClassTime();
+
+        renderCalendarDays(
+            currentMonth,
+            todayDate,
+            studentInfo,
+            attendRecords,
+            selectedSubject,
+            getAttendanceCheck(),
+            classTime
+        );
+
+        renderDiligenceGradeWatermark();
+        bindAttendButton();
     }
-
-    sessionStorage.setItem(
-        `attendanceCompleted_${todayDate}_${className}`,
-        "true"
-    );
-
-    await loadMonth(currentMonth, true);
-    await loadTodayClassTime();
-
-    renderCalendarDays(
-        currentMonth,
-        todayDate,
-        studentInfo,
-        attendRecords,
-        selectedSubject,
-        getAttendanceCheck(),
-        classTime
-    );
-
-    renderDiligenceGradeWatermark();
-    bindAttendButton();
-});
+);
