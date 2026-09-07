@@ -74,33 +74,35 @@ function createMonthRecords(monthKey, historyData) {
     const rewardData = historyData.reward || {};
 
     // 출석
-    Object.entries(attendanceData).forEach(([dateKey, data]) => {
+    Object.entries(attendanceData).forEach(([dateKey, subjectData]) => {
         if (dateKey.slice(0, 7) !== monthKey) {
             return;
         }
 
-        const attendP = getPoint(data?.attendP);
-        const homeworkP = getPoint(data?.homeworkP);
+        Object.entries(subjectData || {}).forEach(([subject, data]) => {
+            const attendP = getPoint(data?.attendP);
+            const homeworkP = getPoint(data?.homeworkP);
 
-        if (attendP > 0) {
-            records.push({
-                date: dateKey,
-                time: "",
-                type: "받음",
-                detail: "출석",
-                point: attendP
-            });
-        }
+            if (attendP > 0) {
+                records.push({
+                    date: dateKey,
+                    time: "",
+                    type: "받음",
+                    detail: "출석",
+                    point: attendP
+                });
+            }
 
-        if (homeworkP > 0) {
-            records.push({
-                date: dateKey,
-                time: "",
-                type: "받음",
-                detail: "숙제",
-                point: homeworkP
-            });
-        }
+            if (homeworkP > 0) {
+                records.push({
+                    date: dateKey,
+                    time: "",
+                    type: "받음",
+                    detail: "숙제",
+                    point: homeworkP
+                });
+            }
+        });
     });
 
     // 보드게임

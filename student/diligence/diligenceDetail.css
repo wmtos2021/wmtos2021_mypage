@@ -4,6 +4,7 @@
 #diligenceDetailModal .studentModalBox h2 {
     color: #078887;
 }
+
 #diligenceDetailModal .studentModalBox {
     overflow: hidden;
 }
@@ -62,7 +63,7 @@
 
 .diligenceDetailSign {
     flex: 0 0 14px;
-    margin-right: 5px;
+    margin-right: 2px;
     color: #E05A5A;
     font-size: 14px;
     font-weight: 700;
