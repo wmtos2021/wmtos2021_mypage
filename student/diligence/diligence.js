@@ -6,21 +6,16 @@ import {
     getPreviousMonth,
     getNextMonth
 } from "./diligenceCalendar.js";
-
 import {
     renderCalendarHeader,
     renderSubjectTabs,
     renderCalendarDays
 } from "./diligenceUi.js";
-
 import {bindAttendButton} from "./diligenceAttend.js";
 import {setDiligenceDetailData} from "./diligenceDetail.js";
 import {getMonthRecords} from "./diligenceFirebase.js";
 import {getReward} from "../reward/reward.js";
-
-import {
-    getTimestampParts
-} from "../../utils.js";
+import {getTimestampParts} from "../../utils.js";
 
 // 이번 달 오늘
 let currentMonth = null;
@@ -149,9 +144,7 @@ function renderDiligenceGradeWatermark() {
     }
 
     const grade = getDiligenceGrade(score);
-
-    watermark.innerHTML =
-        renderDiligenceGrade(grade);
+    watermark.innerHTML = renderDiligenceGrade(grade);
 }
 
 // 성실도 데이터 저장
@@ -205,8 +198,7 @@ function loadTodayClassTime() {
         return;
     }
 
-    const data =
-        sessionStorage.getItem("todayClassTimes");
+    const data = sessionStorage.getItem("todayClassTimes");
 
     if (!data) {
         return;
@@ -214,8 +206,7 @@ function loadTodayClassTime() {
 
     try {
         const todayClassTimes = JSON.parse(data);
-        classTime =
-            todayClassTimes?.[selectedSubject] || null;
+        classTime = todayClassTimes?.[selectedSubject] || null;
     } catch (error) {
         classTime = null;
     }
@@ -246,7 +237,6 @@ function updateDiligenceView() {
     );
 
     renderDiligenceGradeWatermark();
-
     bindAttendButton();
 }
 
@@ -255,17 +245,14 @@ async function loadMonth(
     monthKey,
     force = false
 ) {
-    const deviceData =
-        sessionStorage.getItem("deviceInfo");
+    const deviceData = sessionStorage.getItem("deviceInfo");
 
     if (!deviceData) {
         return false;
     }
 
     try {
-        const deviceInfo =
-            JSON.parse(deviceData);
-
+        const deviceInfo = JSON.parse(deviceData);
         const mobile = deviceInfo.mobile;
 
         if (!mobile) {
@@ -294,11 +281,8 @@ async function loadMonth(
             monthKey
         );
 
-        attendRecords[monthKey] =
-            monthAttendRecords;
-
-        diligenceRecords[monthKey] =
-            diligenceScore;
+        attendRecords[monthKey] = monthAttendRecords;
+        diligenceRecords[monthKey] = diligenceScore;
 
         return true;
     } catch (error) {
@@ -377,7 +361,6 @@ function bindEvents() {
                 getPreviousMonth(currentMonth);
 
             await loadMonth(currentMonth);
-
             updateDiligenceView();
         }
     );
@@ -399,7 +382,6 @@ function bindEvents() {
                 getNextMonth(currentMonth);
 
             await loadMonth(currentMonth);
-
             updateDiligenceView();
         }
     );
