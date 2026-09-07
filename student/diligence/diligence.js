@@ -458,38 +458,28 @@ export async function renderDiligenceCalendar() {
 }
 
 // 출석 완료 후 갱신
-document.addEventListener(
-    "attendanceCompleted",
-    async event => {
-        const subject =
-            event.detail?.subject;
+document.addEventListener("attendanceCompleted", async event => {
+    const subject = event.detail?.subject;
+    if (!subject || currentMonth !== todayMonth) return;
 
-        if (
-            !subject ||
-            currentMonth !== todayMonth
-        ) {
-            return;
-        }
+    sessionStorage.setItem(
+        `attendanceCompleted_${todayDate}_${subject}`,
+        "true"
+    );
 
-        await loadMonth(
-            currentMonth,
-            true
-        );
+    await loadMonth(currentMonth, true);
+    await loadTodayClassTime();
 
-        await loadTodayClassTime();
+    renderCalendarDays(
+        currentMonth,
+        todayDate,
+        studentInfo,
+        attendRecords,
+        selectedSubject,
+        getAttendanceCheck(),
+        classTime
+    );
 
-        renderCalendarDays(
-            currentMonth,
-            todayDate,
-            studentInfo,
-            attendRecords,
-            selectedSubject,
-            getAttendanceCheck(),
-            classTime
-        );
-
-        renderDiligenceGradeWatermark();
-
-        bindAttendButton();
-    }
-);
+    renderDiligenceGradeWatermark();
+    bindAttendButton();
+});

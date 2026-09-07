@@ -146,6 +146,9 @@ export function renderCalendarDays(
         ) {
             body.innerHTML = renderRecordStatus(dayData.record);
         } else if (
+            !sessionStorage.getItem(
+                `attendanceCompleted_${dayData.dateString}_${selectedSubject}`
+            ) &&
             shouldShowAttendButton(
                 dayData.isToday,
                 dayData.isBeforeEnrollment,
