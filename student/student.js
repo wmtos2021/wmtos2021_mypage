@@ -89,6 +89,7 @@ function loadStudentInfo() {
     }
 
     studentInfo = JSON.parse(studentData);
+
     attendRecords =
         attendData
             ? JSON.parse(attendData)
@@ -235,7 +236,8 @@ boardGameMainBtn.addEventListener(
     "click",
     event => {
         event.stopPropagation();
-        location.href = "../board/board.html";
+        location.href =
+            "../board/board.html";
     }
 );
 
@@ -243,7 +245,8 @@ boardGameBtn.addEventListener(
     "click",
     event => {
         event.stopPropagation();
-        location.href = "../board/board.html";
+        location.href =
+            "../board/board.html";
     }
 );
 
@@ -252,7 +255,8 @@ goldShopMainBtn.addEventListener(
     "click",
     event => {
         event.stopPropagation();
-        location.href = "../shop/shop.html";
+        location.href =
+            "../shop/shop.html";
     }
 );
 
@@ -260,7 +264,8 @@ goldShopBtn.addEventListener(
     "click",
     event => {
         event.stopPropagation();
-        location.href = "../shop/shop.html";
+        location.href =
+            "../shop/shop.html";
     }
 );
 
@@ -277,6 +282,12 @@ document.addEventListener(
         const attendanceClass =
             event.detail?.class;
 
+        const attend =
+            event.detail?.attend || "";
+
+        const attendSc =
+            Number(event.detail?.attendSc || 0);
+
         const attendanceCheck =
             getAttendanceCheck();
 
@@ -285,16 +296,52 @@ document.addEventListener(
                 ? attendanceCheck.attendTimestamp.slice(0, 10)
                 : null;
 
+        const todayMonth =
+            attendanceCheck?.attendTimestamp
+                ? getMonthFromTimestamp(
+                    attendanceCheck.attendTimestamp
+                )
+                : null;
+
+        // 출석 완료 기록 저장
         if (
+            todayMonth &&
             attendanceDate &&
             attendanceClass
         ) {
+            if (!attendRecords[todayMonth]) {
+                attendRecords[todayMonth] = {};
+            }
+
+            if (
+                !attendRecords[todayMonth][attendanceDate]
+            ) {
+                attendRecords[todayMonth][attendanceDate] = {};
+            }
+
+            attendRecords[todayMonth][attendanceDate][
+                attendanceClass
+            ] = {
+                attend,
+                attendP: point,
+                attendSc,
+                homework: "",
+                homeworkP: "",
+                homeworkSc: ""
+            };
+
+            sessionStorage.setItem(
+                "attendRecords",
+                JSON.stringify(attendRecords)
+            );
+
             sessionStorage.setItem(
                 `attendanceCompleted_${attendanceDate}_${attendanceClass}`,
                 "true"
             );
         }
 
+        // POINT 갱신
         if (point > 0) {
             const currentPoint =
                 Number(
@@ -314,11 +361,14 @@ document.addEventListener(
 
                 sessionStorage.setItem(
                     "studentInfo",
-                    JSON.stringify(studentInfo)
+                    JSON.stringify(
+                        studentInfo
+                    )
                 );
             }
         }
 
+        // 성실도 갱신
         if (
             diligence !== null &&
             diligence !== undefined &&
@@ -331,7 +381,9 @@ document.addEventListener(
                 newDiligence;
 
             const grade =
-                getReward(newDiligence).grade;
+                getReward(
+                    newDiligence
+                ).grade;
 
             diligenceGrade.innerHTML =
                 grade === "A+"
@@ -344,6 +396,14 @@ document.addEventListener(
             );
         }
 
+        // 성실도 데이터 갱신
+        setDiligenceData(
+            studentInfo,
+            attendRecords,
+            diligence
+        );
+
+        // 성실도 화면이 열려 있으면 즉시 갱신
         if (
             diligenceModal &&
             !diligenceModal.classList.contains(
