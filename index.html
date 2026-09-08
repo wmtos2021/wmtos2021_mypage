@@ -12,11 +12,13 @@
 
     <script>
         const className =
-            new URLSearchParams(location.search).get("class"); // || "math";
+            new URLSearchParams(location.search).get("class") || "math";
 
         if (className) {
             location.href =
                 `./check/check.html?class=${encodeURIComponent(className)}`;
+        } else {
+            location.href = "./check/check.html";
         }
     </script>
 
