@@ -120,7 +120,7 @@ function createMonthRecords(monthKey, historyData) {
                     date: dateKey,
                     time: timeKey,
                     type: "받음",
-                    detail: "게임참여보상",
+                    detail: "게임보상",
                     point: getP
                 });
             }

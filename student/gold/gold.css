@@ -75,7 +75,7 @@
 
 .goldHistoryDetail {
     flex: 1;
-    margin-right: 0px;
+    margin-right: 10px;
     color: #333D43;
     font-size: 14px;
     font-weight: 600;
@@ -86,6 +86,7 @@
 
 .goldHistorySign {
     flex: 0 0 14px;
+    margin-left: 10px;
     margin-right: 0px;
     font-size: 14px;
     font-weight: 700;
