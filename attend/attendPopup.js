@@ -28,7 +28,7 @@ export function showAttendPopup(image, point, title, message, callback) {
         confirmCallback = callback;
 
         attendModal.classList.remove("hidden");
-    }, 500);
+    }, 200);
 }
 
 // 출석 팝업 확인
@@ -67,5 +67,5 @@ export function showAttendMessage(message) {
             wisdomMessage.style.marginBottom = "0px";
             wisdomMessage.style.removeProperty("font-size");
         }, 3000);
-    }, 500);
+    }, 200);
 }
