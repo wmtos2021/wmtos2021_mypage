@@ -267,7 +267,7 @@ body {
 
 .footerLine1 {
     margin-bottom: 0;
-    font-size: 18px;
+    font-size: 15px;
     font-weight: 300;
     letter-spacing: 0.5px;
     color: #FFFFFF;
@@ -275,23 +275,22 @@ body {
 
 .footerLine2 {
     margin-bottom: 0;
-    font-size: 12px;
+    font-size: 10px;
     font-weight: 300;
     color: #FFFFFF;
     letter-spacing: -0.3px;
 }
 
-/* 하단 오른쪽 정보 */
 .footerRight {
     position: fixed;
     right: 12px;
     bottom: 10px;
-    font-size: 13px;
+    font-size: 11px;
     font-weight: 300;
     color: #FFFFFF;
     text-align: right;
     pointer-events: none;
-    z-index: 2;
+    z-index: 101;
 }
 
 /* 작은 화면 높이 대응 */

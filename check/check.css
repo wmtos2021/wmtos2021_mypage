@@ -140,28 +140,29 @@ body {
 }
 
 .footerLine1 {
-    font-size: 18px;
+    margin-bottom: 0;
+    font-size: 15px;
     font-weight: 300;
     letter-spacing: 0.5px;
     color: #FFFFFF;
 }
 
 .footerLine2 {
-    font-size: 12px;
+    margin-bottom: 0;
+    font-size: 10px;
     font-weight: 300;
     color: #FFFFFF;
     letter-spacing: -0.3px;
 }
 
-/* 하단 오른쪽 정보 */
 .footerRight {
     position: fixed;
     right: 12px;
     bottom: 10px;
-    font-size: 13px;
+    font-size: 11px;
     font-weight: 300;
     color: #FFFFFF;
     text-align: right;
     pointer-events: none;
-    z-index: 2;
+    z-index: 101;
 }
