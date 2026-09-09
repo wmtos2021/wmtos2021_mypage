@@ -62,25 +62,27 @@
 }
 .pointHistoryDate {
     flex: 0 0 82px;
-    margin-right: 4px;
+    margin-right: 0px;
     color: #999999;
-    font-size: 12.8px;
+    font-size: 12.4px;
     font-weight: 400;
     text-align: left;
     user-select: none;
+    letter-spacing: -0.5px;
 }
 .pointHistoryDetail {
     flex: 1;
-    margin-right: 20px;
+    margin-right: 0px;
     color: #333D43;
-    font-size: 14.8px;
+    font-size: 14px;
     font-weight: 600;
     text-align: left;
     user-select: none;
+    letter-spacing: -0.5px;
 }
 .pointHistorySign {
     flex: 0 0 14px;
-    margin-right: 2px;
+    margin-right: 0px;
     font-size: 14px;
     font-weight: 700;
     text-align: left;
@@ -92,6 +94,7 @@
     font-weight: 700;
     text-align: right;
     user-select: none;
+    letter-spacing: -0.5px;
 }
 .pointHistoryUnit {
     flex: 0 0 14px;

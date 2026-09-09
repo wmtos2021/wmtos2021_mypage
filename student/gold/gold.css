@@ -52,6 +52,7 @@
     user-select: none;
     -webkit-tap-highlight-color: transparent;
 }
+
 .goldHistoryRow {
     display: flex;
     align-items: center;
@@ -60,39 +61,47 @@
     padding: 2px 2px;
     user-select: none;
 }
+
 .goldHistoryDate {
     flex: 0 0 82px;
-    margin-right: 4px;
+    margin-right: 0px;
     color: #999999;
-    font-size: 12.8px;
+    font-size: 12.4px;
     font-weight: 400;
     text-align: left;
     user-select: none;
+    letter-spacing: -0.5px;
 }
+
 .goldHistoryDetail {
     flex: 1;
-    margin-right: 20px;
+    margin-right: 0px;
     color: #333D43;
-    font-size: 14.8px;
+    font-size: 14px;
     font-weight: 600;
     text-align: left;
     user-select: none;
+    letter-spacing: -0.5px;
 }
+
 .goldHistorySign {
     flex: 0 0 14px;
-    margin-right: 2px;
+    margin-right: 0px;
     font-size: 14px;
     font-weight: 700;
     text-align: left;
     user-select: none;
 }
+
 .goldHistoryValue {
     flex: 0 0 44px;
     font-size: 16px;
     font-weight: 700;
     text-align: right;
     user-select: none;
+    letter-spacing: -0.5px;
 }
+
 .goldHistoryUnit {
     flex: 0 0 14px;
     margin-left: 1px;
@@ -101,12 +110,15 @@
     text-align: left;
     user-select: none;
 }
+
 .goldHistoryPlus {
     color: #0B7ECA;
 }
+
 .goldHistoryMinus {
     color: #E05A5A;
 }
+
 .goldHistoryEmpty {
     padding: 30px 0;
     color: #999999;
