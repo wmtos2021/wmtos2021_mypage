@@ -45,7 +45,7 @@ button:focus {
     max-width: 520px;
     min-height: 100dvh;
     margin: 0 auto;
-    padding: 48px 34px 90px;
+    padding: 54px 34px 90px;
 }
 
 /* 상단 인사 영역 */
@@ -54,9 +54,9 @@ button:focus {
     justify-content: space-between;
     align-items: flex-start;
     gap: 12px;
-    margin-left: 10px;
+    margin-left: 12px;
     margin-right: 8px;
-    margin-bottom: 22px;
+    margin-bottom: 18px;
 }
 
 .welcomeArea {
