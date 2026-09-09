@@ -57,24 +57,24 @@ async function saveLoginData(
         [`student/${phone}/uid`]: uid,
         [`student/${phone}/deviceId`]: deviceId,
 
-        [`deviceId/${deviceId}/uid`]: uid,
-        [`deviceId/${deviceId}/mobile`]: phone,
-        [`deviceId/${deviceId}/name`]: student.name || "",
-        [`deviceId/${deviceId}/class`]: student.class || {},
+        [`deviceId/student/${deviceId}/uid`]: uid,
+        [`deviceId/student/${deviceId}/mobile`]: phone,
+        [`deviceId/student/${deviceId}/name`]: student.name || "",
+        [`deviceId/student/${deviceId}/class`]: student.class || {},
 
-        [`authUser/${uid}/name`]: student.name || "",
-        [`authUser/${uid}/mobile`]: phone
+        [`authUser/student/${uid}/name`]: student.name || "",
+        [`authUser/student/${uid}/mobile`]: phone
     };
 
     if (wisdom !== null) {
-        updates[`deviceId/${deviceId}/wisdom`] = wisdom;
+        updates[`deviceId/student/${deviceId}/wisdom`] = wisdom;
     }
 
     if (
         oldDeviceId &&
         oldDeviceId !== deviceId
     ) {
-        updates[`deviceId/${oldDeviceId}`] = null;
+        updates[`deviceId/student/${oldDeviceId}`] = null;
     }
 
     await update(

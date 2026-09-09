@@ -13,7 +13,7 @@ import {
 // Device ID로 Firebase 확인
 export function getDeviceInfo(deviceId) {
     return get(
-        ref(db, `deviceId/${deviceId}`)
+        ref(db, `deviceId/student/${deviceId}`)
     );
 }
 

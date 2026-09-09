@@ -71,51 +71,28 @@ function getAttendanceCheck() {
 }
 
 // 오늘 수업시간 가져오기
-async function loadTodayClassTimes(
-    deviceInfo,
-    attendanceCheck
-) {
+async function loadTodayClassTimes(deviceInfo, attendanceCheck) {
     const classData = deviceInfo?.class || {};
-    const day = getDayFromTimestamp(
-        attendanceCheck?.attendTimestamp
-    );
+    const day = getDayFromTimestamp(attendanceCheck?.attendTimestamp);
 
     if (!day) {
         return {};
     }
 
     const subjects = Object.keys(classData);
-
     const results = await Promise.all(
         subjects.map(async subject => {
             const className = classData[subject];
 
             if (!className) {
-                return [
-                    subject,
-                    null
-                ];
+                return [subject, null];
             }
 
             try {
-                const snapshot = await get(
-                    ref(
-                        db,
-                        `class/${subject}/${className}/time/${day}`
-                    )
-                );
-
-                return [
-                    subject,
-                    snapshot.exists()
-                        ? snapshot.val()
-                        : null
-                ];
+                const snapshot = await get(ref(db, `class/${subject}/${className}/time/${day}`));
+                return [subject, snapshot.exists() ? snapshot.val() : null];
             } catch (error) {
-                return [
-                    subject,
-                    null
-                ];
+                return [subject, null];
             }
         })
     );
@@ -133,65 +110,43 @@ export async function loadStudentData() {
         return false;
     }
 
-    const attendanceCheck =
-        getAttendanceCheck();
-
-    const monthKey =
-        getMonthFromTimestamp(
-            attendanceCheck?.attendTimestamp
-        );
+    const attendanceCheck = getAttendanceCheck();
+    const monthKey = getMonthFromTimestamp(attendanceCheck?.attendTimestamp);
 
     if (!monthKey) {
         return false;
     }
 
-    const deviceSnapshot =
-        await get(
-            ref(db, `deviceId/${deviceId}`)
-        );
+    const deviceSnapshot = await get(ref(db, `deviceId/student/${deviceId}`));
 
     if (!deviceSnapshot.exists()) {
         return false;
     }
 
-    const deviceInfo =
-        deviceSnapshot.val();
-
-    const mobile =
-        deviceInfo.mobile;
+    const deviceInfo = deviceSnapshot.val();
+    const mobile = deviceInfo.mobile;
 
     if (!mobile) {
         return false;
     }
 
-    const studentSnapshot =
-        await get(
-            ref(db, `student/${mobile}`)
-        );
+    const studentSnapshot = await get(ref(db, `student/${mobile}`));
 
     if (!studentSnapshot.exists()) {
         return false;
     }
 
-    const studentInfo =
-        studentSnapshot.val();
-
-    const monthStart =
-        `${monthKey}-01`;
-
-    const nextMonth =
-        new Date(
-            Number(monthKey.slice(0, 4)),
-            Number(monthKey.slice(5, 7)),
-            1
-        );
+    const studentInfo = studentSnapshot.val();
+    const monthStart = `${monthKey}-01`;
+    const nextMonth = new Date(
+        Number(monthKey.slice(0, 4)),
+        Number(monthKey.slice(5, 7)),
+        1
+    );
 
     nextMonth.setDate(0);
 
-    const monthEnd =
-        `${monthKey}-${String(
-            nextMonth.getDate()
-        ).padStart(2, "0")}`;
+    const monthEnd = `${monthKey}-${String(nextMonth.getDate()).padStart(2, "0")}`;
 
     const [
         historySnapshot,
@@ -203,27 +158,16 @@ export async function loadStudentData() {
     ] = await Promise.all([
         get(
             query(
-                ref(
-                    db,
-                    `history/${mobile}/attendance`
-                ),
+                ref(db, `history/${mobile}/attendance`),
                 orderByKey(),
                 startAt(monthStart),
                 endAt(monthEnd)
             )
         ),
-        get(
-            ref(
-                db,
-                `diligence/${mobile}/${monthKey}`
-            )
-        ),
+        get(ref(db, `diligence/${mobile}/${monthKey}`)),
         get(
             query(
-                ref(
-                    db,
-                    `history/${mobile}/board`
-                ),
+                ref(db, `history/${mobile}/board`),
                 orderByKey(),
                 startAt(monthStart),
                 endAt(monthEnd)
@@ -231,10 +175,7 @@ export async function loadStudentData() {
         ),
         get(
             query(
-                ref(
-                    db,
-                    `history/${mobile}/shop`
-                ),
+                ref(db, `history/${mobile}/shop`),
                 orderByKey(),
                 startAt(monthStart),
                 endAt(monthEnd)
@@ -242,92 +183,41 @@ export async function loadStudentData() {
         ),
         get(
             query(
-                ref(
-                    db,
-                    `history/${mobile}/reward`
-                ),
+                ref(db, `history/${mobile}/reward`),
                 orderByKey(),
                 startAt(monthKey),
                 endAt(monthKey)
             )
         ),
-        loadTodayClassTimes(
-            deviceInfo,
-            attendanceCheck
-        )
+        loadTodayClassTimes(deviceInfo, attendanceCheck)
     ]);
 
-    const historyData =
-        historySnapshot.exists()
-            ? historySnapshot.val()
-            : {};
+    const historyData = historySnapshot.exists() ? historySnapshot.val() : {};
+    const boardData = boardSnapshot.exists() ? boardSnapshot.val() : {};
+    const shopData = shopSnapshot.exists() ? shopSnapshot.val() : {};
+    const rewardData = rewardSnapshot.exists() ? rewardSnapshot.val() : {};
+    const diligence = diligenceSnapshot.exists() ? Number(diligenceSnapshot.val()) : 100;
 
-    const boardData =
-        boardSnapshot.exists()
-            ? boardSnapshot.val()
-            : {};
+    sessionStorage.setItem("studentInfo", JSON.stringify(studentInfo));
+    sessionStorage.setItem("deviceInfo", JSON.stringify(deviceInfo));
+    sessionStorage.setItem("attendRecords", JSON.stringify({
+        [monthKey]: historyData
+    }));
 
-    const shopData =
-        shopSnapshot.exists()
-            ? shopSnapshot.val()
-            : {};
+    sessionStorage.setItem("diligence", String(diligence));
+    sessionStorage.setItem("pointHistory", JSON.stringify({
+        attendance: historyData,
+        board: boardData,
+        reward: rewardData
+    }));
 
-    const rewardData =
-        rewardSnapshot.exists()
-            ? rewardSnapshot.val()
-            : {};
+    sessionStorage.setItem("goldHistory", JSON.stringify({
+        board: boardData,
+        shop: shopData,
+        reward: rewardData
+    }));
 
-    const diligence =
-        diligenceSnapshot.exists()
-            ? Number(
-                diligenceSnapshot.val()
-            )
-            : 100;
-
-    sessionStorage.setItem(
-        "studentInfo",
-        JSON.stringify(studentInfo)
-    );
-
-    sessionStorage.setItem(
-        "deviceInfo",
-        JSON.stringify(deviceInfo)
-    );
-
-    sessionStorage.setItem(
-        "attendRecords",
-        JSON.stringify({
-            [monthKey]: historyData
-        })
-    );
-
-    sessionStorage.setItem(
-        "diligence",
-        String(diligence)
-    );
-
-    sessionStorage.setItem(
-        "pointHistory",
-        JSON.stringify({
-            attendance: historyData,
-            board: boardData,
-            reward: rewardData
-        })
-    );
-
-    sessionStorage.setItem(
-        "goldHistory",
-        JSON.stringify({
-            board: boardData,
-            shop: shopData,
-            reward: rewardData
-        })
-    );
-
-    sessionStorage.setItem(
-        "todayClassTimes",
-        JSON.stringify(todayClassTimes)
-    );
+    sessionStorage.setItem("todayClassTimes", JSON.stringify(todayClassTimes));
 
     return true;
 }
@@ -341,28 +231,19 @@ export async function updateLoginCount() {
     }
 
     try {
-        const deviceInfo =
-            JSON.parse(data);
-
-        const mobile =
-            deviceInfo.mobile;
+        const deviceInfo = JSON.parse(data);
+        const mobile = deviceInfo.mobile;
 
         if (!mobile) {
             return false;
         }
 
-        const loginCountRef =
-            ref(
-                db,
-                `student/${mobile}/loginCount`
-            );
+        const loginCountRef = ref(db, `student/${mobile}/loginCount`);
 
         await runTransaction(
             loginCountRef,
             currentValue => {
-                const currentCount =
-                    Number(currentValue) || 0;
-
+                const currentCount = Number(currentValue) || 0;
                 return currentCount + 1;
             }
         );

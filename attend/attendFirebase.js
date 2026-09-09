@@ -179,7 +179,7 @@ export async function updateWisdom(
     }
 
     await update(
-        ref(db, `deviceId/${deviceId}`),
+        ref(db, `deviceId/student/${deviceId}`),
         {
             wisdom: nextWisdom
         }

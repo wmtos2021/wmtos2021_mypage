@@ -64,7 +64,7 @@
 .diligenceDetailSign {
     flex: 0 0 14px;
     margin-right: 2px;
-    color: #E05A5A;
+    color: #0B7ECA;
     font-size: 14px;
     font-weight: 700;
     text-align: left;
@@ -73,7 +73,7 @@
 
 .diligenceDetailScore {
     flex: 0 0 44px;
-    color: #E05A5A;
+    color: #0B7ECA;
     font-size: 16px;
     font-weight: 700;
     text-align: right;
