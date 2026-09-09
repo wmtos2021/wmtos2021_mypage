@@ -183,28 +183,30 @@ button:focus {
 }
 
 .diligenceValue strong:first-child {
-    font-size: 35px;
+    font-size: 32px;
     font-weight: 700;
     color: #078887;
     line-height: 0.95;
+    letter-spacing: -1px;
 }
 
 .diligenceValue span {
-    font-size: 23px;
+    font-size: 21px;
     font-weight: 400;
     color: #333D43;
 }
 
 .diligenceValue strong:last-child {
-    font-size: 24px;
+    font-size: 22px;
     font-weight: 700;
     color: #333D43;
+    letter-spacing: -1px;
 }
 
 /* 성실도 등급 */
 #diligenceGrade {
     position: absolute;
-    left: 140px;
+    left: 135px;
     top: 50%;
     transform: translateY(-48%);
     color: #A52A2A;
@@ -237,19 +239,20 @@ button:focus {
 }
 
 .pointValue strong {
-    font-size: 35px;
+    font-size: 32px;
     font-weight: 700;
     color: #EBB000;
     line-height: 0.95;
+    letter-spacing: -1px;
 }
 
 /* 보드게임 외부 버튼 */
 #boardGameMainBtn {
     position: absolute;
-    right: -9px;
-    top: 50%;
+    right: -11px;
+    top: 52%;
     height: 48px;
-    padding: 0 14px;
+    padding: 0 11px;
     border: none;
     border-radius: 10px;
     background: #EBB000;
@@ -281,19 +284,20 @@ button:focus {
 }
 
 .goldValue strong {
-    font-size: 35px;
+    font-size: 32px;
     font-weight: 700;
     color: #F15B18;
     line-height: 0.95;
+    letter-spacing: -1px;
 }
 
 /* 골드상점 외부 버튼 */
 #goldShopMainBtn {
     position: absolute;
-    right: -9px;
-    top: 50%;
+    right: -11px;
+    top: 52%;
     height: 48px;
-    padding: 0 14px;
+    padding: 0 11px;
     border: none;
     border-radius: 10px;
     background: #F15B18;
