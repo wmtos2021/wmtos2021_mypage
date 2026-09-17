@@ -224,12 +224,20 @@ document.addEventListener("attendanceCompleted", async event => {
     if (point !== 0) {
         const currentPoint =
             Number(
-                studentPoint.textContent.replace(/,/g, "")
+                studentPoint.textContent
+                    .replace(/,/g, "")
             ) || 0;
-        const newPoint = currentPoint + point;
-        studentPoint.textContent = newPoint.toLocaleString();
+
+        const newPoint =
+            currentPoint + point;
+
+        studentPoint.textContent =
+            newPoint.toLocaleString();
+
         if (studentInfo) {
-            studentInfo.totalP = newPoint;
+            studentInfo.totalP =
+                newPoint;
+
             sessionStorage.setItem(
                 "studentInfo",
                 JSON.stringify(studentInfo)
