@@ -221,7 +221,7 @@ document.addEventListener("attendanceCompleted", async event => {
     }
 
     // POINT 갱신
-    if (point > 0) {
+    if (point !== 0) {
         const currentPoint =
             Number(
                 studentPoint.textContent.replace(/,/g, "")
