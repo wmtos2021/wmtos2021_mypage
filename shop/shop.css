@@ -1,58 +1,531 @@
 /* shop.css */
 
+
+/* 기본 설정 */
 * {
-    box-sizing: border-box;
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
 }
 
 html,
 body {
     width: 100%;
-    height: 100%;
-    overflow: hidden;
+    min-height: 100%;
 }
 
 body {
-    position: fixed;
-    inset: 0;
-    width: 100%;
-    height: 100dvh;
-    background: #FFFFFF;
+    min-height: 100dvh;
+    background: #F8F5EF url("../imageLogin/로그인화면.webp") center center / cover no-repeat;
+    font-family: Arial, sans-serif;
+    color: #333333;
     overflow: hidden;
 }
 
-.comingSoon {
-    width: 100%;
-    height: 100dvh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.comingSoon img {
-    width: min(80%, 600px);
-    height: auto;
+img {
     display: block;
+    user-select: none;
+    -webkit-user-drag: none;
 }
 
-#backBtn {
-    position: fixed;
-    left: 12px;
-    bottom: 12px;
-    width: 100px;
-    height: 50px;
+button {
+    font-family: inherit;
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+button:focus,
+button:focus-visible {
+    outline: none;
+}
+
+
+/* 전체 영역 */
+.shopContainer {
+    width: 100%;
+    max-width: 520px;
+    height: 100dvh;
+    min-height: 100dvh;
+    margin: 0 auto;
+    padding: 54px 34px 90px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+
+/* 상단 영역 */
+.shopHeader {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    gap: clamp(12px, 9vw, 74px);
+    margin: 25px 0 28px;
+    padding: 0 12px;
+    flex: 0 0 auto;
+}
+
+
+/* 골드상점 */
+.shopTitle {
+    flex: 0 0 auto;
+    font-size: clamp(18px, 6vw, 24px);
+    font-weight: 700;
+    color: #333D43;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+
+/* 학생 정보 + 보유 골드 */
+.shopUserStatus {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+
+/* 학생 이름 */
+.studentName {
+    min-width: 0;
+    flex: 0 1 auto;
+    font-size: clamp(16px, 5vw, 20px);
+    font-weight: 700;
+    color: #333D43;
+    line-height: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
+/* 골드 */
+.gameStatus {
+    display: flex;
+    align-items: center;
+    flex: 0 0 auto;
+}
+
+
+/* 골드 표시 영역 */
+.gameStatusItem {
+    position: relative;
+    width: clamp(80px, 28vw, 108px);
+    flex: 0 0 clamp(80px, 28vw, 108px);
+}
+
+
+/* 골드 이미지 */
+.gameStatusItem img {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+
+/* 골드 숫자 */
+.gameStatusItem strong {
+    position: absolute;
+    top: 50%;
+    right: clamp(7px, 2vw, 10px);
+    transform: translateY(-50%);
+    font-size: clamp(15px, 4.5vw, 18px);
+    font-weight: 700;
+    color: #333D43;
+    white-space: nowrap;
+}
+
+
+/* 상품 영역 */
+.shopArea {
+    width: 100%;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: hidden;
+}
+
+
+/* 상품 목록 */
+.shopProductList {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 2px;
+    padding-bottom: 4px;
+}
+
+
+/* 상품 스크롤바 */
+.shopProductList::-webkit-scrollbar {
+    width: 4px;
+}
+
+.shopProductList::-webkit-scrollbar-thumb {
+    background: rgba(85, 93, 96, 0.35);
+    border-radius: 4px;
+}
+
+.shopProductList::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+
+/* 상품 한 줄 */
+.shopProductRow {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    min-height: 70px;
+    flex: 0 0 70px;
+    padding: 7px 8px;
+    border: 1px solid #D7D2C8;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.72);
+}
+
+
+/* 상품 이미지 */
+.shopProductImage {
+    width: 56px;
+    height: 56px;
+    flex: 0 0 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.shopProductImage img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+
+/* 상품명 */
+.shopProductName {
+    min-width: 0;
+    flex: 0 1 180px;
+    margin-left: 4px;
+    font-size: 16px;
+    font-weight: 700;
+    color: #333D43;
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
+/* 상품 골드 가격 */
+.shopProductPrice {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex: 0 0 auto;
+    min-width: 70px;
+    margin-left: 8px;
+    margin-right: 8px;
+}
+
+
+/* 상품 가격 */
+.shopProductPrice strong {
+    font-size: 17px;
+    font-weight: 700;
+    color: #333D43;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+
+/* 교환 신청 버튼 */
+.exchangeBtn {
+    width: 58px;
+    height: 48px;
+    flex: 0 0 52px;
+    margin-left: auto;
+    padding: 0;
     border: none;
+    border-radius: 10px;
+    background: #F15B18;
+    color: #FFFFFF;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.2;
+    white-space: nowrap;
+}
+
+.exchangeBtn:hover {
+    background: #E35414;
+}
+
+.exchangeBtn:active {
+    background: #D94D0F;
+}
+
+.exchangeBtn:disabled {
+    background: #D8D3C9;
+    color: #FFFFFF;
+    cursor: default;
+}
+
+
+/* 하단 버튼 */
+.shopButtonArea {
+    display: flex;
+    width: 100%;
+    flex: 0 0 auto;
+    margin-top: 14px;
+}
+
+
+/* 나가기 */
+#backBtn {
+    flex: 0 0 100px;
+    height: 50px;
+    padding: 0;
+    border: 1px solid #C8CCCC;
     border-radius: 12px;
     background: #E5E7E7;
     color: #555D60;
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 700;
-    cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
-    outline: none;
 }
 
 #backBtn:active {
     background: #D5D8D8;
+}
+
+
+/* 교환 신청 팝업 */
+.exchangeModal {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    background: rgba(20, 25, 28, 0.42);
+    z-index: 3000;
+}
+
+.exchangeModal.hidden {
+    display: none;
+}
+
+
+/* 교환 신청 팝업 박스 */
+.exchangeModalBox {
+    width: 100%;
+    max-width: 360px;
+    padding: 28px 22px 22px;
+    background: #FFFFFF;
+    border: 1px solid #E2E7E7;
+    border-radius: 18px;
+    text-align: center;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.14);
+}
+
+
+/* 팝업 제목 */
+.exchangeModalBox h2 {
+    margin-bottom: 20px;
+    font-size: 21px;
+    font-weight: 700;
+    color: #333D43;
+    line-height: 1.2;
+}
+
+
+/* 교환 상품 */
+.exchangeProduct {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+
+/* 교환 상품 로고 */
+.exchangeProduct img {
+    width: 86px;
+    height: 86px;
+    margin-bottom: 10px;
+    object-fit: contain;
+}
+
+
+/* 교환 상품명 */
+.exchangeProduct strong {
+    max-width: 100%;
+    font-size: 17px;
+    font-weight: 700;
+    color: #333333;
+    line-height: 1.3;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
+/* 골드 차감 안내 */
+.exchangeDeductMessage {
+    margin-top: 16px;
+    font-size: 18px;
+    font-weight: 700;
+    color: #F15B18;
+    line-height: 1.4;
+}
+
+
+/* 교환 질문 */
+.exchangeQuestion {
+    margin-top: 8px;
+    font-size: 15px;
+    font-weight: 500;
+    color: #555D60;
+    line-height: 1.5;
+}
+
+
+/* 팝업 버튼 영역 */
+.exchangeModalButtonArea {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+    margin-top: 22px;
+}
+
+
+/* 팝업 버튼 공통 */
+.exchangeModalButtonArea button {
+    flex: 1 1 0;
+    width: 100%;
+    height: 45px;
+    padding: 0;
+    border: none;
+    border-radius: 9px;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+
+/* 취소 */
+#exchangeCancelBtn {
+    background: #E5E7E7;
+    color: #555D60;
+}
+
+#exchangeCancelBtn:active {
+    background: #D5D8D8;
+}
+
+
+/* 신청 */
+#exchangeConfirmBtn {
+    background: #F15B18;
+    color: #FFFFFF;
+}
+
+#exchangeConfirmBtn:hover {
+    background: #E35414;
+}
+
+#exchangeConfirmBtn:active {
+    background: #D94D0F;
+}
+
+
+/* 골드 부족 안내 팝업 */
+.alertModal {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    background: rgba(20, 25, 28, 0.42);
+    z-index: 3100;
+}
+
+.alertModal.hidden {
+    display: none;
+}
+
+
+/* 안내 팝업 박스 */
+.alertModalBox {
+    width: 100%;
+    max-width: 300px;
+    padding: 24px 20px;
+    background: #FFFFFF;
+    border: 1px solid #E2E7E7;
+    border-radius: 18px;
+    text-align: center;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.14);
+}
+
+
+/* 안내 메시지 */
+.alertMessage {
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.5;
+    color: #444444;
+    white-space: pre-line;
+}
+
+
+/* 하단 학원 정보 */
+.footerLeft {
+    position: fixed;
+    left: 12px;
+    bottom: 10px;
+    text-align: left;
+    pointer-events: none;
+    z-index: 101;
+}
+
+
+.footerLine1 {
+    margin-bottom: 0;
+    font-size: 18px;
+    font-weight: 300;
+    letter-spacing: 0.5px;
+    color: #FFFFFF;
+}
+
+
+.footerLine2 {
+    margin-bottom: 0;
+    font-size: 12px;
+    font-weight: 300;
+    color: #FFFFFF;
+    letter-spacing: -0.3px;
+}
+
+
+.footerRight {
+    position: fixed;
+    right: 12px;
+    bottom: 10px;
+    font-size: 13px;
+    font-weight: 300;
+    color: #FFFFFF;
+    text-align: right;
+    pointer-events: none;
+    z-index: 101;
 }

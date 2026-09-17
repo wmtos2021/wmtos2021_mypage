@@ -5,24 +5,177 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shop</title>
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+    <title>위드엠투에스학원</title>
     <link rel="stylesheet" href="shop.css">
 </head>
 
 <body>
 
-    <main class="comingSoon">
-        <img src="./커밍순.webp" alt="Coming Soon">
+    <main class="shopContainer">
+
+        <!-- 상단 영역 -->
+        <section class="shopHeader">
+
+            <!-- 골드상점 -->
+            <div class="shopTitle">
+                골드상점
+            </div>
+
+            <!-- 학생 정보 + 보유 골드 -->
+            <div class="shopUserStatus">
+
+                <div
+                    class="studentName"
+                    id="studentName">
+                </div>
+
+                <div class="gameStatus">
+
+                    <div class="gameStatusItem">
+
+                        <img
+                            src="../imageStudent/골드.webp"
+                            alt="골드">
+
+                        <strong
+                            id="studentGold">
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- 상품 영역 -->
+        <section class="shopArea">
+
+            <div
+                class="shopProductList"
+                id="shopProductList">
+            </div>
+
+        </section>
+
+        <!-- 하단 버튼 -->
+        <div class="shopButtonArea">
+
+            <button
+                type="button"
+                id="backBtn">
+                나가기
+            </button>
+
+        </div>
+
+        <!-- 교환 신청 확인 팝업 -->
+        <div
+            id="exchangeModal"
+            class="exchangeModal hidden">
+
+            <div class="exchangeModalBox">
+
+                <h2>
+                    교환 신청
+                </h2>
+
+                <!-- 상품 -->
+                <div class="exchangeProduct">
+
+                    <img
+                        id="exchangeProductImage"
+                        src=""
+                        alt="상품">
+
+                    <strong
+                        id="exchangeItem">
+                    </strong>
+
+                </div>
+
+                <!-- 차감 안내 -->
+                <p
+                    id="exchangeDeductMessage"
+                    class="exchangeDeductMessage">
+                </p>
+
+                <!-- 교환 안내 -->
+                <p
+                    class="exchangeQuestion">
+                    위 상품으로 교환하시겠습니까?
+                </p>
+
+                <!-- 버튼 -->
+                <div class="exchangeModalButtonArea">
+
+                    <button
+                        type="button"
+                        id="exchangeCancelBtn">
+                        취소
+                    </button>
+
+                    <button
+                        type="button"
+                        id="exchangeConfirmBtn">
+                        신청
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
     </main>
 
-    <button
-        type="button"
-        id="backBtn">
-        돌아가기
-    </button>
 
-    <script type="module" src="./shop.js"></script>
+    <!-- 골드 부족 안내 팝업 -->
+    <div
+        id="alertModal"
+        class="alertModal hidden">
+
+        <div class="alertModalBox">
+
+            <p
+                id="alertMessage"
+                class="alertMessage">
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- 하단 학원 정보 -->
+    <div class="footerLeft">
+
+        <div class="footerLine1">
+            위드엠투에스학원
+        </div>
+
+        <div class="footerLine2">
+            경남 김해시 활천로 168, 2층
+        </div>
+
+    </div>
+
+
+    <!-- 버전 -->
+    <div
+        class="footerRight"
+        id="version">
+    </div>
+
+
+    <script
+        type="module"
+        src="shop.js">
+    </script>
 
 </body>
 
