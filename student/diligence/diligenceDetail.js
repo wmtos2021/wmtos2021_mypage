@@ -89,10 +89,21 @@ function createMonthRecords(monthKey, historyData) {
     });
 
     records.sort((a, b) => {
-        const dateA = `${a.date} ${a.detail}`;
-        const dateB = `${b.date} ${b.detail}`;
+        const dateCompare = b.date.localeCompare(a.date);
 
-        return dateB.localeCompare(dateA);
+        if (dateCompare !== 0) {
+            return dateCompare;
+        }
+
+        const priority = {
+            "숙제": 1,
+            "출석": 2
+        };
+
+        const detailA = a.detail.split(" ")[1];
+        const detailB = b.detail.split(" ")[1];
+
+        return (priority[detailA] || 99) - (priority[detailB] || 99);
     });
 
     return records;

@@ -1,15 +1,11 @@
 // point.js
 
 import {
-    getPointHistory,
-    getTodayPointHistory
+    getPointHistory
 } from "./pointFirebase.js";
 
-const pointBtn =
-    document.getElementById("pointBtn");
-
-const pointContent =
-    document.getElementById("pointContent");
+const pointBtn = document.getElementById("pointBtn");
+const pointContent = document.getElementById("pointContent");
 
 const MAX_MONTHS = 3;
 
@@ -19,11 +15,7 @@ let loadingMore = false;
 // 숫자 변환
 function getPoint(value) {
     const point = Number(value);
-
-    return Number.isFinite(point) &&
-        point > 0
-        ? point
-        : 0;
+    return Number.isFinite(point) && point > 0 ? point : 0;
 }
 
 // 과목명 변환
@@ -36,275 +28,141 @@ function getSubjectName(subject) {
         social: "사회"
     };
 
-    return subjectNameMap[subject] ||
-        subject;
+    return subjectNameMap[String(subject).toLowerCase()] || subject;
 }
 
 // 월 키
 function getMonthKey(date) {
-    return `${date.getFullYear()}-${String(
-        date.getMonth() + 1
-    ).padStart(2, "0")}`;
-}
-
-// 날짜 키
-function getDateKey(date) {
-    return `${date.getFullYear()}-${String(
-        date.getMonth() + 1
-    ).padStart(2, "0")}-${String(
-        date.getDate()
-    ).padStart(2, "0")}`;
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
 }
 
 // 이전 월
 function getPreviousMonth(monthKey) {
-    const [year, month] =
-        monthKey.split("-").map(Number);
-
-    const date = new Date(
-        year,
-        month - 2,
-        1
-    );
+    const [year, month] = monthKey.split("-").map(Number);
+    const date = new Date(year, month - 2, 1);
 
     return getMonthKey(date);
 }
 
-// 현재 POINT 데이터 가져오기
-function getInitialPointHistory() {
-    const data =
-        sessionStorage.getItem(
-            "pointHistory"
-        );
-
-    if (!data) {
-        return {
-            attendance: {},
-            board: {},
-            reward: {}
-        };
-    }
-
-    try {
-        const historyData =
-            JSON.parse(data);
-
-        return {
-            attendance:
-                historyData.attendance || {},
-            board:
-                historyData.board || {},
-            reward:
-                historyData.reward || {}
-        };
-
-    } catch (error) {
-        return {
-            attendance: {},
-            board: {},
-            reward: {}
-        };
-    }
-}
-
 // 월별 POINT 기록 생성
-function createMonthRecords(
-    monthKey,
-    historyData
-) {
+function createMonthRecords(monthKey, historyData) {
     const records = [];
-
-    const attendanceData =
-        historyData.attendance || {};
-
-    const boardData =
-        historyData.board || {};
-
-    const rewardData =
-        historyData.reward || {};
+    const attendanceData = historyData.attendance || {};
+    const boardData = historyData.board || {};
+    const rewardData = historyData.reward || {};
 
     // 출석
-    Object.entries(
-        attendanceData
-    ).forEach(
-        ([dateKey, subjectData]) => {
-            if (
-                dateKey.slice(0, 7) !==
-                monthKey
-            ) {
-                return;
-            }
-
-            Object.entries(
-                subjectData || {}
-            ).forEach(
-                ([subject, data]) => {
-                    const subjectName =
-                        getSubjectName(
-                            subject
-                        );
-
-                    const attendP =
-                        Number(
-                            data?.attendP
-                        ) || 0;
-
-                    const homeworkP =
-                        Number(
-                            data?.homeworkP
-                        ) || 0;
-
-                    const attitudeP =
-                        Number(
-                            data?.attitudeP
-                        ) || 0;
-
-                    const attitudeM =
-                        Number(
-                            data?.attitudeM
-                        ) || 0;
-
-                    if (attendP > 0) {
-                        records.push({
-                            date: dateKey,
-                            time: "",
-                            type: "받음",
-                            detail:
-                                `${subjectName} 출석`,
-                            point: attendP
-                        });
-                    }
-
-                    if (homeworkP > 0) {
-                        records.push({
-                            date: dateKey,
-                            time: "",
-                            type: "받음",
-                            detail:
-                                `${subjectName} 숙제`,
-                            point: homeworkP
-                        });
-                    }
-
-                    if (attitudeP > 0) {
-                        records.push({
-                            date: dateKey,
-                            time: "",
-                            type: "받음",
-                            detail:
-                                `${subjectName} 수업태도`,
-                            point: attitudeP
-                        });
-                    }
-
-                    if (attitudeM > 0) {
-                        records.push({
-                            date: dateKey,
-                            time: "",
-                            type: "사용",
-                            detail:
-                                `${subjectName} 수업태도`,
-                            point: attitudeM
-                        });
-                    }
-                }
-            );
+    Object.entries(attendanceData).forEach(([dateKey, subjectData]) => {
+        if (dateKey.slice(0, 7) !== monthKey) {
+            return;
         }
-    );
 
-    // 보드게임
-    Object.entries(
-        boardData
-    ).forEach(
-        ([dateKey, timeData]) => {
-            if (
-                dateKey.slice(0, 7) !==
-                monthKey
-            ) {
-                return;
-            }
+        Object.entries(subjectData || {}).forEach(([subject, data]) => {
+            const subjectName = getSubjectName(subject);
+            const attendP = Number(data?.attendP) || 0;
+            const homeworkP = Number(data?.homeworkP) || 0;
+            const attitude = Number(data?.attitude) || 0;
 
-            Object.entries(
-                timeData || {}
-            ).forEach(
-                ([timeKey, data]) => {
-                    const getP =
-                        getPoint(
-                            data?.getP
-                        );
-
-                    const useP =
-                        getPoint(
-                            data?.useP
-                        );
-
-                    if (getP > 0) {
-                        records.push({
-                            date: dateKey,
-                            time: timeKey,
-                            type: "받음",
-                            detail:
-                                "보드게임적립",
-                            point: getP
-                        });
-                    }
-
-                    if (useP > 0) {
-                        records.push({
-                            date: dateKey,
-                            time: timeKey,
-                            type: "사용",
-                            detail:
-                                "보드게임참여",
-                            point: useP
-                        });
-                    }
-                }
-            );
-        }
-    );
-
-    // 성실도 리워드
-    Object.entries(
-        rewardData
-    ).forEach(
-        ([rewardMonth, data]) => {
-            if (
-                rewardMonth !==
-                monthKey
-            ) {
-                return;
-            }
-
-            const rewardP =
-                getPoint(
-                    data?.rewardP
-                );
-
-            if (rewardP > 0) {
+            if (attendP > 0) {
                 records.push({
-                    date:
-                        `${rewardMonth}-01`,
+                    date: dateKey,
                     time: "",
                     type: "받음",
-                    detail:
-                        `${data.rewardMonth || ""} 성실도`,
-                    point: rewardP
+                    detail: `${subjectName} 출석`,
+                    point: attendP
                 });
             }
+
+            if (homeworkP > 0) {
+                records.push({
+                    date: dateKey,
+                    time: "",
+                    type: "받음",
+                    detail: `${subjectName} 숙제`,
+                    point: homeworkP
+                });
+            }
+
+            if (attitude !== 0) {
+                records.push({
+                    date: dateKey,
+                    time: "",
+                    type: attitude > 0 ? "받음" : "사용",
+                    detail: `${subjectName} 수업태도`,
+                    point: Math.abs(attitude)
+                });
+            }
+        });
+    });
+
+    // 보드게임
+    Object.entries(boardData).forEach(([dateKey, timeData]) => {
+        if (dateKey.slice(0, 7) !== monthKey) {
+            return;
         }
-    );
+
+        Object.entries(timeData || {}).forEach(([timeKey, data]) => {
+            const getP = getPoint(data?.getP);
+            const useP = getPoint(data?.useP);
+
+            if (getP > 0) {
+                records.push({
+                    date: dateKey,
+                    time: timeKey,
+                    type: "받음",
+                    detail: "보드게임적립",
+                    point: getP
+                });
+            }
+
+            if (useP > 0) {
+                records.push({
+                    date: dateKey,
+                    time: timeKey,
+                    type: "사용",
+                    detail: "보드게임참여",
+                    point: useP
+                });
+            }
+        });
+    });
+
+    // 성실도 리워드
+    Object.entries(rewardData).forEach(([rewardMonth, data]) => {
+        if (rewardMonth !== monthKey) {
+            return;
+        }
+
+        const rewardP = getPoint(data?.rewardP);
+
+        if (rewardP > 0) {
+            records.push({
+                date: `${rewardMonth}-01`,
+                time: "",
+                type: "받음",
+                detail: `${data.rewardMonth || ""} 성실도`,
+                point: rewardP
+            });
+        }
+    });
 
     records.sort((a, b) => {
-        const dateA =
-            `${a.date} ${a.time}`;
+        const dateCompare = b.date.localeCompare(a.date);
 
-        const dateB =
-            `${b.date} ${b.time}`;
+        if (dateCompare !== 0) {
+            return dateCompare;
+        }
 
-        return dateB.localeCompare(
-            dateA
-        );
+        const priority = {
+            "수업태도": 1,
+            "숙제": 2,
+            "출석": 3
+        };
+
+        const detailA = a.detail.split(" ").slice(-1)[0];
+        const detailB = b.detail.split(" ").slice(-1)[0];
+
+        return (priority[detailA] || 99) - (priority[detailB] || 99);
     });
 
     return records;
@@ -312,135 +170,67 @@ function createMonthRecords(
 
 // POINT 기록 한 줄 생성
 function createRecordRow(record) {
-    const row =
-        document.createElement("div");
+    const row = document.createElement("div");
+    row.className = "pointHistoryRow";
 
-    row.className =
-        "pointHistoryRow";
+    const date = document.createElement("span");
+    date.className = "pointHistoryDate";
+    date.textContent = record.date;
 
-    const date =
-        document.createElement("span");
+    const detail = document.createElement("span");
+    detail.className = "pointHistoryDetail";
+    detail.textContent = record.detail;
 
-    date.className =
-        "pointHistoryDate";
+    const isGet = record.type === "받음";
+    const colorClass = isGet ? "pointHistoryPlus" : "pointHistoryMinus";
 
-    date.textContent =
-        record.date;
+    const sign = document.createElement("span");
+    sign.className = `pointHistorySign ${colorClass}`;
+    sign.textContent = isGet ? "+" : "-";
 
-    const detail =
-        document.createElement("span");
+    const value = document.createElement("strong");
+    value.className = `pointHistoryValue ${colorClass}`;
+    value.textContent = Math.abs(Number(record.point) || 0).toLocaleString();
 
-    detail.className =
-        "pointHistoryDetail";
-
-    detail.textContent =
-        record.detail;
-
-    const isGet =
-        record.type === "받음";
-
-    const colorClass =
-        isGet
-            ? "pointHistoryPlus"
-            : "pointHistoryMinus";
-
-    const sign =
-        document.createElement("span");
-
-    sign.className =
-        `pointHistorySign ${colorClass}`;
-
-    sign.textContent =
-        isGet
-            ? "+"
-            : "-";
-
-    const value =
-        document.createElement(
-            "strong"
-        );
-
-    value.className =
-        `pointHistoryValue ${colorClass}`;
-
-    value.textContent =
-        Math.abs(
-            Number(record.point) || 0
-        ).toLocaleString();
-
-    const unit =
-        document.createElement("span");
-
-    unit.className =
-        `pointHistoryUnit ${colorClass}`;
-
+    const unit = document.createElement("span");
+    unit.className = `pointHistoryUnit ${colorClass}`;
     unit.textContent = "P";
 
-    row.append(
-        date,
-        detail,
-        sign,
-        value,
-        unit
-    );
+    row.append(date, detail, sign, value, unit);
 
     return row;
 }
 
 // POINT 내역 표시
 function renderRecords(records) {
-    const moreBtn =
-        document.getElementById(
-            "pointMoreBtn"
-        );
+    const moreBtn = document.getElementById("pointMoreBtn");
 
     records.forEach(record => {
-        const row =
-            createRecordRow(
-                record
-            );
+        const row = createRecordRow(record);
 
         if (moreBtn) {
-            pointContent.insertBefore(
-                row,
-                moreBtn
-            );
+            pointContent.insertBefore(row, moreBtn);
         } else {
-            pointContent.appendChild(
-                row
-            );
+            pointContent.appendChild(row);
         }
     });
 }
 
 // 더보기 버튼
 function createMoreButton() {
-    const button =
-        document.createElement(
-            "button"
-        );
-
+    const button = document.createElement("button");
     button.type = "button";
     button.id = "pointMoreBtn";
-    button.className =
-        "pointMoreBtn";
-
+    button.className = "pointMoreBtn";
     button.textContent = "더보기";
-
-    button.addEventListener(
-        "click",
-        loadPreviousMonth
-    );
+    button.addEventListener("click", loadPreviousMonth);
 
     return button;
 }
 
 // 더보기 버튼 제거
 function removeMoreButton() {
-    const moreBtn =
-        document.getElementById(
-            "pointMoreBtn"
-        );
+    const moreBtn = document.getElementById("pointMoreBtn");
 
     if (moreBtn) {
         moreBtn.remove();
@@ -451,249 +241,139 @@ function removeMoreButton() {
 function showMoreButton() {
     removeMoreButton();
 
-    if (
-        loadedMonths.length >=
-        MAX_MONTHS
-    ) {
+    if (loadedMonths.length >= MAX_MONTHS) {
         return;
     }
 
-    pointContent.appendChild(
-        createMoreButton()
-    );
+    pointContent.appendChild(createMoreButton());
 }
 
 // 현재 월 표시
 async function renderInitialHistory() {
-    const historyData =
-        getInitialPointHistory();
+    const deviceData = sessionStorage.getItem("deviceInfo");
 
-    const today = new Date();
-
-    const monthKey =
-        getMonthKey(today);
-
-    const dateKey =
-        getDateKey(today);
-
-    loadedMonths = [
-        monthKey
-    ];
-
-    const deviceData =
-        sessionStorage.getItem(
-            "deviceInfo"
-        );
-
-    if (deviceData) {
-        try {
-            const deviceInfo =
-                JSON.parse(
-                    deviceData
-                );
-
-            const mobile =
-                deviceInfo.mobile;
-
-            if (mobile) {
-                const todayData =
-                    await getTodayPointHistory(
-                        mobile,
-                        dateKey,
-                        monthKey
-                    );
-
-                historyData.attendance[
-                    dateKey
-                ] =
-                    todayData.attendance ||
-                    {};
-
-                historyData.board[
-                    dateKey
-                ] =
-                    todayData.board ||
-                    {};
-
-                if (
-                    todayData.reward &&
-                    Object.keys(
-                        todayData.reward
-                    ).length > 0
-                ) {
-                    historyData.reward[
-                        monthKey
-                    ] =
-                        todayData.reward;
-                } else {
-                    delete historyData.reward[
-                        monthKey
-                    ];
-                }
-            }
-
-        } catch (error) {
-            console.error(
-                "오늘 POINT 조회 오류:",
-                error
-            );
-        }
+    if (!deviceData) {
+        return false;
     }
 
-    const records =
-        createMonthRecords(
+    try {
+        const deviceInfo = JSON.parse(deviceData);
+        const mobile = deviceInfo.mobile;
+
+        if (!mobile) {
+            return false;
+        }
+
+        const today = new Date();
+        const monthKey = getMonthKey(today);
+
+        loadedMonths = [monthKey];
+
+        const historyData = await getPointHistory(
+            mobile,
+            monthKey
+        );
+
+        const records = createMonthRecords(
             monthKey,
             historyData
         );
 
-    if (records.length > 0) {
-        renderRecords(
-            records
-        );
+        if (records.length > 0) {
+            renderRecords(records);
+            return true;
+        }
 
-        return true;
+        return false;
+
+    } catch (error) {
+        console.error("POINT 조회 오류:", error);
+        return false;
     }
-
-    return false;
 }
 
 // 이전 월 조회
 async function loadPreviousMonth() {
     if (
         loadingMore ||
-        loadedMonths.length >=
-        MAX_MONTHS
+        loadedMonths.length >= MAX_MONTHS
     ) {
         return;
     }
 
     loadingMore = true;
 
-    const moreBtn =
-        document.getElementById(
-            "pointMoreBtn"
-        );
+    const moreBtn = document.getElementById("pointMoreBtn");
 
     if (moreBtn) {
         moreBtn.disabled = true;
-        moreBtn.textContent =
-            "불러오는 중...";
+        moreBtn.textContent = "불러오는 중...";
     }
 
     try {
-        const deviceData =
-            sessionStorage.getItem(
-                "deviceInfo"
-            );
+        const deviceData = sessionStorage.getItem("deviceInfo");
 
         if (!deviceData) {
             return;
         }
 
-        const deviceInfo =
-            JSON.parse(
-                deviceData
-            );
-
-        const mobile =
-            deviceInfo.mobile;
+        const deviceInfo = JSON.parse(deviceData);
+        const mobile = deviceInfo.mobile;
 
         if (!mobile) {
             return;
         }
 
-        const lastMonth =
-            loadedMonths[
-                loadedMonths.length - 1
-            ];
+        const lastMonth = loadedMonths[loadedMonths.length - 1];
+        const previousMonth = getPreviousMonth(lastMonth);
 
-        const previousMonth =
-            getPreviousMonth(
-                lastMonth
-            );
-
-        const historyData =
-            await getPointHistory(
-                mobile,
-                previousMonth
-            );
-
-        const records =
-            createMonthRecords(
-                previousMonth,
-                historyData
-            );
-
-        loadedMonths.push(
+        const historyData = await getPointHistory(
+            mobile,
             previousMonth
         );
 
-        if (records.length > 0) {
-            renderRecords(
-                records
-            );
+        const records = createMonthRecords(
+            previousMonth,
+            historyData
+        );
 
+        loadedMonths.push(previousMonth);
+
+        if (records.length > 0) {
+            renderRecords(records);
         } else {
-            const currentMoreBtn =
-                document.getElementById(
-                    "pointMoreBtn"
-                );
+            const currentMoreBtn = document.getElementById("pointMoreBtn");
 
             if (currentMoreBtn) {
-                currentMoreBtn.textContent =
-                    "더 이상 조회할 내용이 없습니다.";
-
-                currentMoreBtn.disabled =
-                    true;
+                currentMoreBtn.textContent = "더 이상 조회할 내용이 없습니다.";
+                currentMoreBtn.disabled = true;
             }
 
             return;
         }
 
-        const currentMoreBtn =
-            document.getElementById(
-                "pointMoreBtn"
-            );
+        const currentMoreBtn = document.getElementById("pointMoreBtn");
 
         if (!currentMoreBtn) {
             return;
         }
 
-        if (
-            loadedMonths.length >=
-            MAX_MONTHS
-        ) {
-            currentMoreBtn.textContent =
-                "과거 내역은 최대 2개월 조회 가능합니다.";
-
-            currentMoreBtn.disabled =
-                true;
-
+        if (loadedMonths.length >= MAX_MONTHS) {
+            currentMoreBtn.textContent = "과거 내역은 최대 2개월 조회 가능합니다.";
+            currentMoreBtn.disabled = true;
         } else {
-            currentMoreBtn.textContent =
-                "더보기";
-
-            currentMoreBtn.disabled =
-                false;
+            currentMoreBtn.textContent = "더보기";
+            currentMoreBtn.disabled = false;
         }
 
     } catch (error) {
-        console.error(
-            "이전 POINT 조회 오류:",
-            error
-        );
+        console.error("이전 POINT 조회 오류:", error);
 
-        const currentMoreBtn =
-            document.getElementById(
-                "pointMoreBtn"
-            );
+        const currentMoreBtn = document.getElementById("pointMoreBtn");
 
         if (currentMoreBtn) {
-            currentMoreBtn.textContent =
-                "더보기";
-
-            currentMoreBtn.disabled =
-                false;
+            currentMoreBtn.textContent = "더보기";
+            currentMoreBtn.disabled = false;
         }
 
     } finally {
@@ -702,32 +382,17 @@ async function loadPreviousMonth() {
 }
 
 // POINT 팝업 열기
-pointBtn.addEventListener(
-    "click",
-    async () => {
-        pointContent.innerHTML =
-            "";
+pointBtn.addEventListener("click", async () => {
+    pointContent.innerHTML = "";
 
-        const hasRecord =
-            await renderInitialHistory();
+    const hasRecord = await renderInitialHistory();
 
-        if (!hasRecord) {
-            const empty =
-                document.createElement(
-                    "div"
-                );
-
-            empty.className =
-                "pointHistoryEmpty";
-
-            empty.textContent =
-                "POINT 내역이 없습니다.";
-
-            pointContent.appendChild(
-                empty
-            );
-        }
-
-        showMoreButton();
+    if (!hasRecord) {
+        const empty = document.createElement("div");
+        empty.className = "pointHistoryEmpty";
+        empty.textContent = "POINT 내역이 없습니다.";
+        pointContent.appendChild(empty);
     }
-);
+
+    showMoreButton();
+});
