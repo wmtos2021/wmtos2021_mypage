@@ -3,9 +3,19 @@
 export const products = [
     // CU편의점
     {
+        item: "CU편의점1000",
+        image: "../imageShop/씨유.webp",
+        gold: 1200
+    },
+    {
+        item: "CU편의점2000",
+        image: "../imageShop/씨유.webp",
+        gold: 2400
+    },        
+    {
         item: "CU편의점3000",
         image: "../imageShop/씨유.webp",
-        gold: 3600
+        gold: 3500
     },
     {
         item: "CU편의점5000",
@@ -20,9 +30,19 @@ export const products = [
 
     // GS25편의점
     {
+        item: "GS25편의점1000",
+        image: "../imageShop/지에스.webp",
+        gold: 1200
+    },
+    {
+        item: "GS25편의점2000",
+        image: "../imageShop/지에스.webp",
+        gold: 2400
+    }, 
+    {
         item: "GS25편의점3000",
         image: "../imageShop/지에스.webp",
-        gold: 3600
+        gold: 3500
     },
     {
         item: "GS25편의점5000",

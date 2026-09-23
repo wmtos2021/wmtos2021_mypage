@@ -50,7 +50,7 @@ button:focus-visible {
     height: 100dvh;
     min-height: 100dvh;
     margin: 0 auto;
-    padding: 54px 34px 90px;
+    padding: 54px 20px 90px;
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -62,9 +62,9 @@ button:focus-visible {
     display: flex;
     align-items: center;
     width: 100%;
-    gap: clamp(12px, 9vw, 74px);
-    margin: 25px 0 28px;
-    padding: 0 12px;
+    gap: clamp(12px, 12vw, 74px);
+    margin: 25px 0 20px;
+    padding: 8px;
     flex: 0 0 auto;
 }
 
@@ -370,7 +370,7 @@ button:focus-visible {
 /* 교환 상품명 */
 .exchangeProduct strong {
     max-width: 100%;
-    font-size: 17px;
+    font-size: 14px;
     font-weight: 700;
     color: #333333;
     line-height: 1.3;
