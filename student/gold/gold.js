@@ -1,5 +1,4 @@
 // gold.js
-
 import {
     getGoldHistory,
     getTodayGoldHistory
@@ -54,7 +53,8 @@ function getInitialGoldHistory() {
         return {
             board: {},
             shop: {},
-            reward: {}
+            reward: {},
+            school: {}
         };
     }
 
@@ -64,13 +64,15 @@ function getInitialGoldHistory() {
         return {
             board: historyData.board || {},
             shop: historyData.shop || {},
-            reward: historyData.reward || {}
+            reward: historyData.reward || {},
+            school: historyData.school || {}
         };
     } catch (error) {
         return {
             board: {},
             shop: {},
-            reward: {}
+            reward: {},
+            school: {}
         };
     }
 }
@@ -81,6 +83,7 @@ function createMonthRecords(monthKey, historyData) {
     const boardData = historyData.board || {};
     const shopData = historyData.shop || {};
     const rewardData = historyData.reward || {};
+    const schoolData = historyData.school || {};
 
     // 보드게임 - GOLD 받음
     Object.entries(boardData).forEach(([dateKey, timeData]) => {
@@ -141,6 +144,34 @@ function createMonthRecords(monthKey, historyData) {
                 gold: rewardG
             });
         }
+    });
+
+    // 성적우수 - GOLD 받음
+    Object.entries(schoolData).forEach(([dateKey, timeData]) => {
+        if (dateKey.slice(0, 7) !== monthKey) {
+            return;
+        }
+
+        Object.entries(timeData || {}).forEach(([timeKey, data]) => {
+            const getG = getGold(data?.getG);
+
+            if (getG > 0) {
+                records.push({
+                    date: dateKey,
+                    time: timeKey,
+                    type: "받음",
+                    detail: data?.type || "성적우수",
+                    gold: getG
+                });
+            }
+        });
+    });
+
+    // 날짜 및 시간 최신순 정렬
+    records.sort((a, b) => {
+        const dateCompare = b.date.localeCompare(a.date);
+        if (dateCompare !== 0) return dateCompare;
+        return b.time.localeCompare(a.time);
     });
 
     return records;
@@ -259,6 +290,7 @@ async function renderInitialHistory() {
 
                 historyData.board[dateKey] = todayData.board || {};
                 historyData.shop[dateKey] = todayData.shop || {};
+                historyData.school[dateKey] = todayData.school || {};
 
                 if (
                     todayData.reward &&
