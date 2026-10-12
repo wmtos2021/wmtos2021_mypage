@@ -1,4 +1,5 @@
 // gold.js
+
 import {
     getGoldHistory,
     getTodayGoldHistory
@@ -288,9 +289,11 @@ async function renderInitialHistory() {
                     monthKey
                 );
 
+                const monthData = await getGoldHistory(mobile, monthKey);
+                historyData.school = monthData.school || {};
+
                 historyData.board[dateKey] = todayData.board || {};
                 historyData.shop[dateKey] = todayData.shop || {};
-                historyData.school[dateKey] = todayData.school || {};
 
                 if (
                     todayData.reward &&
